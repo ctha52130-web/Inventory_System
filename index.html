@@ -363,7 +363,7 @@
           </div>
         </div>
 
-        <!-- REQUISITION FORM -->
+        <!-- REQUISITION FORM (មាន CONDITION ថ្មី/ចាស់ & UOM) -->
         <div class="bg-[#0a1020] border border-blue-900/30 rounded-2xl p-3.5 shadow-sm space-y-3">
           <div class="flex items-center space-x-2 text-amber-400 font-bold border-b border-slate-800 pb-2">
             <span class="w-6 h-6 rounded-lg bg-amber-950/80 border border-amber-800/40 flex items-center justify-center text-xs text-amber-400"><i class="fa-solid fa-cart-flatbed"></i></span>
@@ -372,20 +372,28 @@
 
           <form onsubmit="handleRequestSubmit(event)" class="space-y-3">
             <div>
-              <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">ជ្រើសរើសមុខទំនិញ (Product Name)</label>
-              <select id="req_product" required class="input-cyber w-full rounded-xl p-2.5 text-xs outline-none">
+              <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">ជ្រើសរើសមុខទំនិញ (Product Name) *</label>
+              <select id="req_product" onchange="updateReqUomBadge()" required class="input-cyber w-full rounded-xl p-2.5 text-xs outline-none">
                 <option value="">-- សូមជ្រើសរើសមុខទំនិញ --</option>
               </select>
             </div>
 
-            <div class="grid grid-cols-2 gap-2.5">
-              <div>
-                <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">ចំនួន (Qty)</label>
-                <input type="number" id="req_qty" min="1" value="1" required class="input-cyber w-full rounded-xl p-2.5 font-mono font-bold text-emerald-400 text-xs">
+            <!-- 🌟 បន្ថែម Condition (New / Old) + Qty & Unit + Ticket ID -->
+            <div class="grid grid-cols-12 gap-2">
+              <div class="col-span-4">
+                <label class="text-slate-400 text-[10px] block mb-1 font-medium">ស្ថានភាពឧបករណ៍ *</label>
+                <select id="req_condition" class="input-cyber w-full rounded-xl p-2 text-xs font-semibold text-emerald-400 outline-none">
+                  <option value="New" selected>✨ ថ្មី (New)</option>
+                  <option value="Old">🔄 ចាស់/មួយទឹក (Old)</option>
+                </select>
               </div>
-              <div>
-                <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">Ticket ID អតិថិជន *</label>
-                <input type="text" id="req_ticket" placeholder="ឧ. 1415084" required class="input-cyber w-full rounded-xl p-2.5 font-mono text-slate-200 text-xs">
+              <div class="col-span-4">
+                <label class="text-slate-400 text-[10px] block mb-1 font-medium">ចំនួន (<span id="req_uom_display" class="text-sky-400 font-mono">Qty</span>) *</label>
+                <input type="number" id="req_qty" min="1" value="1" required class="input-cyber w-full rounded-xl p-2 font-mono font-bold text-emerald-400 text-xs">
+              </div>
+              <div class="col-span-4">
+                <label class="text-slate-400 text-[10px] block mb-1 font-medium">Ticket ID អតិថិជន *</label>
+                <input type="text" id="req_ticket" placeholder="1415084" required class="input-cyber w-full rounded-xl p-2 font-mono text-slate-200 text-xs">
               </div>
             </div>
 
@@ -422,7 +430,7 @@
         </div>
       </div>
 
-      <!-- ==================== VIEW 2: បញ្ជាក់ STOCK OUT ==================== -->
+      <!-- ==================== VIEW 2: បញ្ជាក់ STOCK OUT (បង្ហាញប្រភេទ ម៉ែត្រ/គ្រឿង) ==================== -->
       <div id="viewSubmit" class="hidden space-y-3">
         <div class="bg-[#0a1020] border border-emerald-900/30 rounded-2xl p-4 shadow-sm space-y-3">
           <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
@@ -539,7 +547,6 @@
           </div>
         </div>
 
-        <!-- RETURN DEVICE FORM -->
         <div class="bg-[#0a1020] border border-amber-900/30 rounded-2xl p-3.5 shadow-sm space-y-3">
           <div class="flex items-center space-x-2 text-amber-400 font-bold border-b border-slate-800 pb-2">
             <span class="w-6 h-6 rounded-lg bg-amber-950/80 border border-amber-800/40 flex items-center justify-center text-xs text-amber-400"><i class="fa-solid fa-rotate-left"></i></span>
@@ -613,7 +620,7 @@
     </div>
   </div>
 
-  <!-- ==================== 🌟 MODAL SUBMIT STOCK OUT (មាន ២៥ DEPARTMENTS ពេញលេញ) ==================== -->
+  <!-- ==================== 🌟 MODAL SUBMIT STOCK OUT (មាន Used Qty & Remaining Qty) ==================== -->
   <div id="modalStockOut" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="w-full max-w-[380px] cyber-modal-card p-4 sm:p-5 space-y-3.5 my-auto">
       <div class="flex justify-between items-center pb-1">
@@ -625,13 +632,26 @@
         </button>
       </div>
 
-      <div class="cyber-info-box p-3 space-y-1">
-        <div class="text-slate-500 text-[9px] font-medium tracking-wider">ឧបករណ៍ដែលត្រូវចេញស្តុក៖</div>
-        <div id="so_displayItem" class="font-bold text-slate-100 text-[11px] leading-snug">--</div>
+      <!-- Item Details Card -->
+      <div class="cyber-info-box p-3 space-y-1.5 border border-sky-900/60">
+        <div class="text-slate-400 text-[9px] font-medium tracking-wider flex justify-between">
+          <span>ឧបករណ៍ដែលត្រូវចេញស្តុក៖</span>
+          <span id="so_displayCondition" class="text-emerald-400 font-bold font-mono">✨ New</span>
+        </div>
+        <div id="so_displayItem" class="font-bold text-slate-100 text-[12px] leading-snug">--</div>
+        <div class="flex items-center gap-2 text-[10px] text-slate-400 pt-1 border-t border-slate-800/80 font-mono">
+          <span>សុំសរុប: <b id="so_displayTotalReq" class="text-amber-400 font-bold">1</b></span>
+          <span>•</span>
+          <span>ខ្នាត: <b id="so_displayUOM" class="text-sky-300 font-semibold">UNIT</b></span>
+          <span>•</span>
+          <span>Ticket: <b id="so_displayTicket" class="text-indigo-400">--</b></span>
+        </div>
       </div>
 
       <form onsubmit="handleStockOutConfirm(event)" class="space-y-3 text-xs">
         <input type="hidden" id="so_reqId">
+        <input type="hidden" id="so_origQty" value="1">
+        <input type="hidden" id="so_uomVal" value="UNIT">
 
         <!-- LOCATION INFORMATION (Auto Lock Name Team + ២៥ DEPARTMENTS) -->
         <div class="cyber-info-box p-3 space-y-2.5 border border-sky-900/40">
@@ -663,7 +683,6 @@
             </div>
           </div>
 
-          <!-- Location Name & Department Name (🌟 ២៥ ផ្នែកពេញលេញបេះបិទ) -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Location Name</label>
@@ -729,6 +748,19 @@
           </div>
         </div>
 
+        <!-- 🌟 បន្ថែមប្រអប់ ប្រើប្រាស់អស់ប៉ុន្មាន & នៅសល់ប៉ុន្មាន -->
+        <div class="grid grid-cols-2 gap-2 bg-[#040813] p-2.5 rounded-2xl border border-slate-800">
+          <div>
+            <label class="text-slate-300 text-[10px] block mb-1 font-medium">ចំនួនប្រើអស់ (Used Qty) *</label>
+            <input type="number" id="so_usedQty" min="0" value="1" oninput="calculateRemainingStock()" required class="input-cyber w-full rounded-xl p-2 font-mono font-bold text-emerald-400 text-xs border border-emerald-800/50">
+          </div>
+          <div>
+            <label class="text-slate-300 text-[10px] block mb-1 font-medium">នៅសល់ចូលស្តុកវិញ (Return)</label>
+            <input type="number" id="so_remainQty" min="0" value="0" readonly class="input-cyber input-readonly-auto w-full rounded-xl p-2 font-mono font-bold text-amber-400 text-xs text-center">
+          </div>
+        </div>
+
+        <!-- Serial & MAC Fields -->
         <div>
           <label class="text-slate-300 text-[10px] block mb-1 font-medium">Serial No. (លេខស៊េរីម៉ាស៊ីន) *</label>
           <div class="relative">
@@ -749,6 +781,7 @@
           </div>
         </div>
 
+        <!-- Port / Remark -->
         <div>
           <label class="text-slate-300 text-[10px] block mb-1 font-medium">Port / Remark</label>
           <input type="text" id="so_remark" value="Port 1 - New Install" class="cyber-field-input w-full p-2.5 text-slate-100 text-[11px]">
@@ -778,7 +811,9 @@
     let tg = window.Telegram ? window.Telegram.WebApp : null;
     if (tg) { 
       tg.expand();
-      try { tg.enableClosingConfirmation(); } catch(e) {}
+      if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.2')) {
+        try { tg.enableClosingConfirmation(); } catch(e) {}
+      }
     }
 
     let currentStaff = null;
@@ -826,7 +861,6 @@
       "Support & IT": "250"
     };
 
-    // ================= 🌟 AUTHENTICATION LOGIC =================
     function toggleAuthTab(tab) {
       if(tab === 'login') {
         document.getElementById('loginForm').classList.remove('hidden');
@@ -950,6 +984,12 @@
       if (document.getElementById('ret_nameTeam')) document.getElementById('ret_nameTeam').value = currentStaff.fullName;
     }
 
+    function updateReqUomBadge() {
+      const p = document.getElementById('req_product').value;
+      const uom = (productDatabase[p] && productDatabase[p].uom) ? productDatabase[p].uom : 'Qty';
+      document.getElementById('req_uom_display').innerText = uom;
+    }
+
     function autoFillReqLocationCode() {
       const loc = document.getElementById('req_locationSelect').value;
       document.getElementById('req_locationCode').value = locationCodeMap[loc] || "010";
@@ -1057,8 +1097,9 @@
         selRet.innerHTML = '<option value="">-- សូមជ្រើសរើសមុខទំនិញ --</option>';
 
         for (let k in productDatabase) {
-          selReq.innerHTML += `<option value="${k}">${k} [${productDatabase[k].code}]</option>`;
-          selRet.innerHTML += `<option value="${k}">${k} [${productDatabase[k].code}]</option>`;
+          const uom = productDatabase[k].uom ? ` (${productDatabase[k].uom})` : '';
+          selReq.innerHTML += `<option value="${k}">${k}${uom}</option>`;
+          selRet.innerHTML += `<option value="${k}">${k}${uom}</option>`;
         }
       } catch(e) {}
     }
@@ -1072,6 +1113,9 @@
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងបញ្ជូន...';
 
       const p = document.getElementById('req_product').value;
+      const conditionVal = document.getElementById('req_condition').value;
+      const uomVal = (productDatabase[p] && productDatabase[p].uom) ? productDatabase[p].uom : 'UNIT';
+
       const payload = {
         action: 'submitRequisition',
         staffId: currentStaff.staffId,
@@ -1079,6 +1123,8 @@
         staffRole: currentStaff.role,
         productName: p,
         itemCode: productDatabase[p] ? productDatabase[p].code : '',
+        uom: uomVal,
+        condition: conditionVal,
         qty: document.getElementById('req_qty').value,
         ticket: document.getElementById('req_ticket').value,
         serial: document.getElementById('req_serial').value.trim(),
@@ -1146,6 +1192,7 @@
       }
     }
 
+    // 🌟 បង្ហាញព័ត៌មានលម្អិតសម្ភារៈ ទាំងខ្នាត (UOM: ម៉ែត្រ/គ្រឿង) និងប្រភេទ (Condition) លើ View 2
     async function loadApprovedItems() {
       const container = document.getElementById('approvedList');
       container.innerHTML = '<div class="text-center py-8 text-sky-400 font-sans"><i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងទាញទិន្នន័យ...</div>';
@@ -1158,18 +1205,10 @@
 
         if (approved.length === 0) {
           container.innerHTML = `
-            <div class="p-3 bg-[#050811] rounded-2xl border border-slate-800 flex justify-between items-center shadow-sm">
-              <div>
-                <div class="font-bold text-slate-100 text-xs">Patch Cord SC/UPC-SC/APC 1.5m</div>
-                <div class="text-[10px] text-slate-400 mt-0.5 font-mono">
-                  ចំនួន: <b class="text-emerald-400">11111</b> | Ticket: <b class="text-sky-400">1111</b>
-                </div>
-                <div class="text-[9.5px] text-slate-500 mt-0.5">Approve: Super Admin (1954)</div>
-              </div>
-              <button onclick="openStockOutForm('REQ-1001', '2-010747', 'Patch Cord SC/UPC-SC/APC 1.5m', '11111', '1111')" class="px-3.5 py-2 btn-submit-stockout text-white rounded-xl font-bold text-xs shadow transition flex items-center gap-1.5">
-                <i class="fa-solid fa-check"></i>
-                <span>Submit Out</span>
-              </button>
+            <div class="text-center py-8 bg-[#050811] rounded-2xl border border-slate-800">
+              <i class="fa-solid fa-circle-check text-2xl text-slate-600 mb-2"></i>
+              <div class="text-slate-400 font-medium">មិនមានឧបករណ៍ដែលកំពុងរង់ចាំ Submit ទេ!</div>
+              <p class="text-[10px] text-slate-500 mt-1">រាល់សំណើដែល Admin បាន Approve នឹងបង្ហាញនៅទីនេះ។</p>
             </div>
           `;
           return;
@@ -1177,16 +1216,25 @@
 
         let html = '';
         approved.forEach(it => {
+          const uom = it.uom || (productDatabase[it.productName] ? productDatabase[it.productName].uom : 'UNIT');
+          const conditionText = (it.condition === 'Old') ? '🔄 ចាស់/មួយទឹក' : '✨ ថ្មី (New)';
+          const conditionColor = (it.condition === 'Old') ? 'text-amber-400' : 'text-emerald-400';
+          const serialPart = it.verifiedSerial ? `<div class="text-[9.5px] text-slate-400 font-mono mt-0.5"><i class="fa-solid fa-barcode text-xs mr-1"></i> ${it.verifiedSerial}</div>` : '';
+
           html += `
             <div class="p-3 bg-[#050811] rounded-2xl border border-slate-800 flex justify-between items-center shadow-sm">
-              <div>
+              <div class="pr-2">
                 <div class="font-bold text-slate-100 text-xs">${it.productName}</div>
-                <div class="text-[10px] text-slate-400 mt-0.5 font-mono">
-                  ចំនួន: <b class="text-emerald-400">${it.qty}</b> | Ticket: <b class="text-sky-400">${it.ticket}</b>
+                <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5 font-mono">
+                  <span>ចំនួន: <b class="text-emerald-400">${it.qty} ${uom}</b></span>
+                  <span>•</span>
+                  <span>ប្រភេទ: <b class="${conditionColor}">${conditionText}</b></span>
                 </div>
-                <div class="text-[9.5px] text-slate-500 mt-0.5">Approve: ${it.approvedBy || 'Admin'}</div>
+                <div class="text-[10px] text-slate-400 font-mono">Ticket: <b class="text-sky-400">${it.ticket}</b></div>
+                ${serialPart}
+                <div class="text-[9px] text-slate-500 mt-0.5 font-sans">Approve ដោយ: ${it.approvedBy || 'Admin'}</div>
               </div>
-              <button onclick="openStockOutForm('${it.reqId}', '${it.itemCode}', '${it.productName}', '${it.qty}', '${it.ticket}')" class="px-3.5 py-2 btn-submit-stockout text-white rounded-xl font-bold text-xs shadow transition flex items-center gap-1.5">
+              <button onclick="openStockOutForm('${it.reqId}', '${it.itemCode || ''}', '${it.productName}', '${it.qty}', '${it.ticket}', '${it.verifiedSerial || ''}', '${uom}', '${it.condition || 'New'}')" class="px-3.5 py-2 btn-submit-stockout text-white rounded-xl font-bold text-xs shadow transition flex items-center gap-1.5 shrink-0">
                 <i class="fa-solid fa-check"></i>
                 <span>Submit Out</span>
               </button>
@@ -1195,29 +1243,52 @@
         });
         container.innerHTML = html;
       } catch(e) {
-        container.innerHTML = `
-          <div class="p-3 bg-[#050811] rounded-2xl border border-slate-800 flex justify-between items-center shadow-sm">
-            <div>
-              <div class="font-bold text-slate-100 text-xs">Patch Cord SC/UPC-SC/APC 1.5m</div>
-              <div class="text-[10px] text-slate-400 mt-0.5 font-mono">
-                ចំនួន: <b class="text-emerald-400">11111</b> | Ticket: <b class="text-sky-400">1111</b>
-              </div>
-              <div class="text-[9.5px] text-slate-500 mt-0.5">Approve: Super Admin (1954)</div>
-            </div>
-            <button onclick="openStockOutForm('REQ-1001', '2-010747', 'Patch Cord SC/UPC-SC/APC 1.5m', '11111', '1111')" class="px-3.5 py-2 btn-submit-stockout text-white rounded-xl font-bold text-xs shadow transition flex items-center gap-1.5">
-              <i class="fa-solid fa-check"></i>
-              <span>Submit Out</span>
-            </button>
-          </div>
-        `;
+        container.innerHTML = '<div class="text-center py-8 text-rose-500 font-sans">កំហុសក្នុងការទាញទិន្នន័យ!</div>';
       }
     }
 
-    function openStockOutForm(reqId, itemCode, prodName, qty, ticket) {
+    // 🌟 បើក Form Submit Out ដោយមានគណនាចំនួនប្រើអស់ & ចំនួនសល់
+    function openStockOutForm(reqId, itemCode, prodName, qty, ticket, serialMac, uom, condition) {
       document.getElementById('so_reqId').value = reqId;
-      document.getElementById('so_displayItem').innerText = `${prodName} (ចំនួន: ${qty} | Ticket: ${ticket})`;
+      document.getElementById('so_displayItem').innerText = prodName;
+      document.getElementById('so_displayTotalReq').innerText = `${qty} ${uom}`;
+      document.getElementById('so_displayUOM').innerText = uom;
+      document.getElementById('so_displayTicket').innerText = ticket;
+      document.getElementById('so_displayCondition').innerText = (condition === 'Old') ? '🔄 ចាស់/មួយទឹក' : '✨ ថ្មី (New)';
+      document.getElementById('so_origQty').value = qty;
+      document.getElementById('so_uomVal').value = uom;
+
+      // Reset Qty fields
+      document.getElementById('so_usedQty').value = qty;
+      document.getElementById('so_remainQty').value = "0";
+
+      // Split Serial & MAC if present
+      if (serialMac) {
+        const parts = serialMac.split(' / ');
+        document.getElementById('so_serial').value = parts[0] || '';
+        document.getElementById('so_mac').value = parts[1] || '';
+      } else {
+        document.getElementById('so_serial').value = '';
+        document.getElementById('so_mac').value = '';
+      }
+
       applyStaffIdentity();
       document.getElementById('modalStockOut').classList.remove('hidden');
+    }
+
+    // 🌟 គណនាចំនួននៅសល់ស្វ័យប្រវត្តិ (Total - Used = Remaining)
+    function calculateRemainingStock() {
+      const orig = Number(document.getElementById('so_origQty').value) || 0;
+      let used = Number(document.getElementById('so_usedQty').value) || 0;
+      
+      if (used < 0) { used = 0; document.getElementById('so_usedQty').value = 0; }
+      if (used > orig) {
+        used = orig;
+        document.getElementById('so_usedQty').value = orig;
+      }
+
+      const remain = orig - used;
+      document.getElementById('so_remainQty').value = remain;
     }
 
     function closeModal() {
@@ -1232,17 +1303,29 @@
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុង Submit...';
 
+      const usedQty = Number(document.getElementById('so_usedQty').value) || 0;
+      const remainQty = Number(document.getElementById('so_remainQty').value) || 0;
+      const uom = document.getElementById('so_uomVal').value;
+
+      let finalRemark = document.getElementById('so_remark').value.trim();
+      if (remainQty > 0) {
+        finalRemark += ` (ប្រើអស់: ${usedQty} ${uom}, នៅសល់: ${remainQty} ${uom})`;
+      }
+
       const payload = {
         action: 'verifyRequisition',
         reqId: document.getElementById('so_reqId').value,
-        verifiedSerial: document.getElementById('so_serial').value + (document.getElementById('so_mac').value ? ' / ' + document.getElementById('so_mac').value : ''),
+        verifiedSerial: document.getElementById('so_serial').value.trim() + (document.getElementById('so_mac').value.trim() ? ' / ' + document.getElementById('so_mac').value.trim() : ''),
         nameTeam: currentStaff.fullName,
         dateStockOut: document.getElementById('dateStockOut').value,
         locationName: document.getElementById('locationSelect').value,
         locationCode: document.getElementById('locationCode').value,
         departmentName: document.getElementById('deptSelect').value,
         departmentCode: document.getElementById('deptCode').value,
-        remark: document.getElementById('so_remark').value
+        usedQty: usedQty,
+        remainQty: remainQty,
+        uom: uom,
+        remark: finalRemark
       };
 
       try {
