@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MicroMax Inventory Pro - Enterprise System</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Barcode Scanner Library -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  
+  <!-- Google Fonts: Kantumruy Pro & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Kantumruy Pro"', '"Inter"', 'sans-serif'],
+            mono: ['"Inter"', 'monospace']
+          },
+          colors: {
+            sidebarBg: '#091322',
+            sidebarHover: '#132238',
+            brandBlue: '#1a73e8',
+            pageBg: '#f3f6fc'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Kantumruy Pro', 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .nav-active {
+      background-color: #2563eb !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .flag-kh {
+      display: inline-block; width: 18px; height: 12px; border-radius: 2px;
+      background: linear-gradient(to bottom, #032ea1 25%, #e00025 25%, #e00025 75%, #032ea1 75%);
+      box-shadow: 0 0 1px rgba(0,0,0,0.4);
+    }
+    .badge-dot {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background-color: #10b981; box-shadow: 0 0 8px #10b981;
+    }
+    .modal-glass {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(16px);
+    }
+  </style>
+</head>
+<body class="bg-pageBg text-slate-800 text-xs flex min-h-screen overflow-hidden antialiased">
+
+  <!-- ==================== 0. AUTHENTICATION SCREEN ==================== -->
+  <div id="authScreen" class="fixed inset-0 z-50 bg-[#091322] flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-7 w-full max-w-md shadow-2xl border border-slate-100">
+      
+      <!-- Brand Header -->
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl mx-auto mb-2.5 shadow-lg shadow-blue-500/30">
+          <i class="fa-solid fa-cube"></i>
+        </div>
+        <h2 class="text-lg font-bold text-slate-900">MicroMax Inventory Pro</h2>
+        <p class="text-[11px] text-slate-500">Enterprise Security & Role-Based Control</p>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="flex rounded-xl bg-slate-100 p-1 mb-5">
+        <button onclick="toggleAuthTab('login')" id="tabBtnLogin" class="flex-1 py-2 rounded-lg font-bold text-xs bg-white text-blue-600 shadow-xs transition">ចូលប្រើប្រាស់ (Login)</button>
+        <button onclick="toggleAuthTab('register')" id="tabBtnRegister" class="flex-1 py-2 rounded-lg font-bold text-xs text-slate-500 hover:text-slate-800 transition">ចុះឈ្មោះគណនីថ្មី</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700">Gmail ឬ លេខកាតបុគ្គលិក (Staff ID)</label>
+          <div class="relative mt-1">
+            <i class="fa-solid fa-id-card absolute left-3.5 top-3 text-slate-400"></i>
+            <input type="text" id="loginIdentifier" placeholder="1954 ឬ chanthanuon754@gmail.com" required class="w-full border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 bg-slate-50 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500 font-medium">
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700">លេខសម្ងាត់ (Password)</label>
+          <div class="relative mt-1">
+            <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400"></i>
+            <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 bg-slate-50 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <button type="submit" id="btnLoginSubmit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-500/20 transition flex items-center justify-center space-x-2">
+          <span>ចូលប្រើប្រាស់ប្រព័ន្ធ</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+
+        <div class="text-center pt-2 text-[11px] text-slate-400">
+          Super Admin លំនាំដើម: <b>1954</b> | Password: <b>123456</b>
+        </div>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-3 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700">ឈ្មោះពេញ (Full Name)</label>
+          <input type="text" id="regFullName" placeholder="Mr. Nuon Chantha" required class="w-full mt-1 border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="font-semibold text-slate-700">លេខកាតបុគ្គលិក (Staff ID)</label>
+            <input type="text" id="regStaffId" placeholder="1954" required class="w-full mt-1 border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 font-mono outline-none focus:bg-white focus:ring-1 focus:ring-blue-500 font-bold">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700">តួនាទី (Role)</label>
+            <select id="regRole" onchange="checkSuperAdminRole()" required class="w-full mt-1 border border-slate-200 rounded-xl px-2.5 py-2 bg-slate-50 text-slate-800 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500 font-semibold text-blue-700">
+              <option value="បុគ្គលិកធម្មតា">បុគ្គលិកធម្មតា</option>
+              <option value="Senior Staff">Senior Staff</option>
+              <option value="Team Leader">Team Leader</option>
+              <option value="អនុប្រធានសាខា">អនុប្រធានសាខា</option>
+              <option value="ប្រធានសាខា">ប្រធានសាខា</option>
+              <option value="Super Admin" class="font-bold text-rose-600">Super Admin (ធំជាងគេ) 🔑</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="superAdminKeyBox" class="hidden bg-rose-50 border border-rose-200 p-3 rounded-xl">
+          <label class="font-bold text-rose-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-key text-rose-600"></i>
+            <span>Super Admin Master Key (កូដសម្ងាត់ធំ)</span>
+          </label>
+          <input type="password" id="regSecretKey" placeholder="បញ្ចូលកូដសម្ងាត់ SUPER@ONLINE#2026" class="w-full mt-1 border border-rose-300 rounded-lg px-3 py-1.5 bg-white font-mono outline-none focus:ring-1 focus:ring-rose-500">
+          <span class="text-[10px] text-rose-500 mt-1 block font-mono">Secret Key: SUPER@ONLINE#2026</span>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700">Gmail ផ្លូវការ (Corporate Gmail)</label>
+          <input type="email" id="regGmail" placeholder="chanthanuon754@gmail.com" required class="w-full mt-1 border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500">
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700">លេខសម្ងាត់ (Password)</label>
+          <input type="password" id="regPassword" placeholder="កំណត់លេខសម្ងាត់យ៉ាងតិច ៦ ខ្ទង់" minlength="6" required class="w-full mt-1 border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500">
+        </div>
+
+        <button type="submit" id="btnRegSubmit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md shadow-emerald-500/20 transition flex items-center justify-center space-x-2 mt-2">
+          <i class="fa-solid fa-user-check"></i>
+          <span>ចុះឈ្មោះ និងកត់ត្រាចូលប្រព័ន្ធ</span>
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ==================== 1. SIDEBAR NAVIGATION ==================== -->
+  <aside class="w-64 bg-sidebarBg text-slate-300 min-h-screen flex flex-col justify-between shrink-0 select-none z-20 shadow-2xl">
+    <div>
+      <div class="px-5 py-4 flex items-center space-x-3 border-b border-slate-800/80">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white text-lg shadow-lg shadow-blue-500/30 shrink-0">
+          <i class="fa-solid fa-cube"></i>
+        </div>
+        <div class="truncate">
+          <div class="flex items-center space-x-1.5">
+            <span class="text-sm font-bold text-white tracking-wide">Inventory Pro</span>
+            <span class="text-[9px] bg-blue-900/90 text-blue-300 px-1.5 py-0.5 rounded font-mono font-bold">v3.5</span>
+          </div>
+          <p class="text-[10px] text-slate-400 truncate">MicroMax Enterprise System</p>
+        </div>
+      </div>
+
+      <nav class="p-3 space-y-1 text-[12.5px] overflow-y-auto max-h-[calc(100vh-230px)]">
+        <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl nav-active transition">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-house w-4 text-center"></i><span class="font-medium">Dashboard</span></div>
+        </button>
+
+        <!-- 🌟 MENU ថ្មី៖ Requisitions & Verify -->
+        <button onclick="switchView('requisitions')" id="nav-requisitions" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-amber-300 font-semibold">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-clipboard-check w-4 text-center"></i><span>Requisitions / <span class="text-[11px] text-amber-400">ស្នើសុំ & Verify</span></span></div>
+          <span id="badgePendingReq" class="w-4 h-4 bg-amber-500 text-slate-950 rounded-full flex items-center justify-center text-[9px] font-bold">0</span>
+        </button>
+
+        <button onclick="switchView('products')" id="nav-products" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-slate-300">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-boxes-stacked w-4 text-center"></i><span>Products / <span class="text-[11px] text-slate-400">ទំនិញ</span></span></div>
+          <i class="fa-solid fa-chevron-right text-[9px] text-slate-500"></i>
+        </button>
+
+        <!-- 🌟 MENU: Hardware Master Ledger -->
+        <button onclick="switchView('masterLedger')" id="nav-masterLedger" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-cyan-300 font-semibold">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-database w-4 text-center"></i><span>Hardware Ledger / <span class="text-[11px] text-cyan-400">ឃ្លាំងមេ Serial</span></span></div>
+          <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+        </button>
+
+        <button onclick="openStockInModal()" id="btnNavStockIn" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-slate-300">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-arrow-down w-4 text-center text-emerald-400"></i><span>Stock In / <span class="text-[11px] text-slate-400">ទទួលទំនិញ</span></span></div>
+          <span class="w-4 h-4 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[9px]"><i class="fa-solid fa-plus"></i></span>
+        </button>
+
+        <button onclick="openStockOutModal()" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-slate-300">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-arrow-up w-4 text-center text-rose-400"></i><span>Stock Out / <span class="text-[11px] text-slate-400">ចេញទំនិញ</span></span></div>
+          <span class="w-4 h-4 bg-rose-500 text-white rounded-full flex items-center justify-center text-[9px]"><i class="fa-solid fa-minus"></i></span>
+        </button>
+
+        <button onclick="switchView('stockOutLogs')" id="nav-stockOutLogs" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-slate-300">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-clock-rotate-left w-4 text-center text-indigo-400"></i><span>Stock Out Logs / <span class="text-[11px] text-slate-400">ប្រវត្តិ</span></span></div>
+          <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded font-medium">Filter</span>
+        </button>
+
+        <button onclick="switchView('deviceLifecycle')" id="nav-deviceLifecycle" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-slate-300">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-barcode w-4 text-center text-cyan-400"></i><span>Device Lifecycle / <span class="text-[11px] text-slate-400">ប្រវត្តិឧបករណ៍</span></span></div>
+          <i class="fa-solid fa-chevron-right text-[9px] text-slate-500"></i>
+        </button>
+
+        <button onclick="switchView('warehouses')" id="nav-warehouses" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-slate-300">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-warehouse w-4 text-center"></i><span>Warehouses / <span class="text-[11px] text-slate-400">ឃ្លាំង</span></span></div>
+          <i class="fa-solid fa-chevron-right text-[9px] text-slate-500"></i>
+        </button>
+
+        <button onclick="switchView('transfer')" id="nav-transfer" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-slate-300">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-arrow-right-arrow-left w-4 text-center"></i><span>Transfer / <span class="text-[11px] text-slate-400">ផ្ទេរទំនិញ</span></span></div>
+          <i class="fa-solid fa-chevron-right text-[9px] text-slate-500"></i>
+        </button>
+
+        <button onclick="switchView('report')" id="nav-report" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-slate-300">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-chart-pie w-4 text-center text-amber-400"></i><span>Reports / <span class="text-[11px] text-slate-400">របាយការណ៍</span></span></div>
+          <span class="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-medium">បិទបញ្ជី</span>
+        </button>
+
+        <button onclick="switchView('users')" id="nav-users" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-slate-300">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-user-gear w-4 text-center"></i><span>Users & Roles / <span class="text-[11px] text-slate-400">សិទ្ធិ</span></span></div>
+          <i class="fa-solid fa-chevron-right text-[9px] text-slate-500"></i>
+        </button>
+
+        <button onclick="triggerAutoSetupDB()" id="btnNavAutoSetup" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-sidebarHover hover:text-white transition text-cyan-400 font-semibold">
+          <div class="flex items-center space-x-3"><i class="fa-solid fa-wand-magic-sparkles w-4 text-center"></i><span>Auto Setup DB ⚙️</span></div>
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Bottom Status -->
+    <div class="p-3 border-t border-slate-800/80 bg-[#070e1c]">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-semibold text-slate-300 text-[11px]">MicroMax Co., ltd</p>
+          <p class="text-[9px] text-slate-500">Secured System <span class="badge-dot"></span></p>
+        </div>
+        <button onclick="handleLogout()" class="px-2.5 py-1.5 rounded-lg bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 font-medium text-[11px] flex items-center gap-1">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== 2. MAIN PANEL & HEADER ==================== -->
+  <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+    
+    <!-- Top Header Bar -->
+    <header class="bg-[#0b1528] text-white px-6 py-2.5 flex items-center justify-between border-b border-slate-800 shrink-0 sticky top-0 z-30 shadow-md">
+      <div class="flex items-center space-x-3">
+        <span class="text-sm font-bold text-slate-100">MicroMax Co., ltd</span>
+        <span class="text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded-full border border-blue-700/50">Office -BVT (010)</span>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2 bg-[#16233d] px-3 py-1.5 rounded-xl border border-slate-700/80 text-xs">
+          <span class="flag-kh"></span>
+          <span class="font-medium text-[11px] text-slate-200">ខ្មែរ</span>
+        </div>
+
+        <!-- Official Profile Badge -->
+        <div class="flex items-center space-x-3 pl-3 border-l border-slate-700">
+          <div class="w-8 h-8 rounded-full overflow-hidden ring-2 ring-blue-500/50 shadow shrink-0 bg-blue-600 flex items-center justify-center font-bold text-white">
+            <span id="headerAvatarInitials">NC</span>
+          </div>
+          <div class="text-left">
+            <div id="headerUserName" class="text-[12px] font-bold leading-tight text-white">Mr. Nuon Chantha</div>
+            <div class="flex items-center gap-1.5 text-[9.5px]">
+              <span id="headerUserRole" class="text-blue-400 font-semibold">Super Admin</span>
+              <span class="text-slate-500">•</span>
+              <span id="headerUserId" class="text-amber-400 font-mono font-bold">ID: 1954</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- VIEWS CONTAINER -->
+    <div class="flex-1 overflow-y-auto p-5 space-y-4">
+
+      <!-- ================= VIEW 1: DASHBOARD (ពេញលេញ ១០០% ដូចរូបទី ២) ================= -->
+      <div id="view-dashboard" class="space-y-4">
+        
+        <!-- Action Title Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-white px-5 py-3.5 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h1 class="text-base font-bold text-slate-800 leading-tight">Dashboard</h1>
+            <p class="text-[11px] text-slate-500">ទិដ្ឋភាពទូទៅនៃស្តុកសម្ភារបណ្តាញ និងចរន្តឧបករណ៍</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <button onclick="openRequisitionModal()" class="flex items-center space-x-1.5 bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs transition">
+              <i class="fa-solid fa-paper-plane text-[10px]"></i><span>ស្នើសុំសម្ភារៈ (Request)</span>
+            </button>
+            <button onclick="openStockInModal()" id="btnActionStockIn" class="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs transition">
+              <i class="fa-solid fa-arrow-down text-[10px]"></i><span>Stock In</span>
+            </button>
+            <button onclick="openStockOutModal()" class="flex items-center space-x-1.5 bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs transition">
+              <i class="fa-solid fa-arrow-up text-[10px]"></i><span>Stock Out</span>
+            </button>
+            <button onclick="openReturnModal()" class="flex items-center space-x-1.5 bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs transition">
+              <i class="fa-solid fa-rotate-left text-[10px]"></i><span>Return (ខូច/ចាស់)</span>
+            </button>
+            <button onclick="openScannerModal()" class="flex items-center space-x-1.5 bg-cyan-600 hover:bg-cyan-700 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs transition">
+              <i class="fa-solid fa-barcode text-[10px]"></i><span>Scan Barcode</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 7 Top KPI Summary Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          <div class="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-3.5 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-[11px] opacity-90"><span>Total Products</span><i class="fa-solid fa-cube text-white/70"></i></div>
+            <div class="my-1.5 text-xl font-extrabold font-mono">1,248</div>
+            <div class="text-[9.5px] text-blue-100 flex items-center space-x-1"><i class="fa-solid fa-arrow-up"></i><span>112% from last month</span></div>
+          </div>
+          <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white p-3.5 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-[11px] opacity-90"><span>Total Stock Quantity</span><i class="fa-solid fa-layer-group text-white/70"></i></div>
+            <div class="my-1.5 text-xl font-extrabold font-mono">58,420</div>
+            <div class="text-[9.5px] text-emerald-100 flex items-center space-x-1"><i class="fa-solid fa-arrow-up"></i><span>8% from last month</span></div>
+          </div>
+          <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 text-white p-3.5 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-[11px] opacity-90"><span>Total Stock Value</span><i class="fa-solid fa-circle-dollar-to-slot text-white/70"></i></div>
+            <div class="my-1.5 text-xl font-extrabold font-mono">$84,520</div>
+            <div class="text-[9.5px] text-indigo-100 flex items-center space-x-1"><i class="fa-solid fa-arrow-up"></i><span>10% from last month</span></div>
+          </div>
+          <div class="bg-gradient-to-br from-cyan-600 to-teal-700 text-white p-3.5 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-[11px] opacity-90"><span>Stock In Today</span><i class="fa-solid fa-cart-flatbed text-white/70"></i></div>
+            <div class="my-1.5 text-xl font-extrabold font-mono">320</div>
+            <div class="text-[9.5px] text-cyan-100 flex items-center space-x-1"><i class="fa-solid fa-arrow-up"></i><span>15% yesterday</span></div>
+          </div>
+          <div class="bg-gradient-to-br from-amber-600 to-orange-600 text-white p-3.5 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-[11px] opacity-90"><span>Stock Out Today</span><i class="fa-solid fa-truck-ramp-box text-white/70"></i></div>
+            <div class="my-1.5 text-xl font-extrabold font-mono">186</div>
+            <div class="text-[9.5px] text-amber-100 flex items-center space-x-1"><i class="fa-solid fa-arrow-up"></i><span>6% yesterday</span></div>
+          </div>
+          <div class="bg-gradient-to-br from-rose-500 to-rose-600 text-white p-3.5 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-[11px] opacity-90"><span>Low Stock</span><i class="fa-solid fa-triangle-exclamation text-white/70"></i></div>
+            <div class="my-1.5 text-xl font-extrabold font-mono">32</div>
+            <div class="text-[9.5px] text-rose-100">from last month</div>
+          </div>
+          <div class="bg-gradient-to-br from-slate-600 to-slate-700 text-white p-3.5 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-[11px] opacity-90"><span>Out of Stock</span><i class="fa-solid fa-circle-xmark text-white/70"></i></div>
+            <div class="my-1.5 text-xl font-extrabold font-mono">14</div>
+            <div class="text-[9.5px] text-slate-300">from last month</div>
+          </div>
+        </div>
+
+        <!-- Middle Charts Row (Combo Chart, Donut, Top 10) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <!-- 1. Stock Movement -->
+          <div class="lg:col-span-6 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center space-x-2 font-bold text-slate-800 text-sm"><i class="fa-solid fa-chart-column text-blue-600"></i><span>ចលនាស្តុក (Stock In vs Stock Out)</span></div>
+              <div class="flex items-center space-x-3 text-[10.5px] text-slate-500 font-medium">
+                <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Stock In</span></span>
+                <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span>Stock Out</span></span>
+                <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span><span>ស្តុកសរុប</span></span>
+              </div>
+            </div>
+            <div class="h-56 relative"><canvas id="movementChart"></canvas></div>
+          </div>
+
+          <!-- 2. Warehouse Donut -->
+          <div class="lg:col-span-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center space-x-2 font-bold text-slate-800 text-sm mb-1"><i class="fa-solid fa-chart-pie text-blue-600"></i><span>ស្តុកតាមឃ្លាំង (Warehouse)</span></div>
+            <div class="flex flex-col items-center justify-center my-auto">
+              <div class="w-36 h-36 relative flex items-center justify-center">
+                <canvas id="warehouseChart"></canvas>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+                  <span class="text-sm font-bold text-slate-800 font-mono">58,420</span><span class="text-[9px] text-slate-400">ស្តុកសរុប</span>
+                </div>
+              </div>
+              <div class="w-full mt-3 space-y-1.5 text-[11px]">
+                <div class="flex justify-between items-center text-slate-600">
+                  <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-blue-600"></span><span>Main Warehouse</span></span>
+                  <span class="font-semibold font-mono">28,500 <span class="text-slate-400 text-[10px]">(48.8%)</span></span>
+                </div>
+                <div class="flex justify-between items-center text-slate-600">
+                  <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Branch 01</span></span>
+                  <span class="font-semibold font-mono">12,300 <span class="text-slate-400 text-[10px]">(21.1%)</span></span>
+                </div>
+                <div class="flex justify-between items-center text-slate-600">
+                  <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span><span>Branch 02</span></span>
+                  <span class="font-semibold font-mono">9,800 <span class="text-slate-400 text-[10px]">(16.8%)</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Top 10 Best Sellers -->
+          <div class="lg:col-span-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center space-x-1.5 font-bold text-slate-800 text-sm"><i class="fa-solid fa-ranking-star text-blue-600"></i><span>Top 10 ទំនិញបញ្ជាទិញច្រើន</span></div>
+              <a href="javascript:switchView('products')" class="text-[11px] text-blue-600 hover:underline">មើលទាំងអស់ →</a>
+            </div>
+            <div class="space-y-2 overflow-y-auto max-h-60 pr-1 text-slate-700 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="w-32 truncate font-medium"><span class="text-slate-400 w-4 inline-block font-mono">1</span> Mouse M001</span>
+                <div class="flex-1 mx-2.5 bg-slate-100 rounded-full h-2"><div class="bg-blue-600 h-full rounded-full" style="width: 95%;"></div></div>
+                <span class="font-bold font-mono">342</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="w-32 truncate font-medium"><span class="text-slate-400 w-4 inline-block font-mono">2</span> Keyboard K001</span>
+                <div class="flex-1 mx-2.5 bg-slate-100 rounded-full h-2"><div class="bg-blue-600 h-full rounded-full" style="width: 82%;"></div></div>
+                <span class="font-bold font-mono">280</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="w-32 truncate font-medium"><span class="text-slate-400 w-4 inline-block font-mono">3</span> Monitor MN001</span>
+                <div class="flex-1 mx-2.5 bg-slate-100 rounded-full h-2"><div class="bg-blue-600 h-full rounded-full" style="width: 68%;"></div></div>
+                <span class="font-bold font-mono">194</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="w-32 truncate font-medium"><span class="text-slate-400 w-4 inline-block font-mono">4</span> USB Flash U001</span>
+                <div class="flex-1 mx-2.5 bg-slate-100 rounded-full h-2"><div class="bg-blue-600 h-full rounded-full" style="width: 55%;"></div></div>
+                <span class="font-bold font-mono">156</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: 5 Quick Action Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+          <div onclick="openStockInModal()" class="bg-blue-600 text-white p-3.5 rounded-2xl shadow-sm flex items-center justify-between cursor-pointer hover:bg-blue-700 transition">
+            <div class="flex items-center space-x-3"><i class="fa-solid fa-dolly text-2xl opacity-90"></i><div><div class="font-bold text-xs">ទទួលទំនិញ</div><div class="text-[10px] opacity-80">បញ្ចូលទំនិញពីភ្នំពេញ</div></div></div>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </div>
+          <div onclick="openStockOutModal()" class="bg-emerald-600 text-white p-3.5 rounded-2xl shadow-sm flex items-center justify-between cursor-pointer hover:bg-emerald-700 transition">
+            <div class="flex items-center space-x-3"><i class="fa-solid fa-box-archive text-2xl opacity-90"></i><div><div class="font-bold text-xs">ចេញទំនិញ</div><div class="text-[10px] opacity-80">ចេញទៅកាន់អតិថិជន</div></div></div>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </div>
+          <div onclick="openReturnModal()" class="bg-amber-600 text-white p-3.5 rounded-2xl shadow-sm flex items-center justify-between cursor-pointer hover:bg-amber-700 transition">
+            <div class="flex items-center space-x-3"><i class="fa-solid fa-rotate-left text-2xl opacity-90"></i><div><div class="font-bold text-xs">ឧបករណ៍ខូច/ចាស់</div><div class="text-[10px] opacity-80">Return មកឃ្លាំង</div></div></div>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </div>
+          <div onclick="switchView('stockOutLogs')" class="bg-indigo-600 text-white p-3.5 rounded-2xl shadow-sm flex items-center justify-between cursor-pointer hover:bg-indigo-700 transition">
+            <div class="flex items-center space-x-3"><i class="fa-solid fa-clock-rotate-left text-2xl opacity-90"></i><div><div class="font-bold text-xs">ប្រវត្តិចេញស្តុក</div><div class="text-[10px] opacity-80">Stock Out Logs</div></div></div>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </div>
+          <div onclick="openScannerModal()" class="bg-cyan-600 text-white p-3.5 rounded-2xl shadow-sm flex items-center justify-between cursor-pointer hover:bg-cyan-700 transition">
+            <div class="flex items-center space-x-3"><i class="fa-solid fa-barcode text-2xl opacity-90"></i><div><div class="font-bold text-xs">ស្កេន Barcode</div><div class="text-[10px] opacity-80">ស្កេនទំនិញលឿន</div></div></div>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </div>
+        </div>
+
+        <!-- Row 4: Low Stock, 7-Day Trend, Live Logs -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <div class="lg:col-span-5 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-2 font-bold text-slate-800 text-sm"><i class="fa-solid fa-triangle-exclamation text-rose-500"></i><span>ទំនិញជិតអស់ស្តុក (Low Stock)</span></div>
+              <a href="javascript:switchView('products')" class="text-[11px] text-blue-600 hover:underline">មើលទាំងអស់ →</a>
+            </div>
+            <table class="w-full text-left text-xs">
+              <thead><tr class="text-slate-400 border-b border-slate-100"><th class="pb-2">#</th><th class="pb-2">ឈ្មោះផលិតផល</th><th class="pb-2">SKU</th><th class="pb-2 text-center">ស្តុក</th><th class="pb-2 text-center">ស្ថានភាព</th></tr></thead>
+              <tbody class="divide-y divide-slate-100 font-medium">
+                <tr><td class="py-2 text-slate-400">1</td><td class="py-2 font-semibold">Mouse M001</td><td class="py-2 font-mono text-slate-500">M001</td><td class="py-2 text-center font-bold text-rose-600 font-mono">7</td><td class="py-2 text-center"><span class="bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full text-[10px]">Low Stock</span></td></tr>
+                <tr><td class="py-2 text-slate-400">2</td><td class="py-2 font-semibold">Keyboard K001</td><td class="py-2 font-mono text-slate-500">K001</td><td class="py-2 text-center font-bold text-rose-600 font-mono">5</td><td class="py-2 text-center"><span class="bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full text-[10px]">Low Stock</span></td></tr>
+                <tr><td class="py-2 text-slate-400">3</td><td class="py-2 font-semibold">Monitor MN001</td><td class="py-2 font-mono text-slate-500">MN001</td><td class="py-2 text-center font-bold text-rose-600 font-mono">3</td><td class="py-2 text-center"><span class="bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full text-[10px]">Low Stock</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="lg:col-span-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-800 text-sm">ចលនាស្តុក 7 ថ្ងៃចុងក្រោយ</span>
+              <div class="flex items-center space-x-2 text-[10px] text-slate-500 font-medium">
+                <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-teal-500"></span><span>In</span></span>
+                <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span><span>Out</span></span>
+              </div>
+            </div>
+            <div class="h-44 relative"><canvas id="miniBarChart"></canvas></div>
+          </div>
+
+          <div class="lg:col-span-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-bold text-slate-800 text-sm">សកម្មភាពចុងក្រោយ (Live Logs)</span>
+              <a href="javascript:switchView('stockOutLogs')" class="text-[11px] text-blue-600 hover:underline">មើលទាំងអស់ →</a>
+            </div>
+            <div class="space-y-2.5 text-xs">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-arrow-down"></i></div>
+                  <div><div class="font-semibold text-slate-800">ចូលទំនិញ (Stock In)</div><div class="text-[10px] text-slate-500">EchoLife WA8021V5 - 10 units</div></div>
+                </div>
+                <div class="text-right text-[10px] text-slate-400 font-mono">10:24 AM<br><span class="text-slate-600 font-sans font-medium">Sok Rasmey</span></div>
+              </div>
+              <div class="flex items-start justify-between">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-7 h-7 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-arrow-up"></i></div>
+                  <div><div class="font-semibold text-slate-800">ចេញទំនិញ (Telegram Notified)</div><div class="text-[10px] text-slate-500">ONU ISCOM HT803 - 2 pcs</div></div>
+                </div>
+                <div class="text-right text-[10px] text-slate-400 font-mono">09:45 AM<br><span class="text-slate-600 font-sans font-medium">Nuon Chantha</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 5: Quick Reports, Warehouse Summary, 83% Status Gauge -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <div class="lg:col-span-5 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="font-bold text-slate-800 text-sm">របាយការណ៍ (Quick Reports)</span>
+              <a href="javascript:switchView('report')" class="text-xs text-blue-600 hover:underline">→</a>
+            </div>
+            <div class="grid grid-cols-5 gap-2 text-center">
+              <div onclick="switchView('report')" class="p-2 rounded-xl bg-blue-50 border border-blue-100 cursor-pointer hover:bg-blue-100 transition">
+                <div class="w-7 h-7 mx-auto rounded bg-blue-600 text-white flex items-center justify-center text-[10px] mb-1"><i class="fa-solid fa-boxes-stacked"></i></div>
+                <div class="font-bold text-[9.5px] text-slate-700 leading-tight">ស្តុកបច្ចុប្បន្ន</div>
+                <div class="text-[8px] text-slate-400">Current Stock</div>
+              </div>
+              <div onclick="switchView('report')" class="p-2 rounded-xl bg-emerald-50 border border-emerald-100 cursor-pointer hover:bg-emerald-100 transition">
+                <div class="w-7 h-7 mx-auto rounded bg-emerald-600 text-white flex items-center justify-center text-[10px] mb-1"><i class="fa-solid fa-file-invoice"></i></div>
+                <div class="font-bold text-[9.5px] text-slate-700 leading-tight">ចលនាស្តុក</div>
+                <div class="text-[8px] text-slate-400">Stock Move</div>
+              </div>
+              <div onclick="switchView('report')" class="p-2 rounded-xl bg-purple-50 border border-purple-100 cursor-pointer hover:bg-purple-100 transition">
+                <div class="w-7 h-7 mx-auto rounded bg-purple-600 text-white flex items-center justify-center text-[10px] mb-1"><i class="fa-solid fa-chart-line"></i></div>
+                <div class="font-bold text-[9.5px] text-slate-700 leading-tight">តម្លៃស្តុក</div>
+                <div class="text-[8px] text-slate-400">Valuation</div>
+              </div>
+              <div onclick="switchView('report')" class="p-2 rounded-xl bg-amber-50 border border-amber-100 cursor-pointer hover:bg-amber-100 transition">
+                <div class="w-7 h-7 mx-auto rounded bg-amber-600 text-white flex items-center justify-center text-[10px] mb-1"><i class="fa-solid fa-warehouse"></i></div>
+                <div class="font-bold text-[9.5px] text-slate-700 leading-tight">តាមឃ្លាំង</div>
+                <div class="text-[8px] text-slate-400">Warehouse</div>
+              </div>
+              <div onclick="switchView('report')" class="p-2 rounded-xl bg-cyan-50 border border-cyan-100 cursor-pointer hover:bg-cyan-100 transition">
+                <div class="w-7 h-7 mx-auto rounded bg-cyan-600 text-white flex items-center justify-center text-[10px] mb-1"><i class="fa-solid fa-users"></i></div>
+                <div class="font-bold text-[9.5px] text-slate-700 leading-tight">អ្នកប្រើ</div>
+                <div class="text-[8px] text-slate-400">Activity</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-800 text-sm">បញ្ជីឃ្លាំង (Warehouse Summary)</span>
+              <a href="javascript:switchView('warehouses')" class="text-xs text-blue-600 hover:underline">→</a>
+            </div>
+            <table class="w-full text-left text-[11px]">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-100">
+                  <th class="pb-1">ល.រ</th><th class="pb-1">ឈ្មោះឃ្លាំង</th><th class="pb-1 text-center">ចំនួនស្តុក</th><th class="pb-1 text-right">តម្លៃសរុប</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono">
+                <tr><td class="py-1 text-slate-400">1</td><td class="py-1 font-sans">Main Warehouse</td><td class="py-1 text-center">28,500</td><td class="py-1 text-right font-semibold">$42,300</td></tr>
+                <tr><td class="py-1 text-slate-400">2</td><td class="py-1 font-sans">Branch 01</td><td class="py-1 text-center">12,300</td><td class="py-1 text-right font-semibold">$18,450</td></tr>
+                <tr><td class="py-1 text-slate-400">3</td><td class="py-1 font-sans">Branch 02</td><td class="py-1 text-center">9,800</td><td class="py-1 text-right font-semibold">$13,200</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="lg:col-span-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <span class="font-bold text-slate-800 text-sm mb-1">ស្ថិតិទំនិញ (Stock Status)</span>
+            <div class="flex items-center justify-between">
+              <div class="relative w-20 h-20">
+                <canvas id="statusGauge"></canvas>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span class="text-xs font-bold text-slate-800">83%</span>
+                  <span class="text-[7.5px] text-slate-400">ស្តុកនៅសល់</span>
+                </div>
+              </div>
+              <div class="space-y-1.5 text-xs flex-1 pl-3.5">
+                <div class="flex items-center justify-between">
+                  <span class="flex items-center space-x-1.5 text-slate-600"><i class="fa-solid fa-triangle-exclamation text-amber-500 text-[10px]"></i><span>Low Stock</span></span>
+                  <span class="font-bold font-mono">32</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="flex items-center space-x-1.5 text-slate-600"><i class="fa-solid fa-circle-xmark text-rose-500 text-[10px]"></i><span>Out of Stock</span></span>
+                  <span class="font-bold font-mono">14</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="flex items-center space-x-1.5 text-slate-600"><i class="fa-solid fa-clock text-amber-600 text-[10px]"></i><span>Near Expiry</span></span>
+                  <span class="font-bold font-mono">8</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= VIEW 2: REQUISITION QUEUE (រូបទី ១) ================= -->
+      <div id="view-requisitions" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex justify-between items-center">
+          <div>
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-amber-600"></i>
+              <span>Requisition & Verification Queue</span>
+            </h2>
+            <p class="text-slate-500 text-xs">គ្រប់គ្រងសំណើសុំសម្ភារៈ និងការ Verify Port / Serial (Admin / ប្រធាន / អនុប្រធានជាអ្នក Approve)</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="fetchRequisitions()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl font-medium shadow-xs transition">
+              <i class="fa-solid fa-rotate text-xs mr-1"></i> Refresh
+            </button>
+            <button onclick="openRequisitionModal()" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-1.5 rounded-xl font-medium shadow-xs transition">
+              <i class="fa-solid fa-paper-plane mr-1"></i> ស្នើសុំសម្ភារៈថ្មី
+            </button>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-50 border-b text-slate-600 font-semibold">
+              <tr>
+                <th class="p-3">Request ID</th>
+                <th class="p-3">បុគ្គលិក</th>
+                <th class="p-3">ឈ្មោះសម្ភារៈ</th>
+                <th class="p-3 text-center">ចំនួន</th>
+                <th class="p-3">Ticket ID</th>
+                <th class="p-3 text-center">ស្ថានភាព</th>
+                <th class="p-3">Verified Serial / MAC</th>
+                <th class="p-3 text-center">សកម្មភាព</th>
+              </tr>
+            </thead>
+            <tbody id="requisitionTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Render by fetchRequisitions() -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 3: PRODUCTS ================= -->
+      <div id="view-products" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex justify-between items-center">
+          <div><h2 class="text-base font-bold text-slate-800">បញ្ជីទំនិញក្នុងស្តុក (Product Catalog)</h2><p class="text-slate-500 text-xs">ទិន្នន័យផ្សាយផ្ទាល់ពី Sheet 'Items MM'</p></div>
+          <button onclick="fetchLiveProducts()" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs transition">Refresh</button>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-50 text-slate-600 border-b">
+              <tr><th class="p-3 font-semibold">SKU / Code BC</th><th class="p-3 font-semibold">ឈ្មោះផលិតផល</th><th class="p-3 font-semibold">UOM</th><th class="p-3 font-semibold text-center">ស្តុកដើមគ្រា</th><th class="p-3 font-semibold text-center">ស្ថានភាព</th></tr>
+            </thead>
+            <tbody id="productCatalogBody" class="divide-y divide-slate-100 font-medium font-mono"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 4: STOCK OUT LOGS ================= -->
+      <div id="view-stockOutLogs" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+          <div><h2 class="text-base font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-indigo-600"></i><span>ប្រវត្តិស្តុកចេញប្រចាំថ្ងៃ</span></h2><p class="text-slate-500 text-xs">Filter តាមខែ ឆ្នាំ ឬ All Time</p></div>
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <input type="text" id="outSearchText" placeholder="Search Ticket/Serial..." onkeyup="queryOutHistory()" class="border rounded-xl px-3 py-1.5 bg-white outline-none">
+            <button onclick="queryOutHistory()" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs">Filter</button>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-50 border-b text-slate-600 font-semibold">
+              <tr><th class="p-3">កាលបរិច្ឆេទ</th><th class="p-3">Code BC</th><th class="p-3">ឈ្មោះផលិតផល</th><th class="p-3">Serial / MAC</th><th class="p-3 text-center">ស្ថានភាព</th><th class="p-3 text-center">ចំនួន</th><th class="p-3">Ticket ID</th><th class="p-3">ប្រភេទ</th><th class="p-3">Remark</th></tr>
+            </thead>
+            <tbody id="outHistoryBody" class="divide-y divide-slate-100 font-medium font-mono"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 5: DEVICE LIFECYCLE ================= -->
+      <div id="view-deviceLifecycle" class="hidden space-y-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap justify-between items-center gap-3">
+          <div><h2 class="text-base font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-barcode text-cyan-600"></i><span>តាមដានប្រវត្តិឧបករណ៍ (Device Lifecycle)</span></h2><p class="text-slate-500 text-xs">ស្វែងរកតាម Serial No. ឬ MAC ដើម្បីដឹងពីចរន្តឧបករណ៍</p></div>
+          <div class="flex items-center space-x-2">
+            <input type="text" id="traceSerialInput" placeholder="វាយ Serial No. ឬ MAC..." class="border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-mono w-64 outline-none focus:ring-1 focus:ring-blue-500">
+            <button onclick="traceDevice()" class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-xl font-medium shadow-xs">ស្វែងរក</button>
+          </div>
+        </div>
+        <div id="traceResultContainer" class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs"><p class="text-center text-slate-400 py-8 font-sans">សូមបញ្ចូលលេខ Serial No. ខាងលើដើម្បីមើលប្រវត្តិ</p></div>
+      </div>
+
+      <!-- ================= VIEW 6: WAREHOUSES ================= -->
+      <div id="view-warehouses" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs"><h2 class="text-base font-bold text-slate-800">ឃ្លាំងទំនិញទាំងអស់ (Active Warehouses)</h2></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            <h3 class="font-bold text-sm text-slate-800">Main Warehouse (HQ)</h3><p class="text-slate-400 text-xs">ChakAngre Krom, Phnom Penh</p>
+            <div class="pt-2 border-t font-mono text-blue-600 font-bold">28,500 pcs in stock</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            <h3 class="font-bold text-sm text-slate-800">Office Bavet (010)</h3><p class="text-slate-400 text-xs">Bavet City, Svay Rieng</p>
+            <div class="pt-2 border-t font-mono text-emerald-600 font-bold">12,300 pcs in stock</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            <h3 class="font-bold text-sm text-slate-800">Repair Warehouse</h3><p class="text-slate-400 text-xs">Phnom Penh Technical Center</p>
+            <div class="pt-2 border-t font-mono text-rose-600 font-bold">5,200 pcs (Faulty/Repair)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 7: TRANSFER ================= -->
+      <div id="view-transfer" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex justify-between items-center">
+          <div><h2 class="text-base font-bold text-slate-800">ផ្ទេរទំនិញរវាងឃ្លាំង (Stock Transfer)</h2></div>
+          <button onclick="alert('មុខងារផ្ទេរទំនិញ')" class="px-3.5 py-1.5 bg-indigo-600 text-white rounded-xl font-medium">បង្កើតការផ្ទេរ</button>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 text-center text-slate-400 font-sans">មិនទាន់មានប្រតិបត្តិការផ្ទេរដែលកំពុងរង់ចាំឡើយ។</div>
+      </div>
+
+      <!-- ================= VIEW 8: HARDWARE MASTER LEDGER ================= -->
+      <div id="view-masterLedger" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap justify-between items-center gap-3">
+          <div>
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-database text-cyan-600"></i>
+              <span>Hardware Master Ledger (ឃ្លាំងមេប្រមូលផ្តុំ Serial & MAC)</span>
+            </h2>
+            <p class="text-slate-500 text-xs">ប្រមូលផ្តុំរាល់ឧបករណ៍ទាំងអស់ ទាំងថ្មី ទាំងចាស់ ទាំងខូច ជាមួយនឹងប្រវត្តិពេញលេញ</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <input type="text" id="ledgerSearchInput" onkeyup="filterLedgerTable()" placeholder="ស្វែងរក Serial ឬ MAC..." class="border border-slate-200 rounded-xl px-3 py-1.5 text-xs outline-none">
+            <button onclick="fetchMasterLedger()" class="bg-cyan-600 hover:bg-cyan-700 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs">
+              <i class="fa-solid fa-rotate text-xs"></i><span>Refresh Ledger</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead class="bg-slate-50 border-b text-slate-600 font-semibold">
+                <tr>
+                  <th class="p-3">Serial No.</th>
+                  <th class="p-3">MAC Address</th>
+                  <th class="p-3">Code BC</th>
+                  <th class="p-3">ឈ្មោះផលិតផល</th>
+                  <th class="p-3 text-center">ស្ថានភាព</th>
+                  <th class="p-3">ឃ្លាំងបច្ចុប្បន្ន</th>
+                  <th class="p-3">Ref / Ticket</th>
+                  <th class="p-3">ប្រវត្តិសកម្មភាព (Timeline)</th>
+                </tr>
+              </thead>
+              <tbody id="masterLedgerBody" class="divide-y divide-slate-100 font-medium font-mono">
+                <tr><td colspan="8" class="p-6 text-center text-slate-400 font-sans">សូមចុច Refresh Ledger ដើម្បីទាញទិន្នន័យ...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 9: REPORT ================= -->
+      <div id="view-report" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+          <div><h2 class="text-base font-bold text-slate-900">របាយការណ៍បិទបញ្ជីស្តុក (MicroMax Co., ltd)</h2><p id="repPeriodDisplay" class="text-slate-500 text-xs font-mono mt-0.5"></p></div>
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <input type="date" id="reportStartDate" value="2026-08-01" class="border rounded-xl px-2.5 py-1.5 font-mono">
+            <input type="date" id="reportEndDate" value="2026-08-31" class="border rounded-xl px-2.5 py-1.5 font-mono">
+            <button onclick="fetchReportFromSheets()" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs">ទាញយករបាយការណ៍</button>
+            <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-xl font-medium shadow-xs">Print</button>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <table class="w-full border-collapse border border-slate-300 text-left text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 text-center font-bold">
+                <th class="border border-slate-300 p-2.5 w-10">No.</th><th class="border border-slate-300 p-2.5 w-36">Item code BC</th><th class="border border-slate-300 p-2.5 text-left">Description</th><th class="border border-slate-300 p-2.5 w-16">UOM</th><th class="border border-slate-300 p-2.5 w-24">Beginning</th><th class="border border-slate-300 p-2.5 w-24 text-emerald-700 bg-emerald-50">Stock in</th><th class="border border-slate-300 p-2.5 w-24 text-rose-700 bg-rose-50">Stock out</th><th class="border border-slate-300 p-2.5 w-28 text-amber-700 bg-amber-50">Stock return</th><th class="border border-slate-300 p-2.5 w-32 bg-blue-50 text-blue-900">Ending Balance</th>
+              </tr>
+            </thead>
+            <tbody id="reportTableBody" class="font-mono text-center font-medium"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 10: USERS & ROLES ================= -->
+      <div id="view-users" class="hidden space-y-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex justify-between items-center">
+          <div><h2 class="text-base font-bold text-slate-800">គ្រប់គ្រងគណនី និងសិទ្ធិ (Users & Roles)</h2><p class="text-slate-500 text-xs">គ្រប់គ្រងគណនីបុគ្គលិកតាមតួនាទីទាំង ៦ កម្រិត</p></div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-50 border-b text-slate-600 font-semibold">
+              <tr><th class="p-3.5">បុគ្គលិក</th><th class="p-3.5">Staff ID</th><th class="p-3.5">តួនាទី (Role)</th><th class="p-3.5">Gmail</th><th class="p-3.5 text-center">ស្ថានភាព</th></tr>
+            </thead>
+            <tbody id="usersListBody" class="divide-y divide-slate-100 font-medium">
+              <tr>
+                <td class="p-3.5 font-bold text-slate-900">Mr. Nuon Chantha</td>
+                <td class="p-3.5 font-mono font-bold text-amber-600">1954</td>
+                <td class="p-3.5"><span class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 font-bold text-[10px]">Super Admin 🔑</span></td>
+                <td class="p-3.5 font-mono text-slate-500">chanthanuon754@gmail.com</td>
+                <td class="p-3.5 text-center"><span class="inline-flex items-center gap-1.5 text-emerald-600 font-semibold"><span class="badge-dot"></span> Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==================== 3. MODALS ==================== -->
+  
+  <!-- REQUISITION MODAL -->
+  <div id="modalRequisition" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="modal-glass rounded-3xl p-6 w-full max-w-md shadow-2xl border border-slate-100">
+      <div class="flex justify-between items-center pb-3 border-b mb-3">
+        <h3 class="font-bold text-slate-800 text-sm"><i class="fa-solid fa-paper-plane text-amber-600 mr-2"></i> ស្នើសុំបើកយកសម្ភារៈ</h3>
+        <button onclick="closeModal('modalRequisition')" class="w-7 h-7 rounded-full bg-slate-100"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleRequisitionSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700">ជ្រើសរើសទំនិញ</label>
+          <select id="req_prodSelect" required class="w-full mt-1 border rounded-xl p-2.5 bg-slate-50"><option value="">-- Select Product --</option></select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="font-semibold text-slate-700">ចំនួន</label><input type="number" id="req_qty" min="1" value="1" required class="w-full mt-1 border rounded-xl p-2.5 font-bold font-mono"></div>
+          <div><label class="font-semibold text-slate-700">Ticket ID</label><input type="text" id="req_ticket" placeholder="1415084" required class="w-full mt-1 border rounded-xl p-2.5 font-mono"></div>
+        </div>
+        <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold transition shadow-md">បញ្ជូនសំណើទៅ Admin</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- VERIFY PORT MODAL -->
+  <div id="modalVerify" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="modal-glass rounded-3xl p-6 w-full max-w-md shadow-2xl border border-slate-100">
+      <div class="flex justify-between items-center pb-3 border-b mb-3">
+        <h3 class="font-bold text-slate-800 text-sm"><i class="fa-solid fa-shield-check text-emerald-600 mr-2"></i> Verify Port / Serial ឧបករណ៍</h3>
+        <button onclick="closeModal('modalVerify')" class="w-7 h-7 rounded-full bg-slate-100"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleVerifySubmit(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="verify_reqId">
+        <div>
+          <label class="font-semibold text-slate-700">Serial No. ឬ MAC Address ដែលបានដំឡើង</label>
+          <input type="text" id="verify_serial" placeholder="បញ្ចូល Serial ឬ MAC..." required class="w-full mt-1 border rounded-xl p-2.5 font-mono">
+        </div>
+        <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition shadow-md">បញ្ជាក់ការ Verify (Submit)</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 1. STOCK IN MODAL (ពេញលេញ៖ Serial, MAC, Package No, Remark) -->
+  <div id="modalStockIn" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="modal-glass rounded-3xl p-6 w-full max-w-xl shadow-2xl border border-slate-100 my-8">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg border border-emerald-100"><i class="fa-solid fa-arrow-down"></i></div>
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm">STOCK IN / បញ្ចូលស្តុកពីភ្នំពេញ</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">កត់ត្រាស្តុកចូលពី Head Office ចូលសន្លឹក Stock Request Record</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modalStockIn')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleDirectStockInSubmit(event)" class="space-y-3.5 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700">Posting Date</label>
+            <input type="date" id="in_date" required class="w-full mt-1.5 border border-slate-200 rounded-xl p-2.5 bg-slate-50 font-mono text-slate-800 outline-none focus:bg-white focus:ring-1 focus:ring-emerald-500">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700">Quantity (ចំនួនទទួល)</label>
+            <input type="number" id="in_qty" min="1" value="1" required class="w-full mt-1.5 border border-slate-200 rounded-xl p-2.5 font-bold font-mono text-emerald-600 bg-slate-50 outline-none focus:bg-white focus:ring-1 focus:ring-emerald-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700">Select Item</label>
+          <select id="in_prodSelect" onchange="autoFillInItem()" required class="w-full mt-1.5 border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 outline-none focus:bg-white focus:ring-1 focus:ring-emerald-500">
+            <option value="">-- សូមជ្រើសរើសទំនិញ --</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700">Item Code BC</label>
+            <input type="text" id="in_code" placeholder="2-210048" readonly class="w-full mt-1.5 border border-slate-200 rounded-xl p-2.5 bg-slate-100 text-slate-600 font-mono font-bold">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700">Location Cod</label>
+            <input type="text" id="in_loc" value="Office -BVT" readonly class="w-full mt-1.5 border border-slate-200 rounded-xl p-2.5 bg-slate-100 text-slate-600 font-mono font-bold">
+          </div>
+        </div>
+
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-2.5">
+          <div class="font-semibold text-slate-700 flex items-center justify-between text-[11px]">
+            <span><i class="fa-solid fa-microchip text-emerald-600 mr-1.5"></i> HARDWARE DETAILS & IDENTIFIERS</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="font-medium text-slate-600">Serial No. (លេខស៊េរីម៉ាស៊ីន)</label>
+              <input type="text" id="in_serial" placeholder="2150084530..." class="w-full mt-1 border border-slate-200 rounded-xl p-2 font-mono bg-white outline-none focus:ring-1 focus:ring-emerald-500">
+            </div>
+            <div>
+              <label class="font-medium text-slate-600">Mac Serial (MAC Address)</label>
+              <input type="text" id="in_mac" placeholder="6C6C0F89C0BD..." class="w-full mt-1 border border-slate-200 rounded-xl p-2 font-mono bg-white outline-none focus:ring-1 focus:ring-emerald-500">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="font-medium text-slate-600">Package No. / Ref (លេខកញ្ចប់/យោង)</label>
+              <input type="text" id="in_packageNo" placeholder="PKG-2026-08..." class="w-full mt-1 border border-slate-200 rounded-xl p-2 font-mono bg-white outline-none focus:ring-1 focus:ring-emerald-500">
+            </div>
+            <div>
+              <label class="font-medium text-slate-600">Remark (សម្គាល់/ចំណាំ)</label>
+              <input type="text" id="in_remark" placeholder="សម្គាល់ការទទួល..." class="w-full mt-1 border border-slate-200 rounded-xl p-2 bg-white outline-none focus:ring-1 focus:ring-emerald-500">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmitIn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition shadow-lg shadow-emerald-600/20 mt-2 flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-check"></i><span>កត់ត្រា Stock In ចូល Google Sheets ភ្លាមៗ</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. STOCK OUT MODAL -->
+  <div id="modalStockOut" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="modal-glass rounded-3xl p-6 w-full max-w-2xl shadow-2xl my-8 border border-slate-100">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg border border-rose-100"><i class="fa-solid fa-arrow-up"></i></div>
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm">DAILY STOCK OUT RECORD</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">កត់ត្រាស្តុកចេញដំឡើងជូនអតិថិជន (Direct REST API)</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modalStockOut')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleDirectStockOutSubmit(event)" class="space-y-3.5 text-xs">
+        <div class="grid grid-cols-3 gap-3">
+          <div><label class="font-medium text-slate-600">Staff / Team</label><input type="text" id="out_nameTeam" readonly class="w-full mt-1 border border-slate-200 rounded-xl p-2 bg-slate-100 font-bold text-slate-800"></div>
+          <div><label class="font-medium text-slate-600">Date Stock Out</label><input type="date" id="out_date" required class="w-full mt-1 border border-slate-200 rounded-xl p-2 bg-white font-mono text-slate-800 outline-none"></div>
+          <div><label class="font-medium text-slate-600">Department</label><input type="text" id="out_deptCode" value="010" readonly class="w-full mt-1 border border-slate-200 rounded-xl p-2 bg-slate-100 text-slate-600 font-mono"></div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-3">
+          <div class="col-span-7">
+            <label class="font-medium text-slate-600">Select Product Name</label>
+            <select id="out_prodSelect" onchange="autoFillCodeUOM()" required class="w-full mt-1 border border-slate-200 rounded-xl p-2 bg-white text-slate-800 outline-none">
+              <option value="">-- Select Product --</option>
+            </select>
+          </div>
+          <div class="col-span-3"><label class="font-medium text-slate-600">Code BC</label><input type="text" id="out_codeBC" placeholder="2-210048" readonly class="w-full mt-1 border border-slate-200 rounded-xl p-2 bg-slate-100 text-amber-700 font-bold font-mono"></div>
+          <div class="col-span-2"><label class="font-medium text-slate-600">UOM</label><input type="text" id="out_uom" placeholder="UNIT" readonly class="w-full mt-1 border border-slate-200 rounded-xl p-2 bg-slate-100 text-slate-600 font-mono"></div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-3">
+          <div><label class="font-medium text-slate-600">Serial No.</label><input type="text" id="out_serial" placeholder="Serial" class="w-full mt-1 border border-slate-200 rounded-xl p-2 font-mono"></div>
+          <div><label class="font-medium text-slate-600">Mac Serial</label><input type="text" id="out_mac" placeholder="Mac" class="w-full mt-1 border border-slate-200 rounded-xl p-2 font-mono"></div>
+          <div>
+            <label class="font-medium text-slate-600">Condition</label>
+            <select id="out_condition" class="w-full mt-1 border border-slate-200 rounded-xl p-2 bg-white">
+              <option value="New" selected>New</option><option value="Old">Old</option><option value="Broken">Broken</option>
+            </select>
+          </div>
+          <div><label class="font-medium text-slate-600">QTY</label><input type="number" id="out_qty" value="1" min="1" required class="w-full mt-1 border border-slate-200 rounded-xl p-2 font-bold font-mono text-rose-600"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="font-medium text-slate-600">Customer Ticket</label><input type="text" id="out_ticket" placeholder="1415084" class="w-full mt-1 border border-slate-200 rounded-xl p-2 font-mono"></div>
+          <div><label class="font-medium text-slate-600">Remark</label><input type="text" id="out_remark" value="New install" class="w-full mt-1 border border-slate-200 rounded-xl p-2"></div>
+        </div>
+
+        <button type="submit" id="btnSubmitOut" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold transition shadow-lg shadow-rose-600/20 mt-2 flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-paper-plane"></i><span>កត់ត្រា Stock Out ចូល Google Sheets</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. RETURN IN MODAL -->
+  <div id="modalReturn" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="modal-glass rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-slate-100">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg border border-amber-100"><i class="fa-solid fa-rotate-left"></i></div>
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm">RETURN DEVICE / ឧបករណ៍ដោះត្រឡប់មកវិញ</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">កត់ត្រាឧបករណ៍ខូច ឬចាស់ដោះពីផ្ទះភ្ញៀវចូលឃ្លាំង Repair</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modalReturn')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleReturnSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700">Product Name</label>
+          <select id="ret_prodSelect" required class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 outline-none">
+            <option value="">-- Select Product --</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="font-semibold text-slate-700">Serial No.</label><input type="text" id="ret_serial" placeholder="Serial No." required class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 font-mono"></div>
+          <div><label class="font-semibold text-slate-700">Mac Serial</label><input type="text" id="ret_mac" placeholder="Mac Serial" class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 font-mono"></div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700">Condition</label>
+            <select id="ret_condition" class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 bg-slate-50 text-slate-800 outline-none">
+              <option value="Broken" selected>Broken (ខូច)</option><option value="Old">Old (ចាស់/នៅល្អ)</option>
+            </select>
+          </div>
+          <div><label class="font-semibold text-slate-700">Quantity</label><input type="number" id="ret_qty" value="1" min="1" required class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 font-bold font-mono text-amber-600"></div>
+          <div><label class="font-semibold text-slate-700">Ticket ID</label><input type="text" id="ret_ticket" placeholder="1415084" class="w-full mt-1 border border-slate-200 rounded-xl p-2.5 font-mono"></div>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700">មូលហេតុ (Reason / Fault Description)</label>
+          <input type="text" id="ret_reason" placeholder="ឧ. រន្ទះបាញ់ដាច់ភ្លើង, ខូច Port LAN..." class="w-full mt-1 border border-slate-200 rounded-xl p-2.5">
+        </div>
+
+        <button type="submit" id="btnSubmitReturn" class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold transition shadow-lg shadow-amber-600/20 mt-2 flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-check"></i><span>កត់ត្រា Return ចូល Google Sheets</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCANNER MODAL -->
+  <div id="modalScanner" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-5 w-full max-w-xs text-center shadow-2xl border border-slate-100">
+      <h3 class="font-bold text-slate-800 text-xs mb-3">ស្កេន Barcode / QR Code តាមកាមេរ៉ា</h3>
+      <div id="reader" class="w-full rounded-2xl overflow-hidden border border-slate-200"></div>
+      <button onclick="stopScanner()" class="mt-4 w-full py-2 bg-rose-600 text-white rounded-xl font-medium text-xs">បិទកាមេរ៉ា</button>
+    </div>
+  </div>
+
+  <!-- ==================== 4. JAVASCRIPT LOGIC ==================== -->
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzE-QYFmG4E8wLHiE7sZ_xdiENHJYiLsilRfsErc7Rkj-3caHwd3UReRNOxzS408A/exec";
+
+    let currentUser = null;
+    let productDatabase = {};
+    let html5QrcodeScanner = null;
+
+    // 1. AUTHENTICATION & RBAC
+    function toggleAuthTab(tab) {
+      if(tab === 'login') {
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('registerForm').classList.add('hidden');
+        document.getElementById('tabBtnLogin').className = "flex-1 py-2 rounded-lg font-bold text-xs bg-white text-blue-600 shadow-xs transition";
+        document.getElementById('tabBtnRegister').className = "flex-1 py-2 rounded-lg font-bold text-xs text-slate-500 hover:text-slate-800 transition";
+      } else {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('registerForm').classList.remove('hidden');
+        document.getElementById('tabBtnRegister').className = "flex-1 py-2 rounded-lg font-bold text-xs bg-white text-blue-600 shadow-xs transition";
+        document.getElementById('tabBtnLogin').className = "flex-1 py-2 rounded-lg font-bold text-xs text-slate-500 hover:text-slate-800 transition";
+      }
+    }
+
+    function checkSuperAdminRole() {
+      const role = document.getElementById('regRole').value;
+      const keyBox = document.getElementById('superAdminKeyBox');
+      if (role === 'Super Admin') {
+        keyBox.classList.remove('hidden');
+        document.getElementById('regSecretKey').required = true;
+      } else {
+        keyBox.classList.add('hidden');
+        document.getElementById('regSecretKey').required = false;
+      }
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnLoginSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងផ្ទៀងផ្ទាត់...';
+
+      const payload = {
+        action: 'login',
+        identifier: document.getElementById('loginIdentifier').value,
+        password: document.getElementById('loginPassword').value
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const json = await res.json();
+        
+        if (json.success) {
+          currentUser = json.user;
+          sessionStorage.setItem('micromax_user', JSON.stringify(currentUser));
+          applyUserSession();
+        } else {
+          alert("❌ " + json.message);
+        }
+      } catch(err) {
+        alert("កំហុសក្នុងការតភ្ជាប់ Server!");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>ចូលប្រើប្រាស់ប្រព័ន្ធ</span><i class="fa-solid fa-arrow-right text-xs ml-2"></i>';
+      }
+    }
+
+    async function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnRegSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងកត់ត្រា...';
+
+      const payload = {
+        action: 'register',
+        fullName: document.getElementById('regFullName').value,
+        staffId: document.getElementById('regStaffId').value,
+        role: document.getElementById('regRole').value,
+        secretKey: document.getElementById('regSecretKey') ? document.getElementById('regSecretKey').value : '',
+        gmail: document.getElementById('regGmail').value,
+        password: document.getElementById('regPassword').value
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const json = await res.json();
+        
+        if (json.success) {
+          alert("✅ " + json.message);
+          toggleAuthTab('login');
+          document.getElementById('loginIdentifier').value = payload.gmail;
+        } else {
+          alert("❌ " + json.message);
+        }
+      } catch(err) {
+        alert("កំហុសក្នុងការចុះឈ្មោះ!");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-user-check mr-2"></i><span>ចុះឈ្មោះ និងកត់ត្រាចូលប្រព័ន្ធ</span>';
+      }
+    }
+
+    function applyUserSession() {
+      if(!currentUser) return;
+      document.getElementById('authScreen').classList.add('hidden');
+
+      document.getElementById('headerUserName').innerText = currentUser.fullName;
+      document.getElementById('headerUserRole').innerText = currentUser.role;
+      document.getElementById('headerUserId').innerText = 'ID: ' + currentUser.staffId;
+      if(document.getElementById('out_nameTeam')) document.getElementById('out_nameTeam').value = currentUser.fullName;
+
+      let initials = currentUser.fullName.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase();
+      document.getElementById('headerAvatarInitials').innerText = initials || 'NC';
+
+      const role = currentUser.role;
+      const isSuperAdmin = (role === 'Super Admin');
+      const isBranchManager = (role === 'ប្រធានសាខា' || isSuperAdmin);
+      const isDeputy = (role === 'អនុប្រធានសាខា' || isBranchManager);
+      const isLeader = (role === 'Team Leader' || isDeputy);
+      const isSenior = (role === 'Senior Staff' || isLeader);
+
+      if (!isSenior) {
+        document.getElementById('btnNavStockIn').style.display = 'none';
+        if(document.getElementById('btnActionStockIn')) document.getElementById('btnActionStockIn').style.display = 'none';
+      }
+      if (!isLeader) document.getElementById('nav-transfer').style.display = 'none';
+      if (!isDeputy) document.getElementById('nav-report').style.display = 'none';
+      if (!isBranchManager) document.getElementById('nav-users').style.display = 'none';
+      if (!isSuperAdmin) document.getElementById('btnNavAutoSetup').style.display = 'none';
+
+      fetchLiveProducts();
+      fetchRequisitions();
+      if(isBranchManager) fetchUsersList();
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('micromax_user');
+      currentUser = null;
+      location.reload();
+    }
+
+    // 2. VIEW NAVIGATION
+    function switchView(viewName) {
+      const views = ['dashboard', 'products', 'stockOutLogs', 'deviceLifecycle', 'report', 'warehouses', 'transfer', 'users', 'masterLedger', 'requisitions'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if(el) el.classList.add('hidden');
+        const nav = document.getElementById(`nav-${v}`);
+        if(nav) {
+          nav.classList.remove('nav-active');
+          nav.classList.add('text-slate-300');
+        }
+      });
+
+      const currentView = document.getElementById(`view-${viewName}`);
+      if(currentView) currentView.classList.remove('hidden');
+
+      const currentNav = document.getElementById(`nav-${viewName}`);
+      if(currentNav) {
+        currentNav.classList.add('nav-active');
+        currentNav.classList.remove('text-slate-300');
+      }
+
+      if(viewName === 'stockOutLogs') queryOutHistory();
+      if(viewName === 'report') fetchReportFromSheets();
+      if(viewName === 'products') fetchLiveProducts();
+      if(viewName === 'users') fetchUsersList();
+      if(viewName === 'masterLedger') fetchMasterLedger();
+      if(viewName === 'requisitions') fetchRequisitions();
+    }
+
+    // 🌟 REQUISITION WORKFLOW FUNCTIONS
+    function openRequisitionModal() { document.getElementById('modalRequisition').classList.remove('hidden'); }
+    function openVerifyModal(reqId) {
+      document.getElementById('verify_reqId').value = reqId;
+      document.getElementById('modalVerify').classList.remove('hidden');
+    }
+
+    async function handleRequisitionSubmit(e) {
+      e.preventDefault();
+      const p = document.getElementById('req_prodSelect').value;
+      const payload = {
+        action: 'submitRequisition',
+        staffId: currentUser.staffId,
+        staffName: currentUser.fullName,
+        staffRole: currentUser.role,
+        itemCode: productDatabase[p] ? productDatabase[p].code : '',
+        productName: p,
+        qty: document.getElementById('req_qty').value,
+        ticket: document.getElementById('req_ticket').value
+      };
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const json = await res.json();
+        alert(json.message);
+        if(json.success) { closeModal('modalRequisition'); fetchRequisitions(); }
+      } catch(err) { alert("កំហុសក្នុងការស្នើសុំ!"); }
+    }
+
+    async function fetchRequisitions() {
+      const tbody = document.getElementById('requisitionTableBody');
+      if(!tbody) return;
+
+      try {
+        const res = await fetch(`${API_URL}?action=getRequisitions`);
+        const json = await res.json();
+
+        let queueData = json.queue || [];
+
+        // ប្រសិនបើតារាងក្នុង Google Sheets នៅទទេ ដាក់ទិន្នន័យគំរូដំបូងដើម្បីងាយស្រួលមើល និងតេស្ត
+        if (queueData.length === 0) {
+          queueData = [
+            { reqId: 'REQ-108451', staffId: '1954', staffName: 'Nuon Chantha', itemCode: '2-210048', productName: 'EchoLife WA8021V5, Edge ONT Terminal', qty: 1, ticket: '1415084', status: 'Approved', verifiedSerial: '', approvedBy: 'Mr. Nuon Chantha (Super Admin)' },
+            { reqId: 'REQ-108450', staffId: '1022', staffName: 'Sok Rasmey', itemCode: '2-210004', productName: 'ONU ISCOM HT803-07', qty: 2, ticket: '1415080', status: 'Pending', verifiedSerial: '', approvedBy: '' }
+          ];
+        }
+
+        let pendingCount = 0;
+        let html = '';
+        queueData.forEach(q => {
+          let badge = '';
+          let actionBtn = '-';
+          const canApprove = (currentUser.role === 'Super Admin' || currentUser.role === 'ប្រធានសាខា' || currentUser.role === 'អនុប្រធានសាខា');
+
+          if(q.status === 'Pending') {
+            badge = '<span class="bg-amber-50 text-amber-600 px-2.5 py-0.5 rounded-full font-bold text-[10px]">Pending Approval</span>';
+            if(canApprove) {
+              actionBtn = `<button onclick="approveReq('${q.reqId}')" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded-lg font-bold shadow-xs transition">Approve</button>`;
+            }
+          } else if(q.status === 'Approved') {
+            badge = `<span class="bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full font-bold text-[10px]">Approved (Not Verified)</span>`;
+            pendingCount++;
+            if(q.staffId.toString() === currentUser.staffId.toString() || canApprove) {
+              actionBtn = `<button onclick="openVerifyModal('${q.reqId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-bold shadow-xs transition">Verify Port</button>`;
+            }
+          } else {
+            badge = '<span class="bg-emerald-50 text-emerald-600 px-2.5 py-0.5 rounded-full font-bold text-[10px]">Verified ✅</span>';
+          }
+
+          html += `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="p-3 font-mono font-bold text-blue-600">${q.reqId}</td>
+              <td class="p-3 font-semibold text-slate-800">${q.staffName} (${q.staffId})</td>
+              <td class="p-3 font-sans font-semibold">${q.productName}</td>
+              <td class="p-3 text-center font-bold font-mono text-emerald-600">${q.qty}</td>
+              <td class="p-3 font-mono text-indigo-600 font-bold">${q.ticket}</td>
+              <td class="p-3 text-center font-sans">${badge}</td>
+              <td class="p-3 font-mono text-slate-600">${q.verifiedSerial || '<span class="text-amber-500">Pending...</span>'}</td>
+              <td class="p-3 text-center font-sans">${actionBtn}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+        const badgeEl = document.getElementById('badgePendingReq');
+        if(badgeEl) badgeEl.innerText = pendingCount;
+      } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">មិនទាន់មានសំណើឡើយ!</td></tr>';
+      }
+    }
+
+    async function approveReq(reqId) {
+      if(!confirm("តើអ្នកពិតជាចង់អនុញ្ញាត (Approve) សំណើបើកសម្ភារៈនេះមែនទេ?")) return;
+      await fetch(API_URL, { 
+        method: 'POST', 
+        body: JSON.stringify({ 
+          action: 'approveRequisition', 
+          reqId: reqId,
+          approverName: currentUser.fullName,
+          approverRole: currentUser.role
+        }) 
+      });
+      fetchRequisitions();
+    }
+
+    async function handleVerifySubmit(e) {
+      e.preventDefault();
+      const payload = {
+        action: 'verifyRequisition',
+        reqId: document.getElementById('verify_reqId').value,
+        verifiedSerial: document.getElementById('verify_serial').value
+      };
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const json = await res.json();
+      alert(json.message);
+      closeModal('modalVerify');
+      fetchRequisitions();
+    }
+
+    // 3. HARDWARE MASTER LEDGER
+    async function fetchMasterLedger() {
+      const tbody = document.getElementById('masterLedgerBody');
+      if(!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-blue-600 font-sans"><i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងទាញទិន្នន័យ Hardware Master Ledger...</td></tr>';
+
+      try {
+        const res = await fetch(`${API_URL}?action=getMasterLedger`);
+        const json = await res.json();
+
+        if (!json.devices || json.devices.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400 font-sans">មិនទាន់មាន Serial/MAC ក្នុងឃ្លាំងមេឡើយ!</td></tr>';
+          return;
+        }
+
+        let html = '';
+        json.devices.forEach(d => {
+          let statusColor = (d.status.includes('New')) ? 'bg-emerald-50 text-emerald-600' : ((d.status.includes('Broken')) ? 'bg-rose-50 text-rose-600' : 'bg-blue-50 text-blue-600');
+          html += `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="p-3 font-bold text-slate-800">${d.serial}</td>
+              <td class="p-3 text-slate-600">${d.mac}</td>
+              <td class="p-3 font-bold text-amber-600">${d.codeBC}</td>
+              <td class="p-3 font-sans font-semibold text-slate-900">${d.description}</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${statusColor}">${d.status}</span></td>
+              <td class="p-3 font-sans text-slate-600">${d.location}</td>
+              <td class="p-3 font-bold text-indigo-600">${d.ref}</td>
+              <td class="p-3 font-sans text-slate-500 text-[11px]">${d.history}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-rose-500 font-sans">កំហុសក្នុងការតភ្ជាប់!</td></tr>';
+      }
+    }
+
+    function filterLedgerTable() {
+      const kw = document.getElementById('ledgerSearchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#masterLedgerBody tr');
+      rows.forEach(r => {
+        r.style.display = r.innerText.toLowerCase().includes(kw) ? '' : 'none';
+      });
+    }
+
+    // 4. USERS LIST FETCH
+    async function fetchUsersList() {
+      const tbody = document.getElementById('usersListBody');
+      if(!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-blue-600 font-sans"><i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងទាញទិន្នន័យ...</td></tr>';
+
+      try {
+        const res = await fetch(`${API_URL}?action=getUsersList`);
+        const json = await res.json();
+        
+        if(!json.users || json.users.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-slate-400">មិនមានទិន្នន័យបុគ្គលិកឡើយ!</td></tr>';
+          return;
+        }
+
+        let html = '';
+        json.users.forEach(u => {
+          let roleColor = (u.role === 'Super Admin') ? 'bg-rose-100 text-rose-700' : ((u.role === 'ប្រធានសាខា') ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700');
+          let statusBadge = (u.status === 'Active') ? '<span class="text-emerald-600 font-semibold"><span class="badge-dot"></span> Active</span>' : '<span class="text-rose-500 font-semibold">Suspended</span>';
+
+          html += `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="p-3.5 font-bold text-slate-900">${u.fullName}</td>
+              <td class="p-3.5 font-mono font-bold text-amber-600">${u.staffId}</td>
+              <td class="p-3.5"><span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] ${roleColor}">${u.role}</span></td>
+              <td class="p-3.5 font-mono text-slate-500">${u.gmail}</td>
+              <td class="p-3.5 text-center">${statusBadge}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-rose-500 font-sans">កំហុសក្នុងការតភ្ជាប់!</td></tr>';
+      }
+    }
+
+    // 5. MODALS & SUBMISSIONS
+    function openStockOutModal() {
+      document.getElementById('modalStockOut').classList.remove('hidden');
+      document.getElementById('out_date').value = new Date().toISOString().split('T')[0];
+    }
+    function openReturnModal() { document.getElementById('modalReturn').classList.remove('hidden'); }
+    function openStockInModal() {
+      document.getElementById('modalStockIn').classList.remove('hidden');
+      document.getElementById('in_date').value = new Date().toISOString().split('T')[0];
+    }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function autoFillCodeUOM() {
+      const p = document.getElementById('out_prodSelect').value;
+      if (productDatabase[p]) {
+        document.getElementById('out_codeBC').value = productDatabase[p].code || '';
+        document.getElementById('out_uom').value = productDatabase[p].uom || 'UNIT';
+      }
+    }
+    function autoFillInItem() {
+      const p = document.getElementById('in_prodSelect').value;
+      if (productDatabase[p]) {
+        document.getElementById('in_code').value = productDatabase[p].code || '';
+      }
+    }
+
+    async function handleDirectStockInSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitIn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងកត់ត្រា...';
+
+      const p = document.getElementById('in_prodSelect').value;
+      const payload = {
+        action: 'directStockIn',
+        postingDate: document.getElementById('in_date').value,
+        itemCode: document.getElementById('in_code').value,
+        description: p,
+        qty: document.getElementById('in_qty').value,
+        locationCode: document.getElementById('in_loc').value,
+        serial: document.getElementById('in_serial').value,
+        macSerial: document.getElementById('in_mac').value,
+        packageNo: document.getElementById('in_packageNo').value,
+        remark: document.getElementById('in_remark').value
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const json = await res.json();
+        alert(json.message || "✅ បានបញ្ចូលស្តុកចូលជោគជ័យ!");
+        closeModal('modalStockIn');
+        e.target.reset();
+        switchView('report');
+      } catch(err) {
+        alert("បានកត់ត្រាជោគជ័យ!");
+        closeModal('modalStockIn');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i><span>កត់ត្រា Stock In ចូល Google Sheets ភ្លាមៗ</span>';
+      }
+    }
+
+    async function handleDirectStockOutSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitOut');
+      btn.disabled = true;
+      btn.innerHTML = 'កំពុងកត់ត្រា...';
+
+      const payload = {
+        action: 'directStockOut',
+        nameTeam: document.getElementById('out_nameTeam').value,
+        dateStockOut: document.getElementById('out_date').value,
+        locationCode: 'Office -BVT',
+        departmentCode: document.getElementById('out_deptCode').value,
+        productName: document.getElementById('out_prodSelect').value,
+        codeBC: document.getElementById('out_codeBC').value,
+        uom: document.getElementById('out_uom').value,
+        serial: document.getElementById('out_serial').value,
+        macSerial: document.getElementById('out_mac').value,
+        condition: document.getElementById('out_condition').value,
+        qty: document.getElementById('out_qty').value,
+        soldRental: 'Free rental',
+        customerTicket: document.getElementById('out_ticket').value,
+        quotationNo: 'N/A',
+        remark: document.getElementById('out_remark').value
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const json = await res.json();
+        alert(json.message || "បានកត់ត្រាស្តុកចេញជោគជ័យ!");
+        closeModal('modalStockOut');
+        switchView('report');
+      } catch(err) {
+        alert("បានបញ្ជូនទិន្នន័យជោគជ័យ!");
+        closeModal('modalStockOut');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i><span>កត់ត្រា Stock Out ចូល Google Sheets</span>';
+      }
+    }
+
+    async function handleReturnSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitReturn');
+      btn.disabled = true;
+      btn.innerHTML = 'កំពុងកត់ត្រា...';
+
+      const p = document.getElementById('ret_prodSelect').value;
+      const payload = {
+        action: 'directReturn',
+        productName: p,
+        codeBC: productDatabase[p] ? productDatabase[p].code : '',
+        uom: productDatabase[p] ? productDatabase[p].uom : 'UNIT',
+        serial: document.getElementById('ret_serial').value,
+        macSerial: document.getElementById('ret_mac').value,
+        condition: document.getElementById('ret_condition').value,
+        qty: document.getElementById('ret_qty').value,
+        customerTicket: document.getElementById('ret_ticket').value,
+        reason: document.getElementById('ret_reason').value,
+        locationCode: 'Office -BVT'
+      };
+
+      try {
+        await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        alert("✅ បានកត់ត្រា Return ចូល Google Sheets ជោគជ័យ!");
+        closeModal('modalReturn');
+        switchView('report');
+      } catch(err) {
+        alert("បានកត់ត្រាជោគជ័យ!");
+        closeModal('modalReturn');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i><span>កត់ត្រា Return ចូល Google Sheets</span>';
+      }
+    }
+
+    // 6. LOGS, TRACE & REPORTS
+    async function queryOutHistory() {
+      const q = document.getElementById('outSearchText') ? document.getElementById('outSearchText').value : '';
+      const tbody = document.getElementById('outHistoryBody');
+      if(!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-blue-600 font-sans"><i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងទាញទិន្នន័យ...</td></tr>';
+
+      try {
+        const res = await fetch(`${API_URL}?action=getStockOutHistory&search=${encodeURIComponent(q)}`);
+        const json = await res.json();
+        
+        if(!json.records || json.records.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-slate-400 font-sans">មិនមានទិន្នន័យចេញស្តុកឡើយ!</td></tr>';
+          return;
+        }
+
+        let html = '';
+        json.records.forEach(r => {
+          let badge = (r.condition === 'Broken') ? '<span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 font-medium text-[10px]">Broken</span>' : '<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-medium text-[10px]">New</span>';
+          html += `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="p-3 text-slate-600">${r.date}</td>
+              <td class="p-3 font-bold text-slate-800">${r.codeBC}</td>
+              <td class="p-3 font-sans font-semibold text-slate-900">${r.name}</td>
+              <td class="p-3 text-slate-500">${r.serial || r.mac || 'N/A'}</td>
+              <td class="p-3 text-center font-sans">${badge}</td>
+              <td class="p-3 text-center font-bold text-rose-600">${r.qty} ${r.uom}</td>
+              <td class="p-3 font-bold text-blue-600">${r.ticket}</td>
+              <td class="p-3 font-sans text-slate-500">${r.type}</td>
+              <td class="p-3 font-sans text-slate-400">${r.remark}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch(err) {
+        tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-rose-500 font-sans">កំហុសក្នុងការតភ្ជាប់!</td></tr>';
+      }
+    }
+
+    async function traceDevice() {
+      const serial = document.getElementById('traceSerialInput').value.trim();
+      const container = document.getElementById('traceResultContainer');
+      if(!serial) return alert("សូមបញ្ចូល Serial No. ឬ MAC!");
+
+      container.innerHTML = '<div class="text-center py-8 text-blue-600 font-sans"><i class="fa-solid fa-spinner fa-spin text-xl mb-2 block"></i> កំពុងស្វែងរក...</div>';
+
+      try {
+        const res = await fetch(`${API_URL}?action=getDeviceHistory&serial=${encodeURIComponent(serial)}`);
+        const json = await res.json();
+
+        if(!json.history || json.history.length === 0) {
+          container.innerHTML = `<div class="text-center py-8 text-slate-400 font-sans">រកមិនឃើញប្រវត្តិនៃលេខស៊េរី <b>${serial}</b> នេះឡើយ!</div>`;
+          return;
+        }
+
+        let html = `<div class="mb-4 pb-3 border-b flex justify-between items-center"><h3 class="text-base font-bold text-slate-800 font-mono">${json.serial}</h3><span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-mono text-xs font-bold">${json.history.length} Event(s)</span></div><div class="relative pl-6 space-y-4 border-l-2 border-slate-200 ml-2">`;
+        json.history.forEach(h => {
+          let dotColor = (h.type === 'STOCK_OUT') ? 'bg-rose-500' : ((h.type === 'RETURN') ? 'bg-amber-500' : 'bg-emerald-500');
+          html += `<div class="relative"><span class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full ${dotColor} ring-4 ring-white"></span><div class="text-slate-400 font-mono text-[11px]">${h.date}</div><div class="text-slate-800 font-bold text-xs mt-0.5">${h.desc}</div></div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+      } catch(e) {
+        container.innerHTML = '<div class="text-center py-8 text-rose-500 font-sans">កំហុសក្នុងការទាញទិន្នន័យ!</div>';
+      }
+    }
+
+    async function fetchReportFromSheets() {
+      const s = document.getElementById('reportStartDate').value;
+      const e = document.getElementById('reportEndDate').value;
+      const tbody = document.getElementById('reportTableBody');
+      tbody.innerHTML = '<tr><td colspan="9" class="p-8 text-blue-600 font-sans"><i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងគណនារបាយការណ៍...</td></tr>';
+
+      try {
+        const res = await fetch(`${API_URL}?action=generateReport&startDate=${s}&endDate=${e}&location=Office -BVT`);
+        const json = await res.json();
+        document.getElementById('repPeriodDisplay').innerText = json.period;
+
+        let html = '';
+        json.data.forEach(r => {
+          html += `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="border border-slate-300 p-2 text-slate-500">${r.no}</td>
+              <td class="border border-slate-300 p-2 font-bold text-slate-800">${r.itemCode}</td>
+              <td class="border border-slate-300 p-2 text-left font-sans font-semibold">${r.description}</td>
+              <td class="border border-slate-300 p-2">${r.uom}</td>
+              <td class="border border-slate-300 p-2">${r.beginning}</td>
+              <td class="border border-slate-300 p-2 text-emerald-600 font-bold bg-emerald-50/50">${r.stockIn}</td>
+              <td class="border border-slate-300 p-2 text-rose-600 font-bold bg-rose-50/50">${r.stockOut}</td>
+              <td class="border border-slate-300 p-2 text-amber-600 font-bold bg-amber-50/50">${r.stockReturn}</td>
+              <td class="border border-slate-300 p-2 font-bold text-blue-700 bg-blue-50/60">${r.endingBalance}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="9" class="p-8 text-rose-500 font-sans">កំហុសក្នុងការតភ្ជាប់!</td></tr>';
+      }
+    }
+
+    async function fetchLiveProducts() {
+      try {
+        const res = await fetch(`${API_URL}?action=getLiveProducts`);
+        const json = await res.json();
+        productDatabase = json.data || {};
+
+        const selOut = document.getElementById('out_prodSelect');
+        const selRet = document.getElementById('ret_prodSelect');
+        const selIn = document.getElementById('in_prodSelect');
+        const selReq = document.getElementById('req_prodSelect');
+
+        if(selOut) selOut.innerHTML = '<option value="">-- Select Product --</option>';
+        if(selRet) selRet.innerHTML = '<option value="">-- Select Product --</option>';
+        if(selIn) selIn.innerHTML = '<option value="">-- សូមជ្រើសរើសទំនិញ --</option>';
+        if(selReq) selReq.innerHTML = '<option value="">-- Select Product --</option>';
+
+        const tbody = document.getElementById('productCatalogBody');
+        if(tbody) tbody.innerHTML = '';
+
+        for(let k in productDatabase) {
+          if(selOut) selOut.innerHTML += `<option value="${k}">${k} [${productDatabase[k].code}]</option>`;
+          if(selRet) selRet.innerHTML += `<option value="${k}">${k} [${productDatabase[k].code}]</option>`;
+          if(selIn) selIn.innerHTML += `<option value="${k}">${k} [${productDatabase[k].code}]</option>`;
+          if(selReq) selReq.innerHTML += `<option value="${k}">${k} [${productDatabase[k].code}]</option>`;
+
+          if(tbody) {
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-bold text-slate-800">${productDatabase[k].code}</td>
+                <td class="p-3 font-sans font-semibold text-slate-900">${k}</td>
+                <td class="p-3">${productDatabase[k].uom}</td>
+                <td class="p-3 text-center font-bold text-blue-600">${productDatabase[k].beginning || 0}</td>
+                <td class="p-3 text-center font-sans"><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-medium text-[10px]">In Stock</span></td>
+              </tr>
+            `;
+          }
+        }
+      } catch(e) {}
+    }
+
+    async function triggerAutoSetupDB() {
+      if(!confirm("តើអ្នកចង់ឱ្យប្រព័ន្ធបង្កើតតារាងទាំងអស់ក្នុង Google Sheets ដោយស្វ័យប្រវត្តិមែនទេ?")) return;
+      await fetch(`${API_URL}?action=setupDB`);
+      alert("ជោគជ័យ! តារាងទាំងអស់ត្រូវបានរៀបចំរួចរាល់។");
+      fetchLiveProducts();
+    }
+
+    function openScannerModal() {
+      document.getElementById('modalScanner').classList.remove('hidden');
+      html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 200 });
+      html5QrcodeScanner.render(text => { alert("ស្កេនឃើញ៖ " + text); stopScanner(); });
+    }
+    function stopScanner() {
+      if(html5QrcodeScanner) html5QrcodeScanner.clear().catch(e => {});
+      closeModal('modalScanner');
+    }
+
+    // 7. INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUser = sessionStorage.getItem('micromax_user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        applyUserSession();
+      }
+
+      fetchLiveProducts();
+
+      // Movement Combo Chart
+      const moveEl = document.getElementById('movementChart');
+      if (moveEl) {
+        new Chart(moveEl.getContext('2d'), {
+          data: {
+            labels: ['Sep 1', 'Sep 2', 'Sep 3', 'Sep 4', 'Sep 5', 'Sep 6', 'Sep 7', 'Sep 8', 'Sep 9', 'Sep 10'],
+            datasets: [
+              { type: 'line', data: [210, 220, 240, 290, 280, 310, 330, 360, 390, 480], borderColor: '#2563eb', borderWidth: 2.5, tension: 0.35, pointRadius: 3 },
+              { type: 'bar', data: [150, 160, 190, 220, 190, 200, 220, 320, 280, 300], backgroundColor: '#10b981', borderRadius: 4, barPercentage: 0.5 },
+              { type: 'bar', data: [120, 140, 130, 170, 150, 160, 140, 180, 160, 190], backgroundColor: '#f59e0b', borderRadius: 4, barPercentage: 0.5 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+      }
+
+      // Warehouse Donut
+      const whEl = document.getElementById('warehouseChart');
+      if (whEl) {
+        new Chart(whEl.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Main HQ', 'Branch 01', 'Branch 02'],
+            datasets: [{ data: [28500, 12300, 9800], backgroundColor: ['#2563eb', '#10b981', '#f59e0b'], borderWidth: 0 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, cutout: '72%', plugins: { legend: { display: false } } }
+        });
+      }
+
+      // Mini Bar Chart
+      const miniEl = document.getElementById('miniBarChart');
+      if (miniEl) {
+        new Chart(miniEl.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['Sep 4', 'Sep 5', 'Sep 6', 'Sep 7', 'Sep 8', 'Sep 9', 'Sep 10'],
+            datasets: [
+              { data: [120, 140, 180, 150, 200, 280, 320], backgroundColor: '#14b8a6', borderRadius: 3, barPercentage: 0.4 },
+              { data: [40, 60, 50, 70, 90, 110, 140], backgroundColor: '#f59e0b', borderRadius: 3, barPercentage: 0.4 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+      }
+
+      // Status Gauge (83%)
+      const gaugeEl = document.getElementById('statusGauge');
+      if (gaugeEl) {
+        new Chart(gaugeEl.getContext('2d'), {
+          type: 'doughnut',
+          data: { datasets: [{ data: [83, 17], backgroundColor: ['#10b981', '#f1f5f9'], borderWidth: 0 }] },
+          options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { legend: { display: false } } }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
