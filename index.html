@@ -3,219 +3,896 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MicroMax Staff Portal</title>
+  <title>DAILY STOCK OUT RECORD - ONLINE SECURED</title>
+  <link rel="icon" href="https://chanthanuon754-a11y.github.io/DAILY-STOCK-OUT-RECORD./img/logo.png" />
   
+  <!-- Tailwind CSS & Telegram WebApp SDK -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <!-- Fonts & Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kantumruy+Pro:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Space Grotesk"', '"Kantumruy Pro"', '"Inter"', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace']
+          },
+          colors: {
+            cyberDark: '#02050e',
+            cardDark: '#060e20',
+            inputDark: '#081122',
+            neonBlue: '#00d2ff',
+            neonAmber: '#ff9900',
+            neonGreen: '#00e676',
+            neonPurple: '#d500f9'
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
-    body { font-family: 'Kantumruy Pro', sans-serif; }
-    .tab-active { background-color: #2563eb !important; color: white !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); }
+    :root {
+      --bg-main: #02050e;
+      --card-bg: rgba(6, 14, 32, 0.95);
+      --input-bg: #081122;
+      --input-border: #16233d;
+      --neon-blue: #00d2ff;
+      --neon-amber: #ff9900;
+      --neon-green: #00e676;
+      --neon-purple: #d500f9;
+    }
+    * { box-sizing: border-box; transition: all 0.2s ease; }
+    body {
+      font-family: 'Space Grotesk', 'Kantumruy Pro', sans-serif;
+      background: var(--bg-main);
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(0, 210, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(213, 0, 249, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+      color: #f8fafc;
+      min-height: 100vh;
+    }
+    .cyber-grid {
+      position: fixed; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+      background-size: 32px 32px;
+      z-index: -1; pointer-events: none;
+    }
+    .glow-btn {
+      background: linear-gradient(90deg, #0072ff 0%, #00c6ff 40%, #a100c2 80%, #d500f9 100%);
+      box-shadow: 0 10px 30px rgba(0, 114, 255, 0.4);
+    }
+    .glow-btn:active { transform: scale(0.98); }
+    .tab-active {
+      background: linear-gradient(90deg, #0284c7, #7c3aed) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+    }
+    .badge-dot {
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background-color: #00e676; box-shadow: 0 0 10px #00e676;
+    }
+    input, select {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: #f8fafc;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.25);
+    }
+    input[readonly] { background: rgba(4, 9, 18, 0.9) !important; color: #94a3b8; cursor: not-allowed; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-3 text-xs flex flex-col justify-between">
 
-  <!-- ==================== TOP PROFILE BAR ==================== -->
-  <div>
-    <div class="bg-slate-900/90 rounded-2xl p-3.5 border border-slate-800 shadow-md mb-3 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white text-sm shadow">
-          <span id="userInitial">NC</span>
+<body class="p-3 pb-12 flex flex-col items-center min-h-screen">
+  <div class="cyber-grid"></div>
+
+  <!-- Floating Key for Admin Settings -->
+  <button class="fixed bottom-6 right-6 w-11 h-11 bg-slate-900/90 border border-slate-700/80 rounded-full text-slate-400 hover:text-rose-400 hover:border-rose-500/50 flex items-center justify-center shadow-2xl backdrop-blur-md z-40 transition-transform active:scale-95" onclick="toggleAdminPanel()" title="Admin Manager">🔑</button>
+
+  <iframe name="hidden_iframe" id="hidden_iframe" class="hidden" onload="if(window.submitted){showSuccessPage();}"></iframe>
+
+  <div class="w-full max-w-4xl bg-[#060d1f]/95 border border-slate-800/90 rounded-[32px] p-5 md:p-8 shadow-2xl space-y-6 relative overflow-hidden backdrop-blur-xl">
+
+    <!-- 1. 3D HEADER BANNER -->
+    <div class="flex items-center justify-between gap-4">
+      <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/10 border border-cyan-400/30 flex items-center justify-center shadow-[0_0_25px_rgba(0,210,255,0.2)] shrink-0">
+        <i class="fa-solid fa-cube text-cyan-400 text-3xl md:text-4xl drop-shadow-[0_0_10px_rgba(0,210,255,0.8)]"></i>
+      </div>
+
+      <div class="text-center flex-1">
+        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1">
+          <i class="fa-solid fa-bolt text-xs"></i> <span>ONLINE</span> <span class="badge-dot"></span>
+        </div>
+        <h1 class="text-xl md:text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-300 to-indigo-400 uppercase">
+          DAILY STOCK OUT RECORD
+        </h1>
+        <p class="text-[10px] md:text-xs text-slate-400 font-medium tracking-wide mt-1">Accurate Record • Smart Management • Secure Control</p>
+      </div>
+
+      <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-600/10 border border-purple-400/30 flex items-center justify-center shadow-[0_0_25px_rgba(213,0,249,0.2)] shrink-0">
+        <i class="fa-solid fa-clipboard-check text-purple-400 text-3xl md:text-4xl drop-shadow-[0_0_10px_rgba(213,0,249,0.8)]"></i>
+      </div>
+    </div>
+
+    <!-- 2. TOP 4 STATUS CARDS -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
+      <div class="bg-cardDark border border-slate-800/80 rounded-2xl p-3 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-cyan-950/60 border border-cyan-800/50 flex items-center justify-center text-cyan-400 shrink-0">
+          <i class="fa-regular fa-calendar-days text-sm"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="text-slate-500 uppercase tracking-tight text-[9px] font-bold">DATE & TIME</div>
+          <div id="liveClock" class="font-bold text-slate-200 font-mono text-[11px] truncate mt-0.5">-- Sept 2026</div>
+        </div>
+      </div>
+
+      <div class="bg-cardDark border border-slate-800/80 rounded-2xl p-3 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-blue-950/60 border border-blue-800/50 flex items-center justify-center text-blue-400 shrink-0">
+          <i class="fa-solid fa-user text-sm"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="text-slate-500 uppercase tracking-tight text-[9px] font-bold">NAME TEAM</div>
+          <div id="staffNameDisplay" class="font-bold text-slate-200 text-[11px] truncate mt-0.5">Mr. Nuon Chantha</div>
+        </div>
+      </div>
+
+      <div class="bg-cardDark border border-slate-800/80 rounded-2xl p-3 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-emerald-950/60 border border-emerald-800/50 flex items-center justify-center text-emerald-400 shrink-0">
+          <i class="fa-solid fa-wifi text-sm"></i>
         </div>
         <div>
-          <h2 id="userName" class="font-bold text-slate-100 text-xs">Nuon Chantha</h2>
-          <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-            <span>Staff ID: <b id="userStaffId" class="text-amber-400 font-mono">1954</b></span>
-            <span>•</span>
-            <span class="text-blue-400">Office -BVT</span>
+          <div class="text-slate-500 uppercase tracking-tight text-[9px] font-bold">SYSTEM STATUS</div>
+          <div class="font-bold text-emerald-400 flex items-center gap-1.5 text-[11px] mt-0.5">
+            <span>Online</span><span class="badge-dot"></span>
           </div>
         </div>
       </div>
-      <button onclick="refreshData()" class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white">
-        <i class="fa-solid fa-rotate text-xs"></i>
-      </button>
-    </div>
 
-    <!-- ==================== ប៊ូតុងមេទាំង ២ សម្រាប់បុគ្គលិក ==================== -->
-    <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 mb-3.5">
-      <button onclick="switchTab('request')" id="btnTabRequest" class="py-3 rounded-xl font-bold text-xs tab-active transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-paper-plane text-xs"></i>
-        <span>១. ស្នើសុំសម្ភារៈ</span>
-      </button>
-      <button onclick="switchTab('submit')" id="btnTabSubmit" class="py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-box-archive text-xs"></i>
-        <span>២. បញ្ជាក់ Stock Out</span>
-      </button>
-    </div>
-
-    <!-- ==================== ផ្ទាំងទី ១៖ ស្នើសុំសម្ភារៈ ==================== -->
-    <div id="viewRequest" class="space-y-3">
-      <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-sm space-y-3">
-        <div class="border-b border-slate-800 pb-2">
-          <h3 class="font-bold text-slate-200 text-xs flex items-center gap-2">
-            <i class="fa-solid fa-cart-plus text-amber-400"></i>
-            <span>ទម្រង់ស្នើសុំសម្ភារៈ / ឧបករណ៍បណ្តាញ</span>
-          </h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">បំពេញព័ត៌មានខាងក្រោមដើម្បីបញ្ជូនទៅកាន់ Admin Approve</p>
+      <div class="bg-cardDark border border-slate-800/80 rounded-2xl p-3 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/50 flex items-center justify-center text-purple-400 shrink-0">
+          <i class="fa-solid fa-shield-halved text-sm"></i>
         </div>
-        
-        <form onsubmit="handleRequestSubmit(event)" class="space-y-3">
-          <div>
-            <label class="font-medium text-slate-300">ជ្រើសរើសមុខទំនិញ</label>
-            <select id="req_product" required class="w-full mt-1.5 border border-slate-700 rounded-xl p-2.5 bg-slate-950 text-slate-200 outline-none focus:border-blue-500 text-xs">
-              <option value="">-- កំពុងទាញទិន្នន័យទំនិញ... --</option>
-            </select>
+        <div>
+          <div class="text-slate-500 uppercase tracking-tight text-[9px] font-bold">SECURITY</div>
+          <div class="font-bold text-slate-200 flex items-center gap-1.5 text-[11px] mt-0.5">
+            <span>Shield Active</span><span class="badge-dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. TOP WORKFLOW SWITCHER TABS -->
+    <div class="grid grid-cols-2 gap-2 bg-[#081124] p-1.5 rounded-2xl border border-slate-800">
+      <button type="button" onclick="switchAppTab('direct')" id="tabBtnDirect" class="py-2.5 rounded-xl font-extrabold text-xs tab-active transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-bolt text-xs"></i><span>១. បញ្ចូល Stock Out ផ្ទាល់ (Direct Mode)</span>
+      </button>
+      <button type="button" onclick="switchAppTab('queue')" id="tabBtnQueue" class="py-2.5 rounded-xl font-extrabold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-clipboard-list text-xs"></i><span>២. ស្នើសុំសម្ភារៈ & Approved Queue</span>
+      </button>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- PANEL A: DIRECT STOCK OUT MODE (FULL GOOGLE FORM & TELEGRAM) -->
+    <!-- ========================================================= -->
+    <div id="panelDirectMode" class="space-y-5">
+      <form id="stockForm" action="https://docs.google.com/forms/d/e/1FAIpQLSc2vMOuXx5mltGbaPmV-d-bm7L8Gb6tRS8X3Pi-Kcp4SPWKew/formResponse" method="POST" target="hidden_iframe" onsubmit="return handleFormSubmit();" class="space-y-5">
+
+        <!-- SECTION 01: LOCATION INFORMATION -->
+        <div class="bg-cardDark rounded-2xl p-4 md:p-5 border border-cyan-500/30 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div class="flex items-center gap-2.5 text-cyan-400 font-extrabold uppercase text-xs">
+              <span class="w-6 h-6 rounded-lg bg-cyan-950/80 border border-cyan-500/40 flex items-center justify-center text-xs text-white">01</span>
+              <span>LOCATION INFORMATION</span>
+            </div>
+            <i class="fa-solid fa-globe text-cyan-500/30 text-base"></i>
           </div>
 
-          <div class="grid grid-cols-2 gap-2.5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
-              <label class="font-medium text-slate-300">ចំនួន (Qty)</label>
-              <input type="number" id="req_qty" min="1" value="1" required class="w-full mt-1.5 border border-slate-700 rounded-xl p-2 bg-slate-950 text-emerald-400 font-mono font-bold outline-none text-xs">
+              <label class="text-slate-400 text-[10.5px] font-semibold">Name Team</label>
+              <select name="entry.team_name_id" id="nameTeam" onchange="updateTeamDisplay()" required class="w-full mt-1 px-3 py-2 rounded-xl text-xs">
+                <option value="">-- Select Member --</option>
+                <option value="Va Kongkea">Va Kongkea</option>
+                <option value="Sok Rasmey">Sok Rasmey</option>
+                <option value="Nuon Chantha" selected>Nuon Chantha</option>
+                <option value="Pouk Sokha">Pouk Sokha</option>
+                <option value="Chhuey Thyda">Chhuey Thyda</option>
+                <option value="Sous Vuthy">Sous Vuthy</option>
+                <option value="Sum Vechorvorn">Sum Vechorvorn</option>
+              </select>
             </div>
             <div>
-              <label class="font-medium text-slate-300">Ticket ID អតិថិជន</label>
-              <input type="text" id="req_ticket" placeholder="ឧ. 1415084" required class="w-full mt-1.5 border border-slate-700 rounded-xl p-2 bg-slate-950 text-slate-200 font-mono outline-none text-xs">
+              <label class="text-slate-400 text-[10.5px] font-semibold">Date Stock Out</label>
+              <input type="date" name="entry.240747870" id="dateStockOut" onchange="calculateMonth()" required class="w-full mt-1 px-3 py-2 rounded-xl text-xs font-mono">
+            </div>
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Month</label>
+              <input type="number" name="entry.2080272992" id="monthInput" readonly class="w-full mt-1 px-3 py-2 rounded-xl text-xs font-mono">
             </div>
           </div>
 
-          <button type="submit" id="btnReqAction" class="w-full py-3.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold shadow-md transition flex items-center justify-center gap-2 mt-2">
-            <i class="fa-solid fa-paper-plane"></i>
-            <span>បញ្ជូនសំណើទៅកាន់ Admin</span>
-          </button>
-        </form>
-      </div>
-    </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Location Name</label>
+              <select id="locationSelect" onchange="autoFillLocationCode()" required class="w-full mt-1 px-3 py-2 rounded-xl text-xs">
+                <option value="">-- Select Location --</option>
+                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse at Head Office</option>
+                <option value="Department IMO">Department IMO</option>
+                <option value="Department Network and System">Department Network and System</option>
+                <option value="Department Technical Support">Department Technical Support</option>
+                <option value="Office BTB">Office BTB</option>
+                <option value="Office SRP">Office SRP</option>
+                <option value="Offce SHV">Offce SHV</option>
+                <option value="Office Bavet">Office Bavet</option>
+                <option value="Office Poipet">Office Poipet</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Department Name</label>
+              <select id="deptSelect" onchange="autoFillDepartmentCode()" required class="w-full mt-1 px-3 py-2 rounded-xl text-xs">
+                <option value="">-- Select Department --</option>
+                <option value="Installation and Maintenance (IMO)">Installation and Maintenance (IMO)</option>
+                <option value="Outside-Planning (OSP)">Outside-Planning (OSP)</option>
+                <option value="Project Planning">Project Planning</option>
+                <option value="Network and system (IMO)">Network and system (IMO)</option>
+                <option value="Solution (IMO)">Solution (IMO)</option>
+                <option value="Accounting & Finance">Accounting & Finance</option>
+                <option value="Stock">Stock</option>
+                <option value="Credit Control">Credit Control</option>
+                <option value="Supply chain">Supply chain</option>
+                <option value="HR">HR</option>
+                <option value="Admin">Admin</option>
+                <option value="Legal">Legal</option>
+                <option value="Management">Management</option>
+                <option value="Internal Audit">Internal Audit</option>
+                <option value="Project development">Project development</option>
+                <option value="Commercial - sale">Commercial - sale</option>
+                <option value="Marketing">Marketing</option>
+                <option value="CSV">CSV</option>
+                <option value="CR">CR</option>
+                <option value="Call center">Call center</option>
+                <option value="Billing development">Billing development</option>
+                <option value="Software development">Software development</option>
+                <option value="System and Network">System and Network</option>
+                <option value="Power">Power</option>
+                <option value="Support & IT">Support & IT</option>
+              </select>
+            </div>
+          </div>
 
-    <!-- ==================== ផ្ទាំងទី ២៖ បញ្ជាក់ Submit ចូល Stock Out វិញ ==================== -->
-    <div id="viewSubmit" class="hidden space-y-3">
-      <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-sm space-y-3">
-        <div class="border-b border-slate-800 pb-2">
-          <h3 class="font-bold text-slate-200 text-xs flex items-center gap-2">
-            <i class="fa-solid fa-clipboard-check text-emerald-400"></i>
-            <span>បញ្ជីសម្ភារៈដែល Admin បាន Approve រួចរាល់</span>
-          </h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">សូមជ្រើសយកឧបករណ៍ខាងក្រោមដើម្បីបំពេញ Serial និង Submit ចូល Stock Out</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="relative flex items-center">
+              <input type="text" name="entry.1784007688" id="locationCode" placeholder="Location Code" readonly required class="w-full px-3 py-2 rounded-xl text-xs font-mono pr-8">
+              <i class="fa-solid fa-qrcode absolute right-3 text-cyan-400 text-xs pointer-events-none"></i>
+            </div>
+            <div class="relative flex items-center">
+              <input type="text" name="entry.739448496" id="deptCode" placeholder="Dept Code" readonly required class="w-full px-3 py-2 rounded-xl text-xs font-mono pr-8">
+              <i class="fa-solid fa-qrcode absolute right-3 text-cyan-400 text-xs pointer-events-none"></i>
+            </div>
+          </div>
         </div>
 
-        <div id="approvedList" class="space-y-2.5">
-          <!-- ឧបករណ៍ដែល Approve ហើយត្រូវបាន Render នៅទីនេះ -->
-        </div>
-      </div>
-    </div>
-  </div>
+        <!-- SECTION 02: PRODUCT INFORMATION -->
+        <div class="bg-cardDark rounded-2xl p-4 md:p-5 border border-amber-500/30 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div class="flex items-center gap-2.5 text-amber-400 font-extrabold uppercase text-xs">
+              <span class="w-6 h-6 rounded-lg bg-amber-950/80 border border-amber-500/40 flex items-center justify-center text-xs text-white">02</span>
+              <span>PRODUCT INFORMATION</span>
+            </div>
+            <i class="fa-solid fa-cubes-stacked text-amber-500/30 text-base"></i>
+          </div>
 
-  <!-- Bottom Brand -->
-  <div class="text-center text-[10px] text-slate-500 py-2">
-    MicroMax Enterprise System • Svay Rieng Office
-  </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="md:col-span-2">
+              <label class="text-slate-400 text-[10.5px] font-semibold">Search & Select Product</label>
+              <div class="relative mt-1 mb-2">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                <input type="text" id="productSearchInput" placeholder="ស្វែងរកតាមឈ្មោះ ឬ Code BC..." onkeyup="filterProducts()" class="w-full pl-8 pr-3 py-2 rounded-xl text-xs">
+              </div>
+              <select name="entry.1718200836" id="productSelect" onchange="autoFillCodeAndUOM()" required class="w-full px-3 py-2 rounded-xl text-xs">
+                <option value="">-- Select Product --</option>
+              </select>
+            </div>
 
-  <!-- ==================== MODAL SUBMIT STOCK OUT ==================== -->
-  <div id="modalStockOut" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm shadow-2xl space-y-3 text-xs">
-      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-        <h4 class="font-bold text-emerald-400 text-xs flex items-center gap-1.5">
-          <i class="fa-solid fa-shield-check"></i>
-          <span>បញ្ជាក់ដំឡើង & Submit ចូល Stock Out</span>
-        </h4>
-        <button onclick="closeModal()" class="w-6 h-6 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <form onsubmit="handleStockOutConfirm(event)" class="space-y-2.5">
-        <input type="hidden" id="so_reqId">
-        <input type="hidden" id="so_itemCode">
-        <input type="hidden" id="so_productName">
-        <input type="hidden" id="so_qty">
-        <input type="hidden" id="so_ticket">
-
-        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-          <div class="text-slate-400 text-[10px]">ឧបករណ៍ដែលត្រូវចេញស្តុក៖</div>
-          <div id="so_displayItem" class="font-bold text-white text-xs mt-0.5"></div>
-        </div>
-
-        <div>
-          <label class="font-medium text-slate-300">Serial No. (លេខស៊េរីម៉ាស៊ីន) *</label>
-          <input type="text" id="so_serial" placeholder="បញ្ចូល Serial ឧបករណ៍..." required class="w-full mt-1 border border-slate-700 rounded-xl p-2.5 bg-slate-950 font-mono text-slate-100 outline-none text-xs">
+            <div class="grid grid-cols-2 md:grid-cols-1 gap-2">
+              <div>
+                <label class="text-slate-400 text-[10.5px] font-semibold">Code BC MM Co.,</label>
+                <input type="text" name="entry.2001095029" id="codeBC" placeholder="Code BC" readonly class="w-full mt-1 px-3 py-2 rounded-xl text-xs text-amber-400 font-mono font-bold">
+              </div>
+              <div>
+                <label class="text-slate-400 text-[10.5px] font-semibold">UOM</label>
+                <input type="text" name="entry.1957731341" id="uomInput" placeholder="UNIT" readonly class="w-full mt-1 px-3 py-2 rounded-xl text-xs font-mono">
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label class="font-medium text-slate-300">Mac Serial (MAC Address)</label>
-          <input type="text" id="so_mac" placeholder="បញ្ចូល MAC ឧបករណ៍..." class="w-full mt-1 border border-slate-700 rounded-xl p-2.5 bg-slate-950 font-mono text-slate-100 outline-none text-xs">
+        <!-- SECTION 03: PRODUCT DETAILS (WITH CAMERA SCANNER) -->
+        <div class="bg-cardDark rounded-2xl p-4 md:p-5 border border-emerald-500/30 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div class="flex items-center gap-2.5 text-emerald-400 font-extrabold uppercase text-xs">
+              <span class="w-6 h-6 rounded-lg bg-emerald-950/80 border border-emerald-500/40 flex items-center justify-center text-xs text-white">03</span>
+              <span>PRODUCT DETAILS</span>
+            </div>
+            <i class="fa-solid fa-microchip text-emerald-500/30 text-base"></i>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Serial No.</label>
+              <div class="relative flex items-center mt-1">
+                <input type="text" name="entry.617330529" id="serialInput" placeholder="Serial / Scan..." class="w-full px-3 py-2 rounded-xl text-xs font-mono pr-10">
+                <label class="absolute right-1.5 w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center cursor-pointer hover:bg-emerald-500 hover:text-slate-950 transition">
+                  <i class="fa-solid fa-camera text-xs"></i>
+                  <input type="file" accept="image/*" capture="environment" class="hidden" onchange="processNativeBarcode(this, 'serialInput')">
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Mac Serial</label>
+              <div class="relative flex items-center mt-1">
+                <input type="text" name="entry.173083904" id="macInput" placeholder="MAC / Scan..." class="w-full px-3 py-2 rounded-xl text-xs font-mono pr-10">
+                <label class="absolute right-1.5 w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center cursor-pointer hover:bg-emerald-500 hover:text-slate-950 transition">
+                  <i class="fa-solid fa-camera text-xs"></i>
+                  <input type="file" accept="image/*" capture="environment" class="hidden" onchange="processNativeBarcode(this, 'macInput')">
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Condition Status</label>
+              <select name="entry.341140615" id="statusSelect" required class="w-full mt-1 px-3 py-2 rounded-xl text-xs">
+                <option value="">-- Select --</option>
+                <option value="New" selected>New</option>
+                <option value="Old">Old</option>
+                <option value="Broken">Broken</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Quantity (QTY)</label>
+              <input type="number" name="entry.2116288745" id="qtyInput" min="1" value="1" required class="w-full mt-1 px-3 py-2 rounded-xl text-xs font-bold text-emerald-400 font-mono">
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label class="font-medium text-slate-300">Port / Remark</label>
-          <input type="text" id="so_remark" value="Port 1 - New Install" class="w-full mt-1 border border-slate-700 rounded-xl p-2.5 bg-slate-950 text-slate-100 outline-none text-xs">
+        <!-- SECTION 04: TRANSACTION DETAILS -->
+        <div class="bg-cardDark rounded-2xl p-4 md:p-5 border border-purple-500/30 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div class="flex items-center gap-2.5 text-purple-400 font-extrabold uppercase text-xs">
+              <span class="w-6 h-6 rounded-lg bg-purple-950/80 border border-purple-500/40 flex items-center justify-center text-xs text-white">04</span>
+              <span>TRANSACTION INFORMATION</span>
+            </div>
+            <i class="fa-solid fa-receipt text-purple-500/30 text-base"></i>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Sold / Free Rental</label>
+              <select name="entry.519894153" id="typeSelect" required class="w-full mt-1 px-3 py-2 rounded-xl text-xs">
+                <option value="">-- Select Type --</option>
+                <option value="Free rental" selected>Free rental</option>
+                <option value="Sold">Sold</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Customer's Ticket ID</label>
+              <input type="text" name="entry.1296176737" id="ticketInput" placeholder="1415084" class="w-full mt-1 px-3 py-2 rounded-xl text-xs font-mono">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Quotation No.</label>
+              <input type="text" name="entry.1080710696" id="quoteInput" placeholder="Quote Reference..." class="w-full mt-1 px-3 py-2 rounded-xl text-xs">
+            </div>
+            <div>
+              <label class="text-slate-400 text-[10.5px] font-semibold">Remark</label>
+              <input type="text" name="entry.2061896501" id="remarkInput" placeholder="Port / Remarks..." class="w-full mt-1 px-3 py-2 rounded-xl text-xs">
+            </div>
+          </div>
         </div>
 
-        <button type="submit" id="btnConfirmAction" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md transition flex items-center justify-center gap-2 mt-2">
-          <i class="fa-solid fa-check"></i>
-          <span>Submit ចូល Stock Out ផ្លូវការ</span>
+        <!-- TRANSMIT BUTTON -->
+        <button type="submit" id="btnSubmitForm" class="w-full py-4 rounded-2xl font-black text-sm uppercase tracking-wider text-white glow-btn transition flex items-center justify-between px-6 shadow-2xl">
+          <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> <span>SECURE SAVE & TRANSMIT</span></span>
+          <i class="fa-solid fa-paper-plane"></i>
         </button>
       </form>
     </div>
+
+    <!-- ========================================================= -->
+    <!-- PANEL B: REQUISITION & QUEUE (TELEGRAM APPROVAL WORKFLOW) -->
+    <!-- ========================================================= -->
+    <div id="panelQueueMode" class="hidden space-y-5">
+      
+      <!-- Requisition Input Card -->
+      <div class="bg-cardDark rounded-2xl p-4 md:p-5 border border-sky-500/30 space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <div class="text-sky-400 font-extrabold text-xs uppercase flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i><span>បង្កើតសំណើសុំសម្ភារៈថ្មី (Submit Requisition)</span>
+          </div>
+          <span class="text-[10px] text-slate-500">Auto Notify to Approver</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label class="text-slate-400 text-[10px]">ជ្រើសរើសឧបករណ៍</label>
+            <select id="req_productSelect" onchange="autoFillReqProduct()" class="w-full mt-1 px-3 py-2 rounded-xl text-xs">
+              <option value="">-- Select Product --</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-400 text-[10px]">Code BC / UOM</label>
+            <div class="flex gap-2 mt-1">
+              <input type="text" id="req_codeBC" placeholder="Code BC" readonly class="w-2/3 px-3 py-2 rounded-xl text-xs text-amber-400 font-mono font-bold">
+              <input type="text" id="req_uom" placeholder="UOM" readonly class="w-1/3 px-3 py-2 rounded-xl text-xs font-mono">
+            </div>
+          </div>
+          <div>
+            <label class="text-slate-400 text-[10px]">ចំនួន (QTY) & Ticket</label>
+            <div class="flex gap-2 mt-1">
+              <input type="number" id="req_qty" min="1" value="1" class="w-1/3 px-3 py-2 rounded-xl text-xs font-bold text-emerald-400 font-mono">
+              <input type="text" id="req_ticket" placeholder="Ticket ID *" class="w-2/3 px-3 py-2 rounded-xl text-xs font-mono">
+            </div>
+          </div>
+        </div>
+
+        <button type="button" onclick="handleTransmitRequisition()" id="btnTransmitReq" class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i><span>ផ្ញើសំណើសុំទៅ Telegram Approver</span>
+        </button>
+      </div>
+
+      <!-- Approved Queue Waiting Verification -->
+      <div class="bg-cardDark rounded-2xl p-4 md:p-5 border border-emerald-500/30 space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <div class="text-emerald-400 font-extrabold text-xs uppercase flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-check"></i><span>Approved Queue (រង់ចាំ Scan Serial & Submit Stock Out)</span>
+          </div>
+          <button onclick="loadMyApprovedList()" class="text-sky-400 text-xs hover:underline flex items-center gap-1"><i class="fa-solid fa-rotate"></i> Reload</button>
+        </div>
+
+        <div id="approvedItemsList" class="space-y-2.5">
+          <!-- Render Approved Items Here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. ADMIN MANAGER PANEL (HIDDEN BY DEFAULT) -->
+    <div id="adminPanel" class="hidden bg-slate-900/90 border border-rose-500/50 rounded-2xl p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-rose-500/30 pb-2">
+        <h3 class="font-extrabold text-rose-400 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-sliders"></i><span>ONLINE SYSTEM MANAGER (ADMIN)</span>
+        </h3>
+        <button onclick="document.getElementById('adminPanel').classList.add('hidden')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <button type="button" id="btnExport" onclick="exportMonthlyReport()" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs transition">
+        📥 EXPORT MONTHLY SUMMARY REPORT (CSV)
+      </button>
+
+      <!-- Add New Product -->
+      <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
+        <div class="text-slate-300 font-bold text-xs">➕ បន្ថែមទំនិញថ្មី (Add New Product)</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <input type="text" id="newProdName" placeholder="ឈ្មោះផលិតផល..." class="px-3 py-2 rounded-lg text-xs">
+          <input type="text" id="newProdCode" placeholder="Code BC MM Co.,..." class="px-3 py-2 rounded-lg text-xs">
+          <input type="text" id="newProdUom" placeholder="UOM (Unit/Pcs)..." class="px-3 py-2 rounded-lg text-xs">
+        </div>
+        <button type="button" id="btnAddProd" onclick="handleProductAction('add')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs">
+          បញ្ចូលទំនិញថ្មីទៅ Database
+        </button>
+      </div>
+
+      <!-- Delete Product -->
+      <div class="p-3.5 bg-rose-950/20 rounded-xl border border-rose-900/40 space-y-2">
+        <div class="text-rose-400 font-bold text-xs">🗑️ លុបទំនិញពី Database (Delete Product)</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <input type="text" id="adminDeleteSearchInput" placeholder="ស្វែងរកដើម្បីលុប..." onkeyup="filterAdminDeleteProducts()" class="px-3 py-2 rounded-lg text-xs">
+          <select id="adminProductDeleteSelect" class="px-3 py-2 rounded-lg text-xs"><option value="">-- ជ្រើសរើសទំនិញត្រូវលុប --</option></select>
+        </div>
+        <button type="button" id="btnDelProd" onclick="handleProductAction('delete')" class="w-full py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg text-xs">
+          លុបទំនិញដែលបានជ្រើសរើស
+        </button>
+      </div>
+    </div>
+
+    <!-- 5. FOOTER STATUS BAR -->
+    <div class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-800 text-[10px] text-slate-500 gap-2">
+      <div class="flex items-center gap-1.5"><i class="fa-solid fa-lock text-cyan-400"></i><span>Encrypted Proxy Active</span></div>
+      <div class="text-slate-400 font-bold">ONLINE ICT SOLUTION</div>
+      <div class="flex items-center gap-1.5"><span class="badge-dot"></span><span>v3.5 Secured</span></div>
+    </div>
+
   </div>
 
-  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <!-- SUCCESS DIALOG -->
+  <div id="successSection" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-cardDark border border-cyan-500/40 rounded-3xl p-6 text-center max-w-sm w-full space-y-4 shadow-2xl">
+      <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl mx-auto">
+        <i class="fa-regular fa-circle-check"></i>
+      </div>
+      <h3 class="text-lg font-black text-white">Data Transmitted Securely!</h3>
+      <p class="text-xs text-slate-400">ព័ត៌មានស្តុករបស់អ្នកត្រូវបានកត់ត្រា និងបញ្ជូនទៅកាន់ Telegram Bot រួចរាល់ដោយសុវត្ថិភាព។</p>
+      <button onclick="resetAndReturn()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs transition">
+        🔄 បញ្ចូលទិន្នន័យថ្មីទៀត
+      </button>
+    </div>
+  </div>
+
+  <!-- VERIFICATION MODAL FOR APPROVED QUEUE -->
+  <div id="modalVerifyStockOut" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-[#081124] border border-cyan-500/40 rounded-3xl p-5 shadow-2xl space-y-3.5">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <h4 class="font-bold text-emerald-400 text-xs flex items-center gap-1.5">
+          <i class="fa-solid fa-barcode"></i><span>Scan / បញ្ជាក់ Serial & Submit Stock Out</span>
+        </h4>
+        <button onclick="closeVerifyModal()" class="w-6 h-6 rounded-full bg-slate-900 text-slate-400 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+      </div>
+
+      <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+        <div class="text-slate-500 text-[9px] uppercase font-bold">ឧបករណ៍ចេញស្តុក៖</div>
+        <div id="modalItemTitle" class="font-bold text-slate-100 text-xs mt-0.5">--</div>
+      </div>
+
+      <input type="hidden" id="so_reqId">
+      <input type="hidden" id="so_ticket">
+
+      <div>
+        <label class="text-slate-400 text-[10px] font-semibold">Serial No. *</label>
+        <div class="relative flex items-center mt-1">
+          <input type="text" id="so_serial" placeholder="Scan or Enter Serial..." class="w-full px-3 py-2 rounded-xl text-xs font-mono pr-10">
+          <label class="absolute right-1.5 w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center cursor-pointer hover:bg-cyan-500 hover:text-slate-950 transition">
+            <i class="fa-solid fa-camera text-xs"></i>
+            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="processNativeBarcode(this, 'so_serial')">
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-slate-400 text-[10px] font-semibold">Mac Serial</label>
+        <div class="relative flex items-center mt-1">
+          <input type="text" id="so_mac" placeholder="Scan or Enter MAC..." class="w-full px-3 py-2 rounded-xl text-xs font-mono pr-10">
+          <label class="absolute right-1.5 w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center cursor-pointer hover:bg-cyan-500 hover:text-slate-950 transition">
+            <i class="fa-solid fa-camera text-xs"></i>
+            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="processNativeBarcode(this, 'so_mac')">
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-slate-400 text-[10px] font-semibold">Port / Remark</label>
+        <input type="text" id="so_remark" value="Port 1 - New Install" class="w-full mt-1 px-3 py-2 rounded-xl text-xs">
+      </div>
+
+      <button onclick="confirmStockOutSubmit()" id="btnConfirmSO" class="w-full py-3 rounded-xl font-bold text-xs uppercase text-white glow-btn transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-check"></i><span>SUBMIT ចូល STOCK OUT ផ្លូវការ</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzE-QYFmG4E8wLHiE7sZ_xdiENHJYiLsilRfsErc7Rkj-3caHwd3UReRNOxzS408A/exec";
-    
-    // Telegram WebApp Setup
-    let tg = window.Telegram ? window.Telegram.WebApp : null;
-    if (tg) { tg.expand(); }
-
-    let currentStaff = {
-      staffId: "1954",
-      fullName: "Nuon Chantha",
-      role: "Senior Staff"
-    };
-
-    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-      currentStaff.fullName = tg.initDataUnsafe.user.first_name + " " + (tg.initDataUnsafe.user.last_name || "");
-    }
-
-    document.getElementById('userName').innerText = currentStaff.fullName;
-    document.getElementById('userStaffId').innerText = currentStaff.staffId;
-    document.getElementById('userInitial').innerText = currentStaff.fullName.split(' ').map(n => n[0]).join('').slice(-2);
-
+    window.submitted = false;
     let productDatabase = {};
 
-    function switchTab(tab) {
-      if (tab === 'request') {
-        document.getElementById('viewRequest').classList.remove('hidden');
-        document.getElementById('viewSubmit').classList.add('hidden');
-        document.getElementById('btnTabRequest').className = "py-3 rounded-xl font-bold text-xs tab-active transition flex items-center justify-center gap-2";
-        document.getElementById('btnTabSubmit').className = "py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2";
-      } else {
-        document.getElementById('viewRequest').classList.add('hidden');
-        document.getElementById('viewSubmit').classList.remove('hidden');
-        document.getElementById('btnTabSubmit').className = "py-3 rounded-xl font-bold text-xs tab-active transition flex items-center justify-center gap-2";
-        document.getElementById('btnTabRequest').className = "py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2";
-        loadApprovedItems();
+    // API & Credentials
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz09AuqFPmUgE3mLMHgCC_JmOFGVwaTHwtBX68-Qavt5FePJhjWuBhhkeWOha0cU-NW/exec";
+    const REQ_API_URL = "https://script.google.com/macros/s/AKfycbzE-QYFmG4E8wLHiE7sZ_xdiENHJYiLsilRfsErc7Rkj-3caHwd3UReRNOxzS408A/exec";
+    const TELEGRAM_BOT_TOKEN = "8758001195:AAFs0wfRQMCjCDa5kdu7kHyxvYpJnPHfaA4";
+    const TELEGRAM_CHAT_ID = "-1003971701236";
+    const ADMIN_HASH = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"; // "1234"
+
+    // Location & Department Code Mappings
+    const locationDatabase = { 
+      "ChakAngre Krom - Main Warehouse at Head Office": "C_KROM", 
+      "Department IMO": "DEP-IMO", 
+      "Department Network and System": "DEP-SYS", 
+      "Department Technical Support": "DEP-TDS", 
+      "Office BTB": "Office -BTB", 
+      "Office SRP": "Office -SRP", 
+      "Offce SHV": "Office -SHV", 
+      "Office Bavet": "Office -BVT", 
+      "Office Poipet": "Office -PPT" 
+    };
+    const departmentDatabase = { 
+      "Installation and Maintenance (IMO)": "010", 
+      "Outside-Planning (OSP)": "020", 
+      "Project Planning": "030", 
+      "Network and system (IMO)": "040", 
+      "Solution (IMO)": "050", 
+      "Accounting & Finance": "110", 
+      "Stock": "120", 
+      "Credit Control": "130", 
+      "Supply chain": "220", 
+      "HR": "310", 
+      "Admin": "320", 
+      "Legal": "330", 
+      "Management": "340", 
+      "Internal Audit": "410", 
+      "Project development": "510", 
+      "Commercial - sale": "520", 
+      "Marketing": "530", 
+      "CSV": "710", 
+      "CR": "720", 
+      "Call center": "730", 
+      "Billing development": "810", 
+      "Software development": "820", 
+      "System and Network": "920", 
+      "Power": "930", 
+      "Support & IT": "910" 
+    };
+
+    // Initialize Staff Profile
+    let currentStaff = { staffId: "1954", fullName: "Nuon Chantha", role: "Super Admin" };
+    let tg = window.Telegram ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.expand();
+      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        currentStaff.fullName = tg.initDataUnsafe.user.first_name + " " + (tg.initDataUnsafe.user.last_name || "");
       }
     }
 
-    async function loadProductCatalog() {
-      try {
-        const res = await fetch(`${API_URL}?action=getLiveProducts`);
-        const json = await res.json();
-        productDatabase = json.data || {};
-        const sel = document.getElementById('req_product');
-        sel.innerHTML = '<option value="">-- សូមជ្រើសរើសទំនិញ --</option>';
-        for (let k in productDatabase) {
-          sel.innerHTML += `<option value="${k}">${k} [${productDatabase[k].code}]</option>`;
-        }
-      } catch(e) {}
+    function escapeHTML(str) {
+      if (!str) return "N/A";
+      return str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    async function handleRequestSubmit(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnReqAction');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងបញ្ជូនសំណើ...';
+    function updateClock() {
+      const now = new Date();
+      const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+      document.getElementById('liveClock').innerText = now.toLocaleString('en-GB', options);
+    }
 
-      const p = document.getElementById('req_product').value;
+    function switchAppTab(tab) {
+      if (tab === 'direct') {
+        document.getElementById('panelDirectMode').classList.remove('hidden');
+        document.getElementById('panelQueueMode').classList.add('hidden');
+        document.getElementById('tabBtnDirect').className = "py-2.5 rounded-xl font-extrabold text-xs tab-active transition flex items-center justify-center gap-2";
+        document.getElementById('tabBtnQueue').className = "py-2.5 rounded-xl font-extrabold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2";
+      } else {
+        document.getElementById('panelDirectMode').classList.add('hidden');
+        document.getElementById('panelQueueMode').classList.remove('hidden');
+        document.getElementById('tabBtnQueue').className = "py-2.5 rounded-xl font-extrabold text-xs tab-active transition flex items-center justify-center gap-2";
+        document.getElementById('tabBtnDirect').className = "py-2.5 rounded-xl font-extrabold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2";
+        loadMyApprovedList();
+      }
+    }
+
+    function updateTeamDisplay() {
+      const val = document.getElementById("nameTeam").value;
+      document.getElementById("staffNameDisplay").innerText = val || "--";
+    }
+
+    function calculateMonth() {
+      const val = document.getElementById("dateStockOut").value;
+      if (val) {
+        document.getElementById("monthInput").value = new Date(val).getMonth() + 1;
+      }
+    }
+
+    function autoFillLocationCode() {
+      document.getElementById("locationCode").value = locationDatabase[document.getElementById("locationSelect").value] || "";
+    }
+
+    function autoFillDepartmentCode() {
+      document.getElementById("deptCode").value = departmentDatabase[document.getElementById("deptSelect").value] || "";
+    }
+
+    function autoFillCodeAndUOM() {
+      const sel = document.getElementById("productSelect").value;
+      document.getElementById("codeBC").value = productDatabase[sel] ? productDatabase[sel].code : "";
+      document.getElementById("uomInput").value = productDatabase[sel] ? productDatabase[sel].uom : "";
+    }
+
+    function autoFillReqProduct() {
+      const p = document.getElementById('req_productSelect').value;
+      if (productDatabase[p]) {
+        document.getElementById('req_codeBC').value = productDatabase[p].code || '';
+        document.getElementById('req_uom').value = productDatabase[p].uom || 'UNIT';
+      }
+    }
+
+    function fetchLiveProducts() {
+      fetch(APPS_SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+          productDatabase = data;
+          renderProductDropdowns();
+        }).catch(err => console.error("Database connection issue", err));
+    }
+
+    function renderProductDropdowns() {
+      const productSelect = document.getElementById("productSelect");
+      const reqSelect = document.getElementById("req_productSelect");
+      const adminDeleteSelect = document.getElementById("adminProductDeleteSelect");
+      
+      productSelect.innerHTML = '<option value="">-- Select Product --</option>';
+      reqSelect.innerHTML = '<option value="">-- Select Product --</option>';
+      adminDeleteSelect.innerHTML = '<option value="">-- ជ្រើសរើសផលិតផលដើម្បីលុប --</option>';
+      
+      for (const key in productDatabase) {
+        if (productDatabase.hasOwnProperty(key)) {
+          const opt1 = document.createElement("option");
+          opt1.value = key;
+          opt1.textContent = `${key} [${productDatabase[key].code}]`;
+          productSelect.appendChild(opt1);
+
+          const opt2 = document.createElement("option");
+          opt2.value = key;
+          opt2.textContent = `${key} [${productDatabase[key].code}]`;
+          reqSelect.appendChild(opt2);
+
+          const opt3 = document.createElement("option");
+          opt3.value = key;
+          opt3.textContent = key;
+          adminDeleteSelect.appendChild(opt3);
+        }
+      }
+    }
+
+    function filterProducts() {
+      const keyword = document.getElementById("productSearchInput").value.toLowerCase();
+      const select = document.getElementById("productSelect");
+      select.innerHTML = '<option value="">-- Select Product --</option>';
+      for (const key in productDatabase) {
+        if (productDatabase.hasOwnProperty(key)) {
+          const code = (productDatabase[key].code || '').toLowerCase();
+          if (key.toLowerCase().includes(keyword) || code.includes(keyword)) {
+            const opt = document.createElement("option");
+            opt.value = key;
+            opt.textContent = `${key} [${productDatabase[key].code}]`;
+            select.appendChild(opt);
+          }
+        }
+      }
+    }
+
+    function filterAdminDeleteProducts() {
+      const keyword = document.getElementById("adminDeleteSearchInput").value.toLowerCase();
+      const select = document.getElementById("adminProductDeleteSelect");
+      select.innerHTML = '<option value="">-- ជ្រើសរើសផលិតផលដើម្បីលុប --</option>';
+      for (const key in productDatabase) {
+        if (productDatabase.hasOwnProperty(key)) {
+          if (key.toLowerCase().includes(keyword)) {
+            const opt = document.createElement("option");
+            opt.value = key;
+            opt.textContent = key;
+            select.appendChild(opt);
+          }
+        }
+      }
+    }
+
+    function processNativeBarcode(inputElement, targetId) {
+      if (inputElement.files && inputElement.files[0]) {
+        const file = inputElement.files[0];
+        const targetInput = document.getElementById(targetId);
+        targetInput.placeholder = "⏳ Processing image...";
+
+        if ('BarcodeDetector' in window) {
+          const barcodeDetector = new BarcodeDetector();
+          const img = new Image();
+          img.src = URL.createObjectURL(file);
+          img.onload = () => {
+            barcodeDetector.detect(img)
+              .then(barcodes => {
+                if (barcodes.length > 0) {
+                  targetInput.value = barcodes[0].rawValue;
+                } else {
+                  alert("⚠️ មិនអាចស្កែន Barcode បានទេ! សូមព្យាយាមថតឱ្យច្បាស់ និងជិតប្រអប់។");
+                }
+              })
+              .catch(() => alert("⚠️ សូមព្យាយាមថតរូប Barcode ឱ្យបានច្បាស់ម្តងទៀត។"));
+          };
+        } else {
+          alert("✅ រូបភាពត្រូវបានទាញយក! ប្រសិនបើប្រព័ន្ធមិនទាន់ទាញយកលេខដោយស្វ័យប្រវត្តិ សូមចុច 'Scan Text' លើក្តារចុចទូរស័ព្ទ។");
+        }
+      }
+    }
+
+    async function sendTelegramMessage() {
+      const nameTeam = escapeHTML(document.getElementById("nameTeam").value);
+      const dateStockOut = escapeHTML(document.getElementById("dateStockOut").value);
+      const productName = escapeHTML(document.getElementById("productSelect").value);
+      const serial = escapeHTML(document.getElementById("serialInput").value);
+      const macSerial = escapeHTML(document.getElementById("macInput").value);
+      const status = document.getElementById("statusSelect").value;
+      const qty = escapeHTML(document.getElementById("qtyInput").value);
+      const ticket = escapeHTML(document.getElementById("ticketInput").value);
+      const remark = escapeHTML(document.getElementById("remarkInput").value);
+
+      let statusBadge = "🟢 NEW";
+      if (status.toLowerCase().includes("broken")) statusBadge = "🔴 BROKEN";
+      if (status.toLowerCase().includes("old")) statusBadge = "🟡 OLD";
+
+      let captionMessage = "🌐 <b>SYSTEM: STOCK OUT RECORD</b>\n";
+      captionMessage += "━━━━━━━━━━━━━━━━━━━━\n\n";
+      captionMessage += "👤 <b>STAFF INFO</b>\n";
+      captionMessage += "<code>• Team Name : " + nameTeam + "</code>\n";
+      captionMessage += "<code>• Date      : " + dateStockOut + "</code>\n\n";
+      captionMessage += "📦 <b>PRODUCT DETAILS</b>\n";
+      captionMessage += "<code>• Item Name : " + productName + "</code>\n";
+      captionMessage += "<code>• Qty/Status: " + qty + " Unit (" + statusBadge + ")</code>\n\n";
+      captionMessage += "🔍 <b>HARDWARE IDENTIFIER</b>\n";
+      captionMessage += "<code>• Serial    : " + serial + "</code>\n";
+      captionMessage += "<code>• MAC       : " + macSerial + "</code>\n\n";
+      captionMessage += "🎫 <b>REFERENCE & REMARK</b>\n";
+      captionMessage += "<code>• Ticket ID : " + ticket + "</code>\n";
+      captionMessage += "<code>• Remark    : " + remark + "</code>\n\n";
+      captionMessage += "━━━━━━━━━━━━━━━━━━━━\n";
+      captionMessage += "⚡ <i>Status: Processed Automatically</i>";
+
+      const inlineKeyboard = {
+        inline_keyboard: [
+          [{ text: "📊 ពិនិត្យមើលលើ Google Sheet", url: "https://docs.google.com/spreadsheets/d/1MfqFSzxojA1nQOGIMOrU_XNEFd2yJzqiAccC1d9ZhHg/edit?gid=2024782254#gid=2024782254" }]
+        ]
+      };
+
+      try {
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: captionMessage,
+            parse_mode: "HTML",
+            reply_markup: inlineKeyboard,
+            disable_web_page_preview: true
+          })
+        });
+      } catch (err) {
+        console.error("Telegram Transmission Issue:", err);
+      }
+    }
+
+    async function handleFormSubmit() {
+      const btnSubmit = document.getElementById("btnSubmitForm");
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<span><i class="fa-solid fa-spinner fa-spin mr-2"></i> TRANSMITTING DATA...</span>';
+      
+      await sendTelegramMessage();
+      window.submitted = true;
+      return true;
+    }
+
+    function showSuccessPage() {
+      document.getElementById("successSection").classList.remove("hidden");
+    }
+
+    function resetAndReturn() {
+      document.getElementById("stockForm").reset();
+      window.submitted = false;
+      document.getElementById("successSection").classList.add("hidden");
+      document.getElementById("btnSubmitForm").disabled = false;
+      document.getElementById("btnSubmitForm").innerHTML = '<span><i class="fa-solid fa-shield-halved" style="margin-right: 8px;"></i> SECURE SAVE & TRANSMIT</span><i class="fa-solid fa-paper-plane"></i>';
+      fetchLiveProducts();
+    }
+
+    // --- REQUISITION WORKFLOW (PANEL B) ---
+    async function handleTransmitRequisition() {
+      const p = document.getElementById('req_productSelect').value;
+      const ticket = document.getElementById('req_ticket').value.trim();
+      const qty = document.getElementById('req_qty').value;
+
+      if (!p) return alert("សូមជ្រើសរើសមុខទំនិញ!");
+      if (!ticket) return alert("សូមបញ្ចូល Ticket ID អតិថិជន!");
+
+      const btn = document.getElementById('btnTransmitReq');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> TRANSMITTING...';
+
       const payload = {
         action: 'submitRequisition',
         staffId: currentStaff.staffId,
@@ -223,119 +900,207 @@
         staffRole: currentStaff.role,
         productName: p,
         itemCode: productDatabase[p] ? productDatabase[p].code : '',
-        qty: document.getElementById('req_qty').value,
-        ticket: document.getElementById('req_ticket').value
+        qty: qty,
+        ticket: ticket
       };
 
       try {
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const res = await fetch(REQ_API_URL, { method: 'POST', body: JSON.stringify(payload) });
         const json = await res.json();
         alert(json.message);
-        if (json.success) e.target.reset();
-      } catch(err) {
-        alert("កំហុសក្នុងការតភ្ជាប់ Server!");
+        if (json.success) {
+          document.getElementById('req_ticket').value = '';
+          document.getElementById('req_productSelect').value = '';
+          document.getElementById('req_codeBC').value = '';
+          document.getElementById('req_uom').value = '';
+        }
+      } catch (err) {
+        alert("កំហុសក្នុងការតភ្ជាប់ Server Requisition!");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i><span>បញ្ជូនសំណើទៅកាន់ Admin</span>';
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i><span>ផ្ញើសំណើសុំទៅ Telegram Approver</span>';
       }
     }
 
-    async function loadApprovedItems() {
-      const container = document.getElementById('approvedList');
-      container.innerHTML = '<div class="text-center py-8 text-blue-400 font-sans"><i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងទាញទិន្នន័យ...</div>';
+    async function loadMyApprovedList() {
+      const container = document.getElementById('approvedItemsList');
+      container.innerHTML = '<div class="text-center py-6 text-sky-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងទាញទិន្នន័យ...</div>';
 
       try {
-        const res = await fetch(`${API_URL}?action=getRequisitions`);
+        const res = await fetch(`${REQ_API_URL}?action=getRequisitions`);
         const json = await res.json();
         const queue = json.queue || [];
+        const myItems = queue.filter(q => q.status === 'Approved' && q.staffId.toString() === currentStaff.staffId.toString());
 
-        // ជ្រើសរើសយកតែឧបករណ៍ណាដែលបាន Approved ហើយបុគ្គលិកត្រូវ Submit ចូល Stock Out
-        const approved = queue.filter(q => q.status === 'Approved' && q.staffId.toString() === currentStaff.staffId.toString());
-
-        if (approved.length === 0) {
-          container.innerHTML = `
-            <div class="text-center py-8 bg-slate-950 rounded-2xl border border-slate-800">
-              <i class="fa-solid fa-circle-check text-2xl text-slate-600 mb-2"></i>
-              <div class="text-slate-400">មិនមានឧបករណ៍ដែលកំពុងរង់ចាំ Submit ទេ!</div>
-              <p class="text-[10px] text-slate-500 mt-1">រាល់សំណើដែល Admin បាន Approve នឹងបង្ហាញនៅទីនេះ។</p>
-            </div>
-          `;
+        if (myItems.length === 0) {
+          container.innerHTML = '<div class="text-center py-6 text-slate-500">មិនទាន់មានឧបករណ៍ដែល Approve រង់ចាំ Submit ចូល Stock Out ឡើយ!</div>';
           return;
         }
 
         let html = '';
-        approved.forEach(it => {
+        myItems.forEach(it => {
           html += `
-            <div class="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex justify-between items-center">
+            <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center gap-3">
               <div>
-                <div class="font-bold text-white text-xs">${it.productName}</div>
+                <div class="font-bold text-slate-200 text-xs">${it.productName}</div>
                 <div class="text-[10px] text-slate-400 mt-0.5">
-                  ចំនួន: <b class="text-emerald-400 font-mono">${it.qty}</b> | Ticket: <b class="text-indigo-400 font-mono">${it.ticket}</b>
+                  ចំនួន: <b class="text-emerald-400 font-mono">${it.qty}</b> | Ticket: <b class="text-cyan-400 font-mono">${it.ticket}</b>
                 </div>
-                <div class="text-[9.5px] text-slate-500 mt-0.5">Approve ដោយ: ${it.approvedBy || 'Admin'}</div>
+                <div class="text-[9.5px] text-slate-500">Approve ដោយ: ${it.approvedBy || 'Admin'}</div>
               </div>
-              <button onclick="openStockOutForm('${it.reqId}', '${it.itemCode}', '${it.productName}', '${it.qty}', '${it.ticket}')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-md transition flex items-center gap-1.5">
-                <i class="fa-solid fa-check"></i>
-                <span>Submit Out</span>
+              <button onclick="openVerifyDialog('${it.reqId}', '${it.productName}', '${it.qty}', '${it.ticket}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs shadow">
+                Submit Out
               </button>
             </div>
           `;
         });
         container.innerHTML = html;
-      } catch(e) {
-        container.innerHTML = '<div class="text-center py-8 text-rose-500">កំហុសក្នុងការទាញទិន្នន័យ!</div>';
+      } catch (e) {
+        container.innerHTML = '<div class="text-center py-6 text-rose-500">កំហុសក្នុងការទាញទិន្នន័យ!</div>';
       }
     }
 
-    function openStockOutForm(reqId, itemCode, prodName, qty, ticket) {
+    function openVerifyDialog(reqId, prodName, qty, ticket) {
       document.getElementById('so_reqId').value = reqId;
-      document.getElementById('so_itemCode').value = itemCode;
-      document.getElementById('so_productName').value = prodName;
-      document.getElementById('so_qty').value = qty;
       document.getElementById('so_ticket').value = ticket;
-      document.getElementById('so_displayItem').innerText = `${prodName} (ចំនួន: ${qty} | Ticket: ${ticket})`;
-      document.getElementById('modalStockOut').classList.remove('hidden');
+      document.getElementById('modalItemTitle').innerText = `${prodName} (ចំនួន: ${qty} | Ticket: ${ticket})`;
+      document.getElementById('modalVerifyStockOut').classList.remove('hidden');
     }
 
-    function closeModal() {
-      document.getElementById('modalStockOut').classList.add('hidden');
+    function closeVerifyModal() {
+      document.getElementById('modalVerifyStockOut').classList.add('hidden');
     }
 
-    async function handleStockOutConfirm(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnConfirmAction');
+    async function confirmStockOutSubmit() {
+      const serial = document.getElementById('so_serial').value.trim();
+      const mac = document.getElementById('so_mac').value.trim();
+      if (!serial) return alert("សូមបញ្ចូល Serial No. ឧបករណ៍!");
+
+      const btn = document.getElementById('btnConfirmSO');
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងកត់ត្រាចូល Stock Out...';
+      btn.innerHTML = 'SUBMITTING...';
 
       const payload = {
         action: 'verifyRequisition',
         reqId: document.getElementById('so_reqId').value,
-        verifiedSerial: document.getElementById('so_serial').value + (document.getElementById('so_mac').value ? ' / ' + document.getElementById('so_mac').value : '')
+        verifiedSerial: serial + (mac ? ' / ' + mac : '')
       };
 
       try {
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const res = await fetch(REQ_API_URL, { method: 'POST', body: JSON.stringify(payload) });
         const json = await res.json();
         alert(json.message);
-        closeModal();
-        loadApprovedItems();
-      } catch(err) {
+        closeVerifyModal();
+        loadMyApprovedList();
+      } catch (err) {
         alert("កំហុសក្នុងការ Submit!");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-check"></i><span>Submit ចូល Stock Out ផ្លូវការ</span>';
+        btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i><span>SUBMIT ចូល STOCK OUT ផ្លូវការ</span>';
       }
     }
 
-    function refreshData() {
-      loadProductCatalog();
-      if (!document.getElementById('viewSubmit').classList.contains('hidden')) {
-        loadApprovedItems();
+    // --- ADMIN ACTIONS (SHA-256) ---
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function toggleAdminPanel() {
+      const adminPanel = document.getElementById("adminPanel");
+      if (!adminPanel.classList.contains("hidden")) {
+        adminPanel.classList.add("hidden");
+        return;
       }
+      const pass = prompt("🔑 សូមបញ្ចូលលេខសម្ងាត់ Admin៖");
+      if (pass !== null) {
+        if (await sha256(pass) === ADMIN_HASH) {
+          adminPanel.classList.remove("hidden");
+          adminPanel.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          alert("❌ លេខសម្ងាត់មិនត្រឹមត្រូវទេ!");
+        }
+      }
+    }
+
+    function handleProductAction(actionType) {
+      const btnAdd = document.getElementById("btnAddProd");
+      const btnDel = document.getElementById("btnDelProd");
+      const formData = new URLSearchParams();
+      
+      if (actionType === 'add') {
+        const name = document.getElementById("newProdName").value.trim();
+        const code = document.getElementById("newProdCode").value.trim();
+        const uom = document.getElementById("newProdUom").value.trim();
+        if (!name || !code || !uom) return alert("⚠️ សូមបំពេញព័ត៌មានផលិតផលថ្មីឱ្យបានគ្រប់គ្រាន់!");
+        
+        btnAdd.disabled = true;
+        formData.append("action", "add");
+        formData.append("new_name", name);
+        formData.append("new_code", code);
+        formData.append("new_uom", uom);
+      } else {
+        const selectedProduct = document.getElementById("adminProductDeleteSelect").value;
+        if (!selectedProduct) return alert("⚠️ សូមជ្រើសរើសផលិតផលជាមុនសិន!");
+        if (!confirm(`⚠️ តើអ្នកប្រាកដជាចង់លុប '${selectedProduct}' នេះមែនទេ?`)) return;
+        
+        btnDel.disabled = true;
+        formData.append("action", "delete");
+        formData.append("delete_name", selectedProduct);
+      }
+
+      fetch(APPS_SCRIPT_URL, { method: "POST", body: formData, headers: { "Content-Type": "application/x-www-form-urlencoded" } })
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.status === "success") {
+            alert(actionType === 'add' ? "✅ បានបន្ថែមផលិតផលថ្មីជោគជ័យ!" : "🗑️ បានលុបផលិតផលរួចរាល់!");
+            document.getElementById("newProdName").value = "";
+            document.getElementById("newProdCode").value = "";
+            document.getElementById("newProdUom").value = "";
+            fetchLiveProducts();
+          } else {
+            alert(resData.message);
+          }
+        })
+        .catch(() => alert("❌ មានបញ្ហាប្រព័ន្ធតភ្ជាប់!"))
+        .finally(() => {
+          btnAdd.disabled = false;
+          btnDel.disabled = false;
+        });
+    }
+
+    function exportMonthlyReport() {
+      const btn = document.getElementById("btnExport");
+      btn.disabled = true;
+      btn.textContent = "⏳ កំពុងទាញយករបាយការណ៍...";
+
+      fetch(APPS_SCRIPT_URL + "?export=true")
+        .then(res => res.json())
+        .then(rows => {
+          if (!rows || rows.length <= 1) return alert("❌ មិនទាន់មានទិន្នន័យសម្រាប់ស្រង់ឡើយ!");
+          let csvContent = "\uFEFF" + rows.map(val => val.map(v => `"${(v || '').toString().replace(/"/g, '""')}"`).join(",")).join("\r\n");
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = `Stock_Out_Report_${new Date().toISOString().slice(0,10)}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          alert("✅ បានទាញយករបាយការណ៍ជោគជ័យ!");
+        })
+        .catch(err => alert("❌ មានបញ្ហាក្នុងការទាញទិន្នន័យ៖ " + err))
+        .finally(() => {
+          btn.disabled = false;
+          btn.textContent = "📥 EXPORT MONTHLY SUMMARY REPORT (CSV)";
+        });
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      loadProductCatalog();
+      updateClock();
+      setInterval(updateClock, 30000);
+      document.getElementById('staffNameDisplay').innerText = currentStaff.fullName;
+      fetchLiveProducts();
     });
   </script>
 </body>
