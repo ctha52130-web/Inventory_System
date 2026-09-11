@@ -24,9 +24,7 @@
     }
   </script>
   <style>
-    :root {
-      --neon-blue: #38bdf8;
-    }
+    :root { --neon-blue: #38bdf8; }
     body {
       font-family: 'Inter', 'Kantumruy Pro', sans-serif;
       background: radial-gradient(circle at top, #09132b 0%, #03060f 100%);
@@ -48,6 +46,13 @@
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
       outline: none;
     }
+    .input-readonly-auto {
+      background-color: #060e20 !important;
+      border: 1px solid #1e3a8a !important;
+      color: #38bdf8 !important;
+      font-weight: 700;
+      cursor: not-allowed;
+    }
     .tab-active {
       background: linear-gradient(90deg, #1d4ed8, #2563eb) !important;
       color: #ffffff !important;
@@ -60,9 +65,7 @@
       border-radius: 18px;
       transition: all 0.2s ease;
     }
-    .btn-submit-stockout:hover {
-      background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
-    }
+    .btn-submit-stockout:hover { background: linear-gradient(90deg, #10b981 0%, #34d399 100%); }
     .btn-submit-stockout:active { transform: scale(0.98); }
     
     .btn-submit-return {
@@ -71,16 +74,13 @@
       border-radius: 18px;
       transition: all 0.2s ease;
     }
-    .btn-submit-return:hover {
-      background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
-    }
+    .btn-submit-return:hover { background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%); }
     .btn-submit-return:active { transform: scale(0.98); }
 
     .badge-dot {
       display: inline-block; width: 6px; height: 6px; border-radius: 50%;
       background-color: #10b981; box-shadow: 0 0 8px #10b981;
     }
-    
     .cyber-modal-card {
       background-color: #070d19;
       border: 1px solid #162544;
@@ -104,19 +104,106 @@
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.4), inset 0 0 4px rgba(56, 189, 248, 0.2);
       outline: none;
     }
-    .barcode-icon-svg {
-      opacity: 0.55;
-      transition: opacity 0.2s;
-    }
-    .barcode-icon-svg:hover {
-      opacity: 1;
-      color: #38bdf8;
-    }
+    .barcode-icon-svg { opacity: 0.55; transition: opacity 0.2s; }
+    .barcode-icon-svg:hover { opacity: 1; color: #38bdf8; }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-2 sm:p-4 text-xs select-none">
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-4 text-xs select-none relative">
 
-  <!-- MAIN APP CONTAINER -->
+  <!-- ==================== 0. AUTHENTICATION MODAL ==================== -->
+  <div id="authScreen" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+    <div class="w-full max-w-sm cyber-modal-card p-6 space-y-4 border border-blue-900/50 shadow-2xl">
+      <div class="text-center">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-700 to-sky-500 flex items-center justify-center text-white text-lg mx-auto mb-2 shadow-lg shadow-blue-500/30">
+          <i class="fa-solid fa-cube"></i>
+        </div>
+        <h2 class="text-sm font-bold text-slate-100">MicroMax Staff Portal</h2>
+        <p class="text-[10px] text-slate-400">ផ្ទៀងផ្ទាត់គណនីបុគ្គលិកជាមួយ Sheet users</p>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="flex rounded-xl bg-[#040813] p-1 border border-slate-800">
+        <button onclick="toggleAuthTab('login')" id="tabBtnLogin" class="flex-1 py-1.5 rounded-lg font-bold text-xs bg-blue-600 text-white shadow-xs transition">ចូលប្រើ (Login)</button>
+        <button onclick="toggleAuthTab('register')" id="tabBtnRegister" class="flex-1 py-1.5 rounded-lg font-bold text-xs text-slate-400 hover:text-slate-200 transition">ចុះឈ្មោះគណនី</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3">
+        <div>
+          <label class="text-slate-300 text-[10.5px] block mb-1 font-medium">Gmail ឬ លេខកាតបុគ្គលិក (Staff ID)</label>
+          <div class="relative">
+            <i class="fa-solid fa-id-card absolute left-3 top-2.5 text-slate-500"></i>
+            <input type="text" id="loginIdentifier" placeholder="1954 ឬ Gmail..." required class="input-cyber w-full rounded-xl pl-8 pr-3 py-2 text-xs font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-300 text-[10.5px] block mb-1 font-medium">លេខសម្ងាត់ (Password)</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3 top-2.5 text-slate-500"></i>
+            <input type="password" id="loginPassword" placeholder="••••••••" required class="input-cyber w-full rounded-xl pl-8 pr-3 py-2 text-xs">
+          </div>
+        </div>
+
+        <button type="submit" id="btnLoginSubmit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg transition flex items-center justify-center gap-2 mt-1">
+          <span>ចូលប្រើប្រាស់</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+
+        <div class="text-center pt-1 text-[10px] text-slate-500 font-mono">
+          គណនីលំនាំដើម: <b>1954</b> | លេខសម្ងាត់: <b>123456</b>
+        </div>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-2.5">
+        <div>
+          <label class="text-slate-300 text-[10px] block mb-0.5">ឈ្មោះពេញ (Full Name)</label>
+          <input type="text" id="regFullName" placeholder="Mr. Nuon Chantha" required class="input-cyber w-full rounded-xl p-2 text-xs">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-slate-300 text-[10px] block mb-0.5">Staff ID</label>
+            <input type="text" id="regStaffId" placeholder="1954" required class="input-cyber w-full rounded-xl p-2 font-mono font-bold text-amber-400 text-xs">
+          </div>
+          <div>
+            <label class="text-slate-300 text-[10px] block mb-0.5">តួនាទី (Role)</label>
+            <select id="regRole" onchange="checkSuperAdminRole()" required class="input-cyber w-full rounded-xl p-2 text-xs font-semibold text-sky-400 outline-none">
+              <option value="បុគ្គលិកធម្មតា">បុគ្គលិកធម្មតា</option>
+              <option value="Senior Staff">Senior Staff</option>
+              <option value="Team Leader">Team Leader</option>
+              <option value="អនុប្រធានសាខា">អនុប្រធានសាខា</option>
+              <option value="ប្រធានសាខា">ប្រធានសាខា</option>
+              <option value="Super Admin">Super Admin</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="superAdminKeyBox" class="hidden bg-rose-950/40 border border-rose-800/60 p-2 rounded-xl">
+          <label class="text-rose-400 text-[9.5px] block font-bold">Super Admin Master Key</label>
+          <input type="password" id="regSecretKey" placeholder="SUPER@ONLINE#2026" class="input-cyber w-full rounded-lg p-1.5 font-mono text-xs mt-0.5">
+        </div>
+
+        <div>
+          <label class="text-slate-300 text-[10px] block mb-0.5">Gmail</label>
+          <input type="email" id="regGmail" placeholder="chanthanuon754@gmail.com" required class="input-cyber w-full rounded-xl p-2 text-xs">
+        </div>
+
+        <div>
+          <label class="text-slate-300 text-[10px] block mb-0.5">លេខសម្ងាត់ (Password)</label>
+          <input type="password" id="regPassword" placeholder="យ៉ាងតិច ៦ ខ្ទង់" minlength="6" required class="input-cyber w-full rounded-xl p-2 text-xs">
+        </div>
+
+        <button type="submit" id="btnRegSubmit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-lg transition flex items-center justify-center gap-2 mt-1">
+          <i class="fa-solid fa-user-plus text-xs"></i>
+          <span>ចុះឈ្មោះចូលប្រព័ន្ធ</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN APP CONTAINER ==================== -->
   <div class="w-full max-w-md glass-panel rounded-[32px] p-4 sm:p-5 flex flex-col justify-between space-y-4">
     
     <div>
@@ -124,20 +211,25 @@
       <div class="bg-[#0a1020]/80 border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between mb-3 shadow-sm">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-700 to-sky-500 flex items-center justify-center font-bold text-white text-sm shadow-md shadow-blue-600/30">
-            <span id="userInitial">SR</span>
+            <span id="userInitial">NC</span>
           </div>
           <div>
-            <h2 id="userName" class="font-bold text-slate-100 text-xs">Sok Rasmey</h2>
+            <h2 id="userName" class="font-bold text-slate-100 text-xs">Mr. Nuon Chantha</h2>
             <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5 font-mono">
-              <span>Staff ID: <b id="userStaffId" class="text-amber-400">1022</b></span>
+              <span>Staff ID: <b id="userStaffId" class="text-amber-400">1954</b></span>
               <span>•</span>
               <span id="userLocationBadge" class="text-sky-400 font-semibold font-sans">Office Bavet</span>
             </div>
           </div>
         </div>
-        <button onclick="refreshData()" class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
-          <i class="fa-solid fa-rotate text-xs"></i>
-        </button>
+        <div class="flex items-center space-x-1.5">
+          <button onclick="refreshData()" title="Refresh" class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-rotate text-xs"></i>
+          </button>
+          <button onclick="handleLogout()" title="Logout" class="w-8 h-8 rounded-xl bg-rose-950/40 border border-rose-900/60 flex items-center justify-center text-rose-400 hover:text-rose-300 transition">
+            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+          </button>
+        </div>
       </div>
 
       <!-- 2. QUICK STATUS BAR -->
@@ -152,7 +244,7 @@
         </div>
       </div>
 
-      <!-- 3. NAVIGATION TABS (៣ ប៊ូតុង៖ ១. ស្នើសុំ, ២. Stock Out, ៣. Return) -->
+      <!-- 3. NAVIGATION TABS (៣ ប៊ូតុង) -->
       <div class="grid grid-cols-3 gap-1.5 bg-[#050811] p-1.5 rounded-2xl border border-slate-800/90 mb-3.5">
         <button onclick="switchTab('request')" id="btnTabRequest" class="py-2.5 rounded-xl font-bold text-[11px] tab-active transition flex items-center justify-center gap-1 border border-transparent">
           <i class="fa-solid fa-paper-plane text-[10px]"></i>
@@ -183,20 +275,11 @@
             <i class="fa-solid fa-globe" style="color: rgba(0, 210, 255, 0.3); font-size: 16px;"></i>
           </div>
 
-          <!-- Name Team, Date, Month -->
+          <!-- Name Team (Auto Lock), Date, Month -->
           <div class="grid grid-cols-12 gap-2">
             <div class="col-span-5">
-              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Name Team</label>
-              <select id="req_nameTeam" onchange="onReqStaffMemberChange()" class="input-cyber w-full rounded-xl p-2 text-xs font-semibold text-sky-300 outline-none">
-                <option value="">-- Select Member --</option>
-                <option value="Va Kongkea">Va Kongkea</option>
-                <option value="Sok Rasmey" selected>Sok Rasmey</option>
-                <option value="Nuon Chantha">Nuon Chantha</option>
-                <option value="Pouk Sokha">Pouk Sokha</option>
-                <option value="Chhuey Thyda">Chhuey Thyda</option>
-                <option value="Sous Vuthy">Sous Vuthy</option>
-                <option value="Sum Vechorvorn">Sum Vechorvorn</option>
-              </select>
+              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Name Team (Auto Lock)</label>
+              <input type="text" id="req_nameTeam" readonly class="input-cyber input-readonly-auto w-full rounded-xl p-2 text-xs font-mono outline-none">
             </div>
             <div class="col-span-4">
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Date Stock Out</label>
@@ -205,36 +288,33 @@
             <div class="col-span-3">
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Month</label>
               <select id="req_monthSelect" disabled class="input-cyber w-full rounded-xl p-2 font-mono text-[10.5px] opacity-80">
-                <option value="">Month</option>
-                <option value="1">January</option><option value="2">February</option><option value="3">March</option>
-                <option value="4">April</option><option value="5">May</option><option value="6">June</option>
-                <option value="7">July</option><option value="8">August</option><option value="9">September</option>
-                <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
+                <option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option>
+                <option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option>
+                <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option>
               </select>
             </div>
           </div>
 
-          <!-- Location Name & Department Name -->
+          <!-- Location Name & Department Name (២៥ ផ្នែកពេញលេញ) -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Location Name</label>
               <select id="req_locationSelect" onchange="autoFillReqLocationCode()" class="input-cyber w-full rounded-xl p-2 text-xs outline-none" required>
-                <option value="">-- Select Location --</option>
-                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse at Head Office</option>
+                <option value="Office Bavet" selected>Office Bavet</option>
+                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse</option>
                 <option value="Department IMO">Department IMO</option>
                 <option value="Department Network and System">Department Network and System</option>
                 <option value="Department Technical Support">Department Technical Support</option>
                 <option value="Office BTB">Office BTB</option>
                 <option value="Office SRP">Office SRP</option>
                 <option value="Offce SHV">Offce SHV</option>
-                <option value="Office Bavet" selected>Office Bavet</option>
                 <option value="Office Poipet">Office Poipet</option>
               </select>
             </div>
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Department Name</label>
               <select id="req_deptSelect" onchange="autoFillReqDepartmentCode()" class="input-cyber w-full rounded-xl p-2 text-xs outline-none" required>
-                <option value="">-- Select Department --</option>
                 <option value="Installation and Maintenance (IMO)" selected>Installation and Maintenance (IMO)</option>
                 <option value="Outside-Planning (OSP)">Outside-Planning (OSP)</option>
                 <option value="Project Planning">Project Planning</option>
@@ -269,14 +349,14 @@
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Location Code</label>
               <div class="relative">
-                <input type="text" id="req_locationCode" placeholder="Enter location code" readonly required class="input-cyber w-full rounded-xl p-2 pr-8 font-mono text-slate-300 text-xs">
+                <input type="text" id="req_locationCode" value="010" readonly required class="input-cyber w-full rounded-xl p-2 pr-8 font-mono text-slate-300 text-xs">
                 <i class="fa-solid fa-qrcode absolute right-2.5 top-2.5" style="color: var(--neon-blue);"></i>
               </div>
             </div>
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Department Code</label>
               <div class="relative">
-                <input type="text" id="req_deptCode" placeholder="Enter department code" readonly required class="input-cyber w-full rounded-xl p-2 pr-8 font-mono text-slate-300 text-xs">
+                <input type="text" id="req_deptCode" value="010" readonly required class="input-cyber w-full rounded-xl p-2 pr-8 font-mono text-slate-300 text-xs">
                 <i class="fa-solid fa-qrcode absolute right-2.5 top-2.5" style="color: var(--neon-blue);"></i>
               </div>
             </div>
@@ -355,15 +435,12 @@
             </button>
           </div>
 
-          <div id="approvedList" class="space-y-2.5">
-            <!-- Render items here -->
-          </div>
+          <div id="approvedList" class="space-y-2.5"></div>
         </div>
       </div>
 
-      <!-- ==================== VIEW 3: RETURN ឧបករណ៍ (ខូច / ចាស់) ==================== -->
+      <!-- ==================== VIEW 3: RETURN ឧបករណ៍ ==================== -->
       <div id="viewReturn" class="hidden space-y-3">
-        <!-- LOCATION INFORMATION (RETURN) -->
         <div class="bg-[#0a1020] border border-amber-900/40 rounded-2xl p-3.5 shadow-sm space-y-3">
           <div class="flex items-center justify-between border-b border-slate-800 pb-2">
             <div class="flex items-center space-x-2 text-amber-400 font-bold">
@@ -376,19 +453,11 @@
             <i class="fa-solid fa-rotate-left" style="color: rgba(245, 158, 11, 0.4); font-size: 16px;"></i>
           </div>
 
-          <!-- Name Team, Date Return, Month -->
+          <!-- Name Team (Auto Lock), Date Return, Month -->
           <div class="grid grid-cols-12 gap-2">
             <div class="col-span-5">
-              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Name Team</label>
-              <select id="ret_nameTeam" class="input-cyber w-full rounded-xl p-2 text-xs font-semibold text-amber-300 outline-none">
-                <option value="Va Kongkea">Va Kongkea</option>
-                <option value="Sok Rasmey" selected>Sok Rasmey</option>
-                <option value="Nuon Chantha">Nuon Chantha</option>
-                <option value="Pouk Sokha">Pouk Sokha</option>
-                <option value="Chhuey Thyda">Chhuey Thyda</option>
-                <option value="Sous Vuthy">Sous Vuthy</option>
-                <option value="Sum Vechorvorn">Sum Vechorvorn</option>
-              </select>
+              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Name Team (Auto Lock)</label>
+              <input type="text" id="ret_nameTeam" readonly class="input-cyber input-readonly-auto w-full rounded-xl p-2 text-xs font-mono outline-none">
             </div>
             <div class="col-span-4">
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Date Return</label>
@@ -405,27 +474,23 @@
             </div>
           </div>
 
-          <!-- Location Name & Department Name (🌟 បានបន្ថែមគ្រប់ ២៥ ផ្នែកពេញលេញ) -->
+          <!-- Location Name & Department Name (២៥ ផ្នែកពេញលេញ) -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Location Name</label>
               <select id="ret_locationSelect" onchange="autoFillRetLocationCode()" class="input-cyber w-full rounded-xl p-2 text-xs outline-none" required>
-                <option value="">-- Select Location --</option>
-                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse at Head Office</option>
+                <option value="Office Bavet" selected>Office Bavet</option>
+                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse</option>
                 <option value="Department IMO">Department IMO</option>
-                <option value="Department Network and System">Department Network and System</option>
-                <option value="Department Technical Support">Department Technical Support</option>
                 <option value="Office BTB">Office BTB</option>
                 <option value="Office SRP">Office SRP</option>
                 <option value="Offce SHV">Offce SHV</option>
-                <option value="Office Bavet" selected>Office Bavet</option>
                 <option value="Office Poipet">Office Poipet</option>
               </select>
             </div>
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Department Name</label>
               <select id="ret_deptSelect" onchange="autoFillRetDepartmentCode()" class="input-cyber w-full rounded-xl p-2 text-xs outline-none" required>
-                <option value="">-- Select Department --</option>
                 <option value="Installation and Maintenance (IMO)" selected>Installation and Maintenance (IMO)</option>
                 <option value="Outside-Planning (OSP)">Outside-Planning (OSP)</option>
                 <option value="Project Planning">Project Planning</option>
@@ -489,7 +554,6 @@
               </select>
             </div>
 
-            <!-- Serial No. -->
             <div>
               <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">Serial No. (លេខស៊េរីម៉ាស៊ីន) *</label>
               <div class="relative">
@@ -500,7 +564,6 @@
               </div>
             </div>
 
-            <!-- Mac Serial -->
             <div>
               <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">Mac Serial (MAC Address)</label>
               <div class="relative">
@@ -511,7 +574,6 @@
               </div>
             </div>
 
-            <!-- Condition, Qty, Ticket -->
             <div class="grid grid-cols-3 gap-2">
               <div>
                 <label class="text-slate-400 text-[10px] block mb-1 font-medium">Condition *</label>
@@ -532,7 +594,7 @@
 
             <div>
               <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">មូលហេតុនៃការខូច / ដោះត្រឡប់ (Fault Reason) *</label>
-              <input type="text" id="ret_reason" placeholder="ឧ. រន្ទះបាញ់ដាច់ភ្លើង, ខូច Port LAN, អតិថិជនផ្តាច់សេវា..." required class="input-cyber w-full rounded-xl p-2.5 text-slate-100 text-xs">
+              <input type="text" id="ret_reason" placeholder="ឧ. រន្ទះបាញ់ដាច់ភ្លើង, ខូច Port LAN..." required class="input-cyber w-full rounded-xl p-2.5 text-slate-100 text-xs">
             </div>
 
             <button type="submit" id="btnRetAction" class="btn-submit-return w-full py-3.5 text-white font-extrabold text-xs shadow-lg transition flex items-center justify-center gap-2 mt-2 uppercase tracking-wider">
@@ -551,11 +613,9 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL SUBMIT STOCK OUT ==================== -->
+  <!-- ==================== 🌟 MODAL SUBMIT STOCK OUT (មាន ២៥ DEPARTMENTS ពេញលេញ) ==================== -->
   <div id="modalStockOut" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="w-full max-w-[380px] cyber-modal-card p-4 sm:p-5 space-y-3.5 my-auto">
-      
-      <!-- Modal Header -->
       <div class="flex justify-between items-center pb-1">
         <h3 class="font-bold text-emerald-400 text-[13px] tracking-wide">
           បញ្ជាក់ដំឡើង &amp; Submit ចូល Stock Out
@@ -565,18 +625,15 @@
         </button>
       </div>
 
-      <!-- Details Box -->
       <div class="cyber-info-box p-3 space-y-1">
         <div class="text-slate-500 text-[9px] font-medium tracking-wider">ឧបករណ៍ដែលត្រូវចេញស្តុក៖</div>
-        <div id="so_displayItem" class="font-bold text-slate-100 text-[11px] leading-snug">
-          Patch Cord SC/UPC-SC/APC 1.5m (ចំនួន: 11111 | Ticket: 1111)
-        </div>
+        <div id="so_displayItem" class="font-bold text-slate-100 text-[11px] leading-snug">--</div>
       </div>
 
       <form onsubmit="handleStockOutConfirm(event)" class="space-y-3 text-xs">
         <input type="hidden" id="so_reqId">
 
-        <!-- LOCATION INFORMATION BLOCK IN SUBMIT MODAL -->
+        <!-- LOCATION INFORMATION (Auto Lock Name Team + ២៥ DEPARTMENTS) -->
         <div class="cyber-info-box p-3 space-y-2.5 border border-sky-900/40">
           <div class="flex items-center justify-between border-b border-slate-800/80 pb-1.5">
             <div class="flex items-center space-x-1.5 text-sky-400 font-bold text-[10.5px]">
@@ -586,20 +643,10 @@
             <i class="fa-solid fa-globe" style="color: rgba(0, 210, 255, 0.3); font-size: 13px;"></i>
           </div>
 
-          <!-- Name Team, Date Stock Out, Month -->
           <div class="grid grid-cols-12 gap-2">
             <div class="col-span-5">
-              <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Name Team</label>
-              <select id="nameTeam" onchange="updateTeamDisplay()" class="cyber-field-input w-full p-1.5 text-[10px] font-semibold text-sky-300 outline-none" required>
-                <option value="">-- Select Member --</option>
-                <option value="Va Kongkea">Va Kongkea</option>
-                <option value="Sok Rasmey" selected>Sok Rasmey</option>
-                <option value="Nuon Chantha">Nuon Chantha</option>
-                <option value="Pouk Sokha">Pouk Sokha</option>
-                <option value="Chhuey Thyda">Chhuey Thyda</option>
-                <option value="Sous Vuthy">Sous Vuthy</option>
-                <option value="Sum Vechorvorn">Sum Vechorvorn</option>
-              </select>
+              <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Name Team (Auto Lock)</label>
+              <input type="text" id="nameTeam" readonly class="cyber-field-input input-readonly-auto w-full p-1.5 text-[10px] font-mono outline-none">
             </div>
             <div class="col-span-4">
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Date Stock Out</label>
@@ -608,37 +655,33 @@
             <div class="col-span-3">
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Month</label>
               <select id="monthSelect" disabled class="cyber-field-input w-full p-1.5 font-mono text-[9.5px] opacity-80">
-                <option value="">Month</option>
-                <option value="1">January</option><option value="2">February</option><option value="3">March</option>
-                <option value="4">April</option><option value="5">May</option><option value="6">June</option>
-                <option value="7">July</option><option value="8">August</option><option value="9">September</option>
-                <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
+                <option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option>
+                <option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option>
+                <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option>
               </select>
-              <input type="hidden" id="monthInput">
             </div>
           </div>
 
-          <!-- Location Name & Department Name -->
+          <!-- Location Name & Department Name (🌟 ២៥ ផ្នែកពេញលេញបេះបិទ) -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Location Name</label>
               <select id="locationSelect" onchange="autoFillLocationCode()" class="cyber-field-input w-full p-1.5 text-[9.5px] outline-none" required>
-                <option value="">-- Select Location --</option>
-                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse at Head Office</option>
+                <option value="Office Bavet" selected>Office Bavet</option>
+                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse</option>
                 <option value="Department IMO">Department IMO</option>
                 <option value="Department Network and System">Department Network and System</option>
                 <option value="Department Technical Support">Department Technical Support</option>
                 <option value="Office BTB">Office BTB</option>
                 <option value="Office SRP">Office SRP</option>
                 <option value="Offce SHV">Offce SHV</option>
-                <option value="Office Bavet" selected>Office Bavet</option>
                 <option value="Office Poipet">Office Poipet</option>
               </select>
             </div>
             <div>
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Department Name</label>
               <select id="deptSelect" onchange="autoFillDepartmentCode()" class="cyber-field-input w-full p-1.5 text-[9.5px] outline-none" required>
-                <option value="">-- Select Department --</option>
                 <option value="Installation and Maintenance (IMO)" selected>Installation and Maintenance (IMO)</option>
                 <option value="Outside-Planning (OSP)">Outside-Planning (OSP)</option>
                 <option value="Project Planning">Project Planning</option>
@@ -668,66 +711,54 @@
             </div>
           </div>
 
-          <!-- Location Code & Department Code -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Location Code</label>
               <div class="relative">
-                <input type="text" id="locationCode" placeholder="Enter location code" readonly required class="cyber-field-input w-full p-1.5 pr-7 font-mono text-slate-300 text-[9.5px]">
+                <input type="text" id="locationCode" value="010" readonly class="cyber-field-input w-full p-1.5 pr-7 font-mono text-slate-300 text-[9.5px]">
                 <i class="fa-solid fa-qrcode absolute right-2 top-2" style="color: var(--neon-blue); font-size: 11px;"></i>
               </div>
             </div>
             <div>
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Department Code</label>
               <div class="relative">
-                <input type="text" id="deptCode" placeholder="Enter department code" readonly required class="cyber-field-input w-full p-1.5 pr-7 font-mono text-slate-300 text-[9.5px]">
+                <input type="text" id="deptCode" value="010" readonly class="cyber-field-input w-full p-1.5 pr-7 font-mono text-slate-300 text-[9.5px]">
                 <i class="fa-solid fa-qrcode absolute right-2 top-2" style="color: var(--neon-blue); font-size: 11px;"></i>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Serial No. Field -->
         <div>
           <label class="text-slate-300 text-[10px] block mb-1 font-medium">Serial No. (លេខស៊េរីម៉ាស៊ីន) *</label>
           <div class="relative">
-            <input type="text" id="so_serial" placeholder="បញ្ចូល Serial..." required class="cyber-field-input w-full p-2.5 pr-11 text-slate-100 font-mono text-[11px] placeholder:text-slate-600">
+            <input type="text" id="so_serial" placeholder="បញ្ចូល Serial..." required class="cyber-field-input w-full p-2.5 pr-11 text-slate-100 font-mono text-[11px]">
             <button type="button" onclick="startScanner('so_serial')" class="absolute right-3 top-2.5 text-slate-400 barcode-icon-svg" title="ស្កេន Barcode">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M2 4h2v16H2V4zm4 0h1v16H6V4zm3 0h2v16H9V4zm4 0h1v16h-1V4zm3 0h2v16h-2V4zm4 0h2v16h-2V4z"/>
-              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M2 4h2v16H2V4zm4 0h1v16H6V4zm3 0h2v16H9V4zm4 0h1v16h-1V4zm3 0h2v16h-2V4zm4 0h2v16h-2V4z"/></svg>
             </button>
           </div>
         </div>
 
-        <!-- Mac Serial Field -->
         <div>
           <label class="text-slate-300 text-[10px] block mb-1 font-medium">Mac Serial (MAC Address)</label>
           <div class="relative">
-            <input type="text" id="so_mac" placeholder="បញ្ចូល MAC..." class="cyber-field-input active-glow w-full p-2.5 pr-11 text-slate-100 font-mono text-[11px] placeholder:text-slate-600">
+            <input type="text" id="so_mac" placeholder="បញ្ចូល MAC..." class="cyber-field-input active-glow w-full p-2.5 pr-11 text-slate-100 font-mono text-[11px]">
             <button type="button" onclick="startScanner('so_mac')" class="absolute right-3 top-2.5 text-slate-400 barcode-icon-svg" title="ស្កេន Barcode">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M2 4h2v16H2V4zm4 0h1v16H6V4zm3 0h2v16H9V4zm4 0h1v16h-1V4zm3 0h2v16h-2V4zm4 0h2v16h-2V4z"/>
-              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M2 4h2v16H2V4zm4 0h1v16H6V4zm3 0h2v16H9V4zm4 0h1v16h-1V4zm3 0h2v16h-2V4zm4 0h2v16h-2V4z"/></svg>
             </button>
           </div>
         </div>
 
-        <!-- Port / Remark Field -->
         <div>
           <label class="text-slate-300 text-[10px] block mb-1 font-medium">Port / Remark</label>
           <input type="text" id="so_remark" value="Port 1 - New Install" class="cyber-field-input w-full p-2.5 text-slate-100 text-[11px]">
         </div>
 
-        <!-- Submit Button -->
         <button type="submit" id="btnConfirmAction" class="btn-submit-stockout w-full py-3.5 text-white font-extrabold text-[11.5px] tracking-wide flex items-center justify-center gap-2 mt-2 uppercase">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-          </svg>
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
           <span>SUBMIT ចូល STOCK OUT ផ្លូវការ</span>
         </button>
       </form>
-
     </div>
   </div>
 
@@ -750,8 +781,7 @@
       try { tg.enableClosingConfirmation(); } catch(e) {}
     }
 
-    let currentStaff = { staffId: "1022", fullName: "Sok Rasmey", role: "Staff" };
-
+    let currentStaff = null;
     let productDatabase = {};
     let html5QrcodeScanner = null;
     let scanTargetInputId = null;
@@ -796,7 +826,130 @@
       "Support & IT": "250"
     };
 
-    // Auto Fill សម្រាប់ Request Tab
+    // ================= 🌟 AUTHENTICATION LOGIC =================
+    function toggleAuthTab(tab) {
+      if(tab === 'login') {
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('registerForm').classList.add('hidden');
+        document.getElementById('tabBtnLogin').className = "flex-1 py-1.5 rounded-lg font-bold text-xs bg-blue-600 text-white shadow-xs transition";
+        document.getElementById('tabBtnRegister').className = "flex-1 py-1.5 rounded-lg font-bold text-xs text-slate-400 hover:text-slate-200 transition";
+      } else {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('registerForm').classList.remove('hidden');
+        document.getElementById('tabBtnRegister').className = "flex-1 py-1.5 rounded-lg font-bold text-xs bg-blue-600 text-white shadow-xs transition";
+        document.getElementById('tabBtnLogin').className = "flex-1 py-1.5 rounded-lg font-bold text-xs text-slate-400 hover:text-slate-200 transition";
+      }
+    }
+
+    function checkSuperAdminRole() {
+      const role = document.getElementById('regRole').value;
+      const keyBox = document.getElementById('superAdminKeyBox');
+      if (role === 'Super Admin') {
+        keyBox.classList.remove('hidden');
+        document.getElementById('regSecretKey').required = true;
+      } else {
+        keyBox.classList.add('hidden');
+        document.getElementById('regSecretKey').required = false;
+      }
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnLoginSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> កំពុងផ្ទៀងផ្ទាត់...';
+
+      const payload = {
+        action: 'login',
+        identifier: document.getElementById('loginIdentifier').value.trim(),
+        password: document.getElementById('loginPassword').value
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const json = await res.json();
+        
+        if (json.success) {
+          currentStaff = json.user;
+          localStorage.setItem('micromax_mini_user', JSON.stringify(currentStaff));
+          document.getElementById('authScreen').classList.add('hidden');
+          applyStaffIdentity();
+        } else {
+          alert("❌ " + json.message);
+        }
+      } catch(err) {
+        alert("កំហុសក្នុងការតភ្ជាប់ Server!");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>ចូលប្រើប្រាស់</span><i class="fa-solid fa-arrow-right text-xs ml-1"></i>';
+      }
+    }
+
+    async function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnRegSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> កំពុងកត់ត្រា...';
+
+      const payload = {
+        action: 'register',
+        fullName: document.getElementById('regFullName').value.trim(),
+        staffId: document.getElementById('regStaffId').value.trim(),
+        role: document.getElementById('regRole').value,
+        secretKey: document.getElementById('regSecretKey') ? document.getElementById('regSecretKey').value : '',
+        gmail: document.getElementById('regGmail').value.trim(),
+        password: document.getElementById('regPassword').value
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const json = await res.json();
+        
+        if (json.success) {
+          alert("✅ " + json.message);
+          toggleAuthTab('login');
+          document.getElementById('loginIdentifier').value = payload.staffId;
+        } else {
+          alert("❌ " + json.message);
+        }
+      } catch(err) {
+        alert("កំហុសក្នុងការចុះឈ្មោះ!");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-user-plus text-xs mr-1"></i><span>ចុះឈ្មោះចូលប្រព័ន្ធ</span>';
+      }
+    }
+
+    function checkAuth() {
+      const saved = localStorage.getItem('micromax_mini_user');
+      if (saved) {
+        currentStaff = JSON.parse(saved);
+        document.getElementById('authScreen').classList.add('hidden');
+        applyStaffIdentity();
+      } else {
+        document.getElementById('authScreen').classList.remove('hidden');
+      }
+    }
+
+    function handleLogout() {
+      if (confirm("តើអ្នកពិតជាចង់ចាកចេញពីគណនីនេះមែនទេ?")) {
+        localStorage.removeItem('micromax_mini_user');
+        currentStaff = null;
+        document.getElementById('authScreen').classList.remove('hidden');
+      }
+    }
+
+    function applyStaffIdentity() {
+      if (!currentStaff) return;
+      document.getElementById('userName').innerText = currentStaff.fullName;
+      document.getElementById('userStaffId').innerText = currentStaff.staffId;
+      document.getElementById('userInitial').innerText = currentStaff.fullName.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase();
+
+      if (document.getElementById('req_nameTeam')) document.getElementById('req_nameTeam').value = currentStaff.fullName;
+      if (document.getElementById('nameTeam')) document.getElementById('nameTeam').value = currentStaff.fullName;
+      if (document.getElementById('ret_nameTeam')) document.getElementById('ret_nameTeam').value = currentStaff.fullName;
+    }
+
     function autoFillReqLocationCode() {
       const loc = document.getElementById('req_locationSelect').value;
       document.getElementById('req_locationCode').value = locationCodeMap[loc] || "010";
@@ -816,14 +969,6 @@
       }
     }
 
-    function onReqStaffMemberChange() {
-      const name = document.getElementById('req_nameTeam').value;
-      currentStaff.fullName = name;
-      document.getElementById('userName').innerText = name;
-      document.getElementById('userInitial').innerText = name.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase();
-    }
-
-    // Auto Fill សម្រាប់ Submit Modal
     function autoFillLocationCode() {
       const loc = document.getElementById('locationSelect').value;
       document.getElementById('locationCode').value = locationCodeMap[loc] || "010";
@@ -838,22 +983,10 @@
       const dt = document.getElementById('dateStockOut').value;
       if (dt) {
         const d = new Date(dt);
-        const m = (d.getMonth() + 1).toString();
-        document.getElementById('monthSelect').value = m;
-        document.getElementById('monthInput').value = m;
+        document.getElementById('monthSelect').value = (d.getMonth() + 1).toString();
       }
     }
 
-    function updateTeamDisplay() {
-      const name = document.getElementById('nameTeam').value;
-      if (name) {
-        currentStaff.fullName = name;
-        document.getElementById('userName').innerText = name;
-        document.getElementById('userInitial').innerText = name.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase();
-      }
-    }
-
-    // Auto Fill សម្រាប់ Return View
     function autoFillRetLocationCode() {
       const loc = document.getElementById('ret_locationSelect').value;
       document.getElementById('ret_locationCode').value = locationCodeMap[loc] || "010";
@@ -887,7 +1020,6 @@
       if (!document.getElementById('dateStockOut').value) {
         document.getElementById('dateStockOut').value = todayStr;
         document.getElementById('monthSelect').value = monthStr;
-        document.getElementById('monthInput').value = monthStr;
       }
       if (!document.getElementById('ret_dateReturn').value) {
         document.getElementById('ret_dateReturn').value = todayStr;
@@ -895,7 +1027,6 @@
       }
     }
 
-    // ការប្ដូរ Tab ទាំង ៣
     function switchTab(tab) {
       const tabs = ['request', 'submit', 'return'];
       tabs.forEach(t => {
@@ -908,9 +1039,7 @@
       if (activeView) activeView.classList.remove('hidden');
 
       const activeBtn = document.getElementById(`btnTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
-      if (activeBtn) {
-        activeBtn.className = "py-2.5 rounded-xl font-bold text-[11px] tab-active transition flex items-center justify-center gap-1 border border-transparent";
-      }
+      if (activeBtn) activeBtn.className = "py-2.5 rounded-xl font-bold text-[11px] tab-active transition flex items-center justify-center gap-1 border border-transparent";
 
       if (tab === 'submit') loadApprovedItems();
     }
@@ -936,6 +1065,8 @@
 
     async function handleRequestSubmit(e) {
       e.preventDefault();
+      if (!currentStaff) return alert("សូម Login ជាមុនសិន!");
+
       const btn = document.getElementById('btnReqAction');
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងបញ្ជូន...';
@@ -944,7 +1075,7 @@
       const payload = {
         action: 'submitRequisition',
         staffId: currentStaff.staffId,
-        staffName: document.getElementById('req_nameTeam').value,
+        staffName: currentStaff.fullName,
         staffRole: currentStaff.role,
         productName: p,
         itemCode: productDatabase[p] ? productDatabase[p].code : '',
@@ -964,6 +1095,7 @@
         if (json.success) {
           e.target.reset();
           document.getElementById('req_qty').value = "1";
+          applyStaffIdentity();
         }
       } catch(err) {
         alert("កំហុសក្នុងការតភ្ជាប់!");
@@ -973,9 +1105,10 @@
       }
     }
 
-    // ការបញ្ជូន Return ឧបករណ៍
     async function handleReturnSubmit(e) {
       e.preventDefault();
+      if (!currentStaff) return alert("សូម Login ជាមុនសិន!");
+
       const btn = document.getElementById('btnRetAction');
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងកត់ត្រា Return...';
@@ -993,7 +1126,7 @@
         customerTicket: document.getElementById('ret_ticket').value,
         reason: document.getElementById('ret_reason').value,
         locationCode: document.getElementById('ret_locationCode').value,
-        nameTeam: document.getElementById('ret_nameTeam').value
+        nameTeam: currentStaff.fullName
       };
 
       try {
@@ -1003,6 +1136,7 @@
         if (json.success) {
           e.target.reset();
           document.getElementById('ret_qty').value = "1";
+          applyStaffIdentity();
         }
       } catch(err) {
         alert("កំហុសក្នុងការកត់ត្រា Return!");
@@ -1082,6 +1216,7 @@
     function openStockOutForm(reqId, itemCode, prodName, qty, ticket) {
       document.getElementById('so_reqId').value = reqId;
       document.getElementById('so_displayItem').innerText = `${prodName} (ចំនួន: ${qty} | Ticket: ${ticket})`;
+      applyStaffIdentity();
       document.getElementById('modalStockOut').classList.remove('hidden');
     }
 
@@ -1091,6 +1226,8 @@
 
     async function handleStockOutConfirm(e) {
       e.preventDefault();
+      if (!currentStaff) return alert("សូម Login ជាមុនសិន!");
+
       const btn = document.getElementById('btnConfirmAction');
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុង Submit...';
@@ -1099,7 +1236,7 @@
         action: 'verifyRequisition',
         reqId: document.getElementById('so_reqId').value,
         verifiedSerial: document.getElementById('so_serial').value + (document.getElementById('so_mac').value ? ' / ' + document.getElementById('so_mac').value : ''),
-        nameTeam: document.getElementById('nameTeam').value,
+        nameTeam: currentStaff.fullName,
         dateStockOut: document.getElementById('dateStockOut').value,
         locationName: document.getElementById('locationSelect').value,
         locationCode: document.getElementById('locationCode').value,
@@ -1142,6 +1279,7 @@
     }
 
     function refreshData() {
+      checkAuth();
       loadProductCatalog();
       if (!document.getElementById('viewSubmit').classList.contains('hidden')) {
         loadApprovedItems();
@@ -1151,6 +1289,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       updateLiveClock();
       setInterval(updateLiveClock, 30000);
+      checkAuth();
       loadProductCatalog();
       autoFillReqLocationCode();
       autoFillReqDepartmentCode();
