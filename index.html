@@ -112,10 +112,10 @@
   <div id="authScreen" class="fixed inset-0 z-50 bg-[#020610]/95 backdrop-blur-xl flex items-center justify-center p-4">
     <div class="w-full max-w-sm glass-terminal-card rounded-[32px] overflow-hidden border border-sky-500/30 shadow-2xl">
       
-      <!-- BRAND HEADER: LOGO រលាយចូលផ្ទៃខាងក្រោយ ១០០% គ្មានស៊ុមប្រអប់ -->
+      <!-- BRAND HEADER -->
       <div class="p-6 text-center border-b border-sky-950/80 bg-gradient-to-b from-[#081a38] to-[#040b18] relative">
         <div class="flex items-center justify-center mb-1">
-          <img src="https://i.imgur.com/x6OdmSS.png" alt="ONLINE Logo" class="h-11 w-auto object-contain logo-blend-screen drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]">
+          <img src="https://ticket.cogetel.com.kh/__swift/themes/__cp/images/online-logo.png" alt="ONLINE Logo" class="h-11 w-auto object-contain logo-blend-screen drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]">
         </div>
         <h2 class="text-xs font-black text-white tracking-widest uppercase font-mono mt-1">ONLINE STAFF TERMINAL</h2>
         <p class="text-[11px] text-sky-400 font-medium">Regional Telecom Operations &amp; Asset Engine</p>
@@ -208,11 +208,11 @@
   <div class="w-full max-w-md glass-terminal-card rounded-[36px] p-4 sm:p-5 flex flex-col justify-between space-y-4">
     
     <div>
-      <!-- 1. PROFILE & POP TERMINAL HEADER -->
+      <!-- 1. PROFILE & POP TERMINAL HEADER (WITH ABOUT US BUTTON) -->
       <div class="glass-inner-box border border-sky-500/30 rounded-2xl p-3.5 flex items-center justify-between mb-3 shadow-md">
         <div class="flex items-center space-x-3">
           <div class="h-10 flex items-center justify-center shrink-0">
-            <img src="https://i.imgur.com/x6OdmSS.png" alt="ONLINE Logo" class="h-8 w-auto object-contain logo-blend-screen drop-shadow-[0_0_10px_rgba(56,189,248,0.3)]">
+            <img src="https://ticket.cogetel.com.kh/__swift/themes/__cp/images/online-logo.png" alt="ONLINE Logo" class="h-8 w-auto object-contain logo-blend-screen drop-shadow-[0_0_10px_rgba(56,189,248,0.3)]">
           </div>
           <div class="border-l border-slate-700/60 pl-3">
             <div class="flex items-center gap-1.5">
@@ -226,6 +226,10 @@
           </div>
         </div>
         <div class="flex items-center space-x-1.5">
+          <!-- 🌟 ប៊ូតុង អំពីយើង (About Us) -->
+          <button onclick="openAboutModal()" title="អំពីយើង (About ONLINE ISP)" class="w-8 h-8 rounded-xl bg-sky-950/60 border border-sky-700/60 flex items-center justify-center text-sky-400 hover:text-white hover:bg-sky-600 transition shadow-xs">
+            <i class="fa-solid fa-circle-info text-xs"></i>
+          </button>
           <button onclick="refreshData()" title="Refresh" class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
             <i class="fa-solid fa-rotate text-xs"></i>
           </button>
@@ -303,7 +307,6 @@
             </div>
           </div>
 
-          <!-- 🌟 ៩ ទីតាំង & ២៥ ផ្នែកពេញលេញ -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Location Name (ទីតាំង)</label>
@@ -614,6 +617,76 @@
     <!-- TERMINAL FOOTER -->
     <div class="text-center text-[10px] text-slate-500 pt-2 border-t border-slate-800/80 font-mono">
       ONLINE ISP • Regional Engineering Terminal
+    </div>
+  </div>
+
+  <!-- ==================== 🌟 MODAL: អំពីយើង (ABOUT US) ==================== -->
+  <div id="modalAbout" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="w-full max-w-[390px] glass-terminal-card rounded-[32px] p-5 space-y-4 my-auto border border-sky-500/30">
+      
+      <!-- Top Brand Header -->
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-circle-info text-sky-400 text-sm"></i>
+          <span class="font-bold text-slate-100 text-xs uppercase tracking-wider">អំពីយើង (About System)</span>
+        </div>
+        <button onclick="closeAboutModal()" class="w-7 h-7 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Corporate Logo Banner -->
+      <div class="p-4 rounded-2xl bg-gradient-to-b from-[#081a38] to-[#040b18] border border-sky-900/60 text-center space-y-1">
+        <img src="https://ticket.cogetel.com.kh/__swift/themes/__cp/images/online-logo.png" alt="ONLINE Logo" class="h-9 w-auto mx-auto object-contain logo-blend-screen drop-shadow-[0_0_12px_rgba(56,189,248,0.35)]">
+        <h3 class="font-extrabold text-white text-xs tracking-wide">Cogetel Co., Ltd (ONLINE ISP)</h3>
+        <p class="text-[10px] text-sky-300 font-mono">Cambodia's Leading Internet &amp; Telecom Solution</p>
+      </div>
+
+      <!-- Information Details -->
+      <div class="space-y-2 text-[11px] text-slate-300">
+        <div class="p-3 rounded-2xl glass-inner-box space-y-1.5 border border-slate-800">
+          <div class="font-bold text-sky-400 text-[11px] flex items-center gap-1.5">
+            <i class="fa-solid fa-cube"></i>
+            <span>ប្រព័ន្ធគ្រប់គ្រងសម្ភារៈ MicroMax (Pro v3.5)</span>
+          </div>
+          <p class="text-[10.5px] text-slate-400 leading-relaxed">
+            ប្រព័ន្ធឌីជីថលឆ្លាតវៃសម្រាប់គ្រប់គ្រង និងតាមដានឧបករណ៍បណ្តាញអុបទិក (ONU, Switch, Fiber Cable) ការចេញ-ចូលស្តុក និងការដំឡើងជូនអតិថិជនជាក់ស្តែងក្នុងតំបន់។
+          </p>
+        </div>
+
+        <div class="p-3 rounded-2xl glass-inner-box space-y-2 border border-slate-800 font-mono text-[10px]">
+          <div class="flex justify-between items-center border-b border-slate-800/80 pb-1">
+            <span class="text-slate-500 font-sans">សាខាប្រតិបត្តិការ៖</span>
+            <span class="font-bold text-emerald-400 font-sans">Office Bavet</span>
+          </div>
+          <div class="flex justify-between items-center border-b border-slate-800/80 pb-1">
+            <span class="text-slate-500 font-sans">កូដច្រកទ្វារបណ្តាញ (POP):</span>
+            <span class="font-bold text-sky-400 font-mono">10.10.0.1</span>
+          </div>
+          <div class="flex justify-between items-center border-b border-slate-800/80 pb-1">
+            <span class="text-slate-500 font-sans">ប្រព័ន្ធសុវត្ថិភាព៖</span>
+            <span class="font-bold text-amber-400 font-sans">Encrypted Telegram Bot Webhook</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500 font-sans">អ្នកគ្រប់គ្រងបច្ចេកទេស៖</span>
+            <span class="font-bold text-slate-200 font-sans">Mr. Nuon Chantha (Super Admin)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support Hotlines -->
+      <div class="p-3 rounded-2xl bg-sky-950/40 border border-sky-900/60 text-center space-y-1">
+        <div class="text-[10.5px] font-bold text-sky-300 font-sans">ទំនាក់ទំនងផ្នែកជំនួយបច្ចេកទេស (Help Desk)</div>
+        <div class="text-[10px] text-slate-400 font-mono flex items-center justify-center gap-2">
+          <span><i class="fa-solid fa-phone text-sky-400"></i> +855 (0) 81676732</span>
+          <span>•</span>
+          <span><i class="fa-solid fa-envelope text-sky-400"></i> @cogetel1954</span>
+        </div>
+      </div>
+
+      <button onclick="closeAboutModal()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 rounded-xl font-bold text-xs transition">
+        យល់ព្រម / បិទ
+      </button>
     </div>
   </div>
 
@@ -1095,6 +1168,14 @@
       if (activeBtn) activeBtn.className = "py-2.5 rounded-xl font-bold text-[11.5px] tab-active transition flex items-center justify-center gap-1.5 border border-transparent";
 
       if (tab === 'submit') loadApprovedItems();
+    }
+
+    // 🌟 បើក / បិទ ផ្ទាំង Modal អំពីយើង (About Us)
+    function openAboutModal() {
+      document.getElementById('modalAbout').classList.remove('hidden');
+    }
+    function closeAboutModal() {
+      document.getElementById('modalAbout').classList.add('hidden');
     }
 
     async function loadProductCatalog() {
