@@ -45,14 +45,14 @@
       filter: contrast(1.2) brightness(1.15);
     }
     .glass-terminal-card {
-      background: linear-gradient(180deg, rgba(12, 26, 51, 0.88) 0%, rgba(6, 13, 27, 0.96) 100%);
+      background: linear-gradient(180deg, rgba(12, 26, 51, 0.92) 0%, rgba(5, 11, 22, 0.98) 100%);
       backdrop-filter: blur(24px);
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.22);
       box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 35px rgba(2, 132, 199, 0.1);
     }
     .glass-inner-box {
-      background: rgba(4, 9, 20, 0.78);
-      border: 1px solid rgba(30, 58, 138, 0.4);
+      background: rgba(4, 9, 20, 0.85);
+      border: 1px solid rgba(30, 58, 138, 0.45);
     }
     .input-terminal {
       background-color: #030713;
@@ -205,60 +205,77 @@
   </div>
 
   <!-- ==================== MAIN MOBILE TERMINAL CONTAINER ==================== -->
-  <div class="w-full max-w-md glass-terminal-card rounded-[36px] p-4 sm:p-5 flex flex-col justify-between space-y-4">
+  <div class="w-full max-w-md glass-terminal-card rounded-[36px] p-4 sm:p-5 flex flex-col justify-between space-y-3.5">
     
     <div>
-      <!-- 1. PROFILE & POP TERMINAL HEADER (WITH ABOUT US BUTTON) -->
-      <div class="glass-inner-box border border-sky-500/30 rounded-2xl p-3.5 flex items-center justify-between mb-3 shadow-md">
-        <div class="flex items-center space-x-3">
-          <div class="h-10 flex items-center justify-center shrink-0">
-            <img src="https://ticket.cogetel.com.kh/__swift/themes/__cp/images/online-logo.png" alt="ONLINE Logo" class="h-8 w-auto object-contain logo-blend-screen drop-shadow-[0_0_10px_rgba(56,189,248,0.3)]">
-          </div>
-          <div class="border-l border-slate-700/60 pl-3">
-            <div class="flex items-center gap-1.5">
-              <h2 id="userName" class="font-bold text-slate-100 text-xs">Mr. Nuon Chantha</h2>
-              <span id="userInitialBadge" class="px-1.5 py-0.2 bg-sky-950/80 border border-sky-800/60 rounded text-[9px] font-mono text-sky-400 font-bold">1954</span>
-            </div>
-            <div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-0.5 font-mono">
-              <span class="badge-dot"></span>
-              <span id="userLocationBadge" class="text-sky-300 font-semibold font-sans">Office Bavet (Office -BVT)</span>
+      <!-- 🌟 REDESIGNED 2-TIER PROFILE HEADER (មិនចង្អៀត ឈ្មោះមិនបាក់ជួរ) -->
+      <div class="glass-inner-box border border-sky-500/30 rounded-2xl p-3 space-y-2.5 shadow-md">
+        
+        <!-- ជាន់ទី ១: Brand Logo & Action Buttons -->
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
+          <div class="flex items-center space-x-2">
+            <img src="https://ticket.cogetel.com.kh/__swift/themes/__cp/images/online-logo.png" alt="ONLINE Logo" class="h-7 w-auto object-contain logo-blend-screen drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]">
+            <div class="border-l border-slate-700 pl-2">
+              <span class="text-[9px] text-sky-400 font-mono tracking-widest uppercase block font-bold">OPERATIONS HUB</span>
             </div>
           </div>
+          
+          <!-- Control Buttons Group -->
+          <div class="flex items-center space-x-1.5">
+            <button onclick="openAboutModal()" title="អំពីយើង (About System)" class="w-7 h-7 rounded-lg bg-sky-950/60 border border-sky-700/60 flex items-center justify-center text-sky-400 hover:text-white hover:bg-sky-600 transition">
+              <i class="fa-solid fa-circle-info text-xs"></i>
+            </button>
+            <button onclick="refreshData()" title="Refresh Data" class="w-7 h-7 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
+              <i class="fa-solid fa-rotate text-xs"></i>
+            </button>
+            <button onclick="handleLogout()" title="Logout" class="w-7 h-7 rounded-lg bg-rose-950/40 border border-rose-900/60 flex items-center justify-center text-rose-400 hover:text-rose-300 transition">
+              <i class="fa-solid fa-right-from-bracket text-xs"></i>
+            </button>
+          </div>
         </div>
-        <div class="flex items-center space-x-1.5">
-          <!-- 🌟 ប៊ូតុង អំពីយើង (About Us) -->
-          <button onclick="openAboutModal()" title="អំពីយើង (About ONLINE ISP)" class="w-8 h-8 rounded-xl bg-sky-950/60 border border-sky-700/60 flex items-center justify-center text-sky-400 hover:text-white hover:bg-sky-600 transition shadow-xs">
-            <i class="fa-solid fa-circle-info text-xs"></i>
-          </button>
-          <button onclick="refreshData()" title="Refresh" class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
-            <i class="fa-solid fa-rotate text-xs"></i>
-          </button>
-          <button onclick="handleLogout()" title="Logout" class="w-8 h-8 rounded-xl bg-rose-950/40 border border-rose-900/60 flex items-center justify-center text-rose-400 hover:text-rose-300 transition">
-            <i class="fa-solid fa-right-from-bracket text-xs"></i>
-          </button>
+
+        <!-- ជាន់ទី ២: Staff Identity & Location Badge (លាតសន្ធឹងពេញលេញ) -->
+        <div class="flex items-center justify-between pt-0.5">
+          <div class="flex items-center space-x-2">
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-sky-600 to-blue-700 flex items-center justify-center text-white text-xs font-bold">
+              <i class="fa-solid fa-user-gear text-[11px]"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span id="userName" class="font-bold text-slate-100 text-[12px] leading-none">Mr. Nuon Chantha</span>
+                <span id="userInitialBadge" class="px-1.5 py-0.2 bg-sky-950 border border-sky-800/80 rounded text-[9px] font-mono text-sky-400 font-bold">1954</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-1 text-[10px] text-sky-300 font-mono bg-[#030713] px-2 py-1 rounded-lg border border-slate-800">
+            <span class="badge-dot"></span>
+            <span id="userLocationBadge" class="font-sans font-semibold">Office Bavet (Office -BVT)</span>
+          </div>
         </div>
+
       </div>
 
       <!-- 2. QUICK STATUS BAR -->
-      <div class="grid grid-cols-2 gap-2 text-[10px] mb-3.5">
-        <div class="glass-inner-box rounded-xl p-2.5 flex items-center space-x-2">
+      <div class="grid grid-cols-2 gap-2 text-[10px] mb-3 mt-2">
+        <div class="glass-inner-box rounded-xl p-2 flex items-center space-x-2">
           <div class="w-6 h-6 rounded-lg bg-sky-950/80 text-sky-400 flex items-center justify-center text-xs shrink-0"><i class="fa-regular fa-clock"></i></div>
           <div class="truncate">
-            <div class="text-slate-500 text-[8.5px] uppercase tracking-wider font-mono">SYSTEM TIME</div>
+            <div class="text-slate-500 text-[8px] uppercase tracking-wider font-mono">SYSTEM TIME</div>
             <div id="liveTime" class="font-bold text-slate-200 font-mono text-[9.5px]">-- Sept 2026</div>
           </div>
         </div>
-        <div class="glass-inner-box rounded-xl p-2.5 flex items-center space-x-2">
+        <div class="glass-inner-box rounded-xl p-2 flex items-center space-x-2">
           <div class="w-6 h-6 rounded-lg bg-emerald-950/80 text-emerald-400 flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-signal"></i></div>
           <div class="truncate">
-            <div class="text-slate-500 text-[8.5px] uppercase tracking-wider font-mono">GATEWAY STATUS</div>
+            <div class="text-slate-500 text-[8px] uppercase tracking-wider font-mono">GATEWAY STATUS</div>
             <div class="font-bold text-emerald-400 flex items-center gap-1 font-mono text-[9.5px]"><span>ONLINE Bavet</span></div>
           </div>
         </div>
       </div>
 
       <!-- 3. NAVIGATION TABS -->
-      <div class="grid grid-cols-3 gap-1.5 glass-inner-box p-1.5 rounded-2xl mb-3.5">
+      <div class="grid grid-cols-3 gap-1.5 glass-inner-box p-1.5 rounded-2xl mb-3">
         <button onclick="switchTab('request')" id="btnTabRequest" class="py-2.5 rounded-xl font-bold text-[11.5px] tab-active transition flex items-center justify-center gap-1.5 border border-transparent">
           <i class="fa-solid fa-paper-plane text-[10px]"></i>
           <span>១. ស្នើសុំ</span>
@@ -369,7 +386,7 @@
         <!-- REQUISITION FORM -->
         <div class="glass-inner-box rounded-2xl p-3.5 space-y-3">
           <div class="flex items-center space-x-2 text-amber-400 font-bold border-b border-slate-800/80 pb-2">
-            <span class="w-6 h-6 rounded-lg bg-amber-950/80 border border-amber-800/40 flex items-center justify-center text-xs text-amber-400"><i class="fa-solid fa-cart-flatbed"></i></span>
+            <span class="w-6 h-6 rounded-lg bg-amber-950 border border-amber-800/40 flex items-center justify-center text-xs text-amber-400"><i class="fa-solid fa-cart-flatbed"></i></span>
             <span class="text-xs">ទម្រង់ស្នើសុំសម្ភារៈ / ឧបករណ៍បណ្តាញ</span>
           </div>
 
@@ -657,7 +674,7 @@
         <div class="p-3 rounded-2xl glass-inner-box space-y-2 border border-slate-800 font-mono text-[10px]">
           <div class="flex justify-between items-center border-b border-slate-800/80 pb-1">
             <span class="text-slate-500 font-sans">សាខាប្រតិបត្តិការ៖</span>
-            <span class="font-bold text-emerald-400 font-sans">Office Bavet</span>
+            <span class="font-bold text-emerald-400 font-sans">Office Bavet (Office -BVT)</span>
           </div>
           <div class="flex justify-between items-center border-b border-slate-800/80 pb-1">
             <span class="text-slate-500 font-sans">កូដច្រកទ្វារបណ្តាញ (POP):</span>
@@ -884,7 +901,6 @@
     let html5QrcodeScanner = null;
     let scanTargetInputId = null;
 
-    // 🌟 ៩ ទីតាំងត្រឹមត្រូវ ១០០%
     const locationCodeMap = {
       "ChakAngre Krom - Main Warehouse at Head Office": "C_KROM",
       "Department IMO": "DEP-IMO",
@@ -897,7 +913,6 @@
       "Office Poipet": "Office -PPT"
     };
 
-    // 🌟 ២៥ ផ្នែកត្រឹមត្រូវ ១០០%
     const deptCodeMap = {
       "Installation and Maintenance (IMO)": "10",
       "Outside-Planning (OSP)": "20",
@@ -1170,7 +1185,6 @@
       if (tab === 'submit') loadApprovedItems();
     }
 
-    // 🌟 បើក / បិទ ផ្ទាំង Modal អំពីយើង (About Us)
     function openAboutModal() {
       document.getElementById('modalAbout').classList.remove('hidden');
     }
