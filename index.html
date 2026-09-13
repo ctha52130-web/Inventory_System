@@ -3,222 +3,225 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MicroMax - Staff Operations Hub</title>
+  <title>ONLINE ISP - Staff Operations Terminal</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kantumruy+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Inter"', '"Kantumruy Pro"', 'sans-serif'],
-            mono: ['"Inter"', 'monospace']
+            sans: ['"Kantumruy Pro"', '"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            brandDark: '#040914',
+            brandNavy: '#071224',
+            panelNavy: '#0c1a33',
+            brandSky: '#0284c7',
+            brandCyan: '#06b6d4',
+            brandEmerald: '#10b981',
+            brandAmber: '#f59e0b'
           }
         }
       }
     }
   </script>
   <style>
-    :root { --neon-blue: #38bdf8; }
     body {
-      font-family: 'Inter', 'Kantumruy Pro', sans-serif;
-      background: radial-gradient(circle at top, #09132b 0%, #03060f 100%);
+      font-family: 'Kantumruy Pro', 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 50% -10%, #0c2144 0%, #030814 100%);
       color: #cbd5e1;
     }
-    .glass-panel {
-      background: rgba(10, 16, 32, 0.94);
-      border: 1px solid rgba(30, 58, 138, 0.35);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    .logo-blend-screen {
+      mix-blend-mode: screen;
+      filter: contrast(1.2) brightness(1.15);
     }
-    .input-cyber {
-      background-color: #040813;
-      border: 1px solid #132038;
+    .glass-terminal-card {
+      background: linear-gradient(180deg, rgba(12, 26, 51, 0.88) 0%, rgba(6, 13, 27, 0.96) 100%);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 35px rgba(2, 132, 199, 0.1);
+    }
+    .glass-inner-box {
+      background: rgba(4, 9, 20, 0.78);
+      border: 1px solid rgba(30, 58, 138, 0.4);
+    }
+    .input-terminal {
+      background-color: #030713;
+      border: 1px solid #162a4d;
       color: #f8fafc;
+      font-family: 'Kantumruy Pro', sans-serif;
       transition: all 0.2s ease;
     }
-    .input-cyber:focus {
+    .input-terminal::placeholder {
+      font-family: 'Kantumruy Pro', sans-serif;
+      color: #64748b;
+      font-size: 11px;
+    }
+    .input-terminal:focus {
       border-color: #38bdf8;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
       outline: none;
     }
     .input-readonly-auto {
-      background-color: #060e20 !important;
-      border: 1px solid #1e3a8a !important;
+      background-color: #050e1f !important;
+      border: 1px solid #1d4ed8 !important;
       color: #38bdf8 !important;
       font-weight: 700;
       cursor: not-allowed;
     }
     .tab-active {
-      background: linear-gradient(90deg, #1d4ed8, #2563eb) !important;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
       color: #ffffff !important;
-      box-shadow: 0 4px 18px rgba(37, 99, 235, 0.45);
-      border: 1px solid #60a5fa !important;
+      box-shadow: 0 4px 18px rgba(2, 132, 199, 0.45);
+      border: 1px solid #38bdf8 !important;
     }
     .btn-submit-stockout {
-      background: linear-gradient(90deg, #059669 0%, #10b981 100%);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
-      border-radius: 18px;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
       transition: all 0.2s ease;
     }
-    .btn-submit-stockout:hover { background: linear-gradient(90deg, #10b981 0%, #34d399 100%); }
+    .btn-submit-stockout:hover { background: linear-gradient(135deg, #10b981 0%, #34d399 100%); }
     .btn-submit-stockout:active { transform: scale(0.98); }
     
     .btn-submit-return {
-      background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
-      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
-      border-radius: 18px;
+      background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
       transition: all 0.2s ease;
     }
-    .btn-submit-return:hover { background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%); }
+    .btn-submit-return:hover { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
     .btn-submit-return:active { transform: scale(0.98); }
 
     .badge-dot {
       display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-      background-color: #10b981; box-shadow: 0 0 8px #10b981;
+      background-color: #10b981; box-shadow: 0 0 10px #10b981;
     }
-    .cyber-modal-card {
-      background-color: #070d19;
-      border: 1px solid #162544;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.95), 0 0 25px rgba(2, 132, 199, 0.08);
-      border-radius: 28px;
-    }
-    .cyber-info-box {
-      background-color: #040813;
-      border: 1px solid #131f38;
-      border-radius: 18px;
-    }
-    .cyber-field-input {
-      background-color: #040813;
-      border: 1px solid #132038;
-      border-radius: 14px;
-      color: #e2e8f0;
-      transition: all 0.2s ease-in-out;
-    }
-    .cyber-field-input:focus, .cyber-field-input.active-glow {
-      border-color: #38bdf8 !important;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4), inset 0 0 4px rgba(56, 189, 248, 0.2);
-      outline: none;
-    }
-    .barcode-icon-svg { opacity: 0.55; transition: opacity 0.2s; }
-    .barcode-icon-svg:hover { opacity: 1; color: #38bdf8; }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-2 sm:p-4 text-xs select-none relative">
+<body class="min-h-screen flex items-center justify-center p-2.5 sm:p-4 text-xs select-none relative">
 
   <!-- ==================== 0. AUTHENTICATION MODAL ==================== -->
-  <div id="authScreen" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
-    <div class="w-full max-w-sm cyber-modal-card p-6 space-y-4 border border-blue-900/50 shadow-2xl">
-      <div class="text-center">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-700 to-sky-500 flex items-center justify-center text-white text-lg mx-auto mb-2 shadow-lg shadow-blue-500/30">
-          <i class="fa-solid fa-cube"></i>
+  <div id="authScreen" class="fixed inset-0 z-50 bg-[#020610]/95 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="w-full max-w-sm glass-terminal-card rounded-[32px] overflow-hidden border border-sky-500/30 shadow-2xl">
+      
+      <!-- BRAND HEADER: LOGO រលាយចូលផ្ទៃខាងក្រោយ ១០០% គ្មានស៊ុមប្រអប់ -->
+      <div class="p-6 text-center border-b border-sky-950/80 bg-gradient-to-b from-[#081a38] to-[#040b18] relative">
+        <div class="flex items-center justify-center mb-1">
+          <img src="https://ticket.cogetel.com.kh/__swift/themes/__cp/images/online-logo.png" alt="ONLINE Logo" class="h-11 w-auto object-contain logo-blend-screen drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]">
         </div>
-        <h2 class="text-sm font-bold text-slate-100">MicroMax Staff Portal</h2>
-        <p class="text-[10px] text-slate-400">ផ្ទៀងផ្ទាត់គណនីបុគ្គលិកជាមួយ Sheet users</p>
+        <h2 class="text-xs font-black text-white tracking-widest uppercase font-mono mt-1">ONLINE STAFF TERMINAL</h2>
+        <p class="text-[11px] text-sky-400 font-medium">Regional Telecom Operations &amp; Asset Engine</p>
       </div>
 
-      <!-- Tab Switcher -->
-      <div class="flex rounded-xl bg-[#040813] p-1 border border-slate-800">
-        <button onclick="toggleAuthTab('login')" id="tabBtnLogin" class="flex-1 py-1.5 rounded-lg font-bold text-xs bg-blue-600 text-white shadow-xs transition">ចូលប្រើ (Login)</button>
-        <button onclick="toggleAuthTab('register')" id="tabBtnRegister" class="flex-1 py-1.5 rounded-lg font-bold text-xs text-slate-400 hover:text-slate-200 transition">ចុះឈ្មោះគណនី</button>
+      <div class="p-6 space-y-4">
+        <div class="flex rounded-2xl bg-[#030713] p-1 border border-slate-800">
+          <button onclick="toggleAuthTab('login')" id="tabBtnLogin" class="flex-1 py-2 rounded-xl font-bold text-xs bg-sky-600 text-white shadow-xs transition">ចូលប្រើ (Sign In)</button>
+          <button onclick="toggleAuthTab('register')" id="tabBtnRegister" class="flex-1 py-2 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 transition">ចុះឈ្មោះគណនី</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3.5">
+          <div>
+            <label class="text-slate-300 text-[11px] block mb-1 font-medium">Gmail ឬ លេខកាតបុគ្គលិក (Staff ID)</label>
+            <div class="relative">
+              <i class="fa-solid fa-id-card absolute left-3.5 top-3 text-slate-500"></i>
+              <input type="text" id="loginIdentifier" placeholder="1954 ឬ Gmail..." required class="input-terminal w-full rounded-2xl pl-9 pr-3 py-2.5 text-xs font-mono">
+            </div>
+          </div>
+
+          <div>
+            <label class="text-slate-300 text-[11px] block mb-1 font-medium">លេខសម្ងាត់ (Password)</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-500"></i>
+              <input type="password" id="loginPassword" placeholder="••••••••" required class="input-terminal w-full rounded-2xl pl-9 pr-3 py-2.5 text-xs">
+            </div>
+          </div>
+
+          <button type="submit" id="btnLoginSubmit" class="w-full py-3 bg-gradient-to-r from-sky-600 via-sky-500 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-sky-950 transition flex items-center justify-center gap-2 mt-2">
+            <span>ផ្ទៀងផ្ទាត់ &amp; ចូលប្រើប្រាស់</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+
+          <div class="text-center pt-1 text-[10px] text-slate-500 font-mono">
+            Master ID: <b class="text-slate-400">1954</b> | Key: <b class="text-slate-400">123456</b>
+          </div>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-3">
+          <div>
+            <label class="text-slate-300 text-[10.5px] block mb-0.5 font-medium">ឈ្មោះពេញ (Full Name)</label>
+            <input type="text" id="regFullName" placeholder="Mr. Nuon Chantha" required class="input-terminal w-full rounded-2xl p-2.5 text-xs">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-slate-300 text-[10.5px] block mb-0.5 font-medium">Staff ID</label>
+              <input type="text" id="regStaffId" placeholder="1954" required class="input-terminal w-full rounded-2xl p-2.5 font-mono font-bold text-amber-400 text-xs">
+            </div>
+            <div>
+              <label class="text-slate-300 text-[10.5px] block mb-0.5 font-medium">តួនាទី (Role)</label>
+              <select id="regRole" onchange="checkSuperAdminRole()" required class="input-terminal w-full rounded-2xl p-2.5 text-xs font-semibold text-sky-400 outline-none">
+                <option value="បុគ្គលិកធម្មតា">Field Staff</option>
+                <option value="Senior Staff">Senior Tech</option>
+                <option value="Team Leader">Team Leader</option>
+                <option value="អនុប្រធានសាខា">Deputy Mgr</option>
+                <option value="ប្រធានសាខា">Branch Mgr</option>
+                <option value="Super Admin">Super Admin</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="superAdminKeyBox" class="hidden bg-rose-950/40 border border-rose-800/60 p-2.5 rounded-2xl">
+            <label class="text-rose-400 text-[9.5px] block font-bold">Super Admin Master Key</label>
+            <input type="password" id="regSecretKey" placeholder="SUPER@ONLINE#2026" class="input-terminal w-full rounded-xl p-2 font-mono text-xs mt-1">
+          </div>
+
+          <div>
+            <label class="text-slate-300 text-[10.5px] block mb-0.5 font-medium">Gmail</label>
+            <input type="email" id="regGmail" placeholder="chanthanuon754@gmail.com" required class="input-terminal w-full rounded-2xl p-2.5 text-xs">
+          </div>
+
+          <div>
+            <label class="text-slate-300 text-[10.5px] block mb-0.5 font-medium">លេខសម្ងាត់ (Password)</label>
+            <input type="password" id="regPassword" placeholder="យ៉ាងតិច ៦ ខ្ទង់" minlength="6" required class="input-terminal w-full rounded-2xl p-2.5 text-xs">
+          </div>
+
+          <button type="submit" id="btnRegSubmit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold shadow-lg transition flex items-center justify-center gap-2 mt-2">
+            <i class="fa-solid fa-user-plus text-xs"></i>
+            <span>ចុះឈ្មោះចូលប្រព័ន្ធ</span>
+          </button>
+        </form>
       </div>
-
-      <!-- LOGIN FORM -->
-      <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3">
-        <div>
-          <label class="text-slate-300 text-[10.5px] block mb-1 font-medium">Gmail ឬ លេខកាតបុគ្គលិក (Staff ID)</label>
-          <div class="relative">
-            <i class="fa-solid fa-id-card absolute left-3 top-2.5 text-slate-500"></i>
-            <input type="text" id="loginIdentifier" placeholder="1954 ឬ Gmail..." required class="input-cyber w-full rounded-xl pl-8 pr-3 py-2 text-xs font-mono">
-          </div>
-        </div>
-
-        <div>
-          <label class="text-slate-300 text-[10.5px] block mb-1 font-medium">លេខសម្ងាត់ (Password)</label>
-          <div class="relative">
-            <i class="fa-solid fa-lock absolute left-3 top-2.5 text-slate-500"></i>
-            <input type="password" id="loginPassword" placeholder="••••••••" required class="input-cyber w-full rounded-xl pl-8 pr-3 py-2 text-xs">
-          </div>
-        </div>
-
-        <button type="submit" id="btnLoginSubmit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg transition flex items-center justify-center gap-2 mt-1">
-          <span>ចូលប្រើប្រាស់</span>
-          <i class="fa-solid fa-arrow-right text-xs"></i>
-        </button>
-
-        <div class="text-center pt-1 text-[10px] text-slate-500 font-mono">
-          គណនីលំនាំដើម: <b>1954</b> | លេខសម្ងាត់: <b>123456</b>
-        </div>
-      </form>
-
-      <!-- REGISTER FORM -->
-      <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-2.5">
-        <div>
-          <label class="text-slate-300 text-[10px] block mb-0.5">ឈ្មោះពេញ (Full Name)</label>
-          <input type="text" id="regFullName" placeholder="Mr. Nuon Chantha" required class="input-cyber w-full rounded-xl p-2 text-xs">
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-slate-300 text-[10px] block mb-0.5">Staff ID</label>
-            <input type="text" id="regStaffId" placeholder="1954" required class="input-cyber w-full rounded-xl p-2 font-mono font-bold text-amber-400 text-xs">
-          </div>
-          <div>
-            <label class="text-slate-300 text-[10px] block mb-0.5">តួនាទី (Role)</label>
-            <select id="regRole" onchange="checkSuperAdminRole()" required class="input-cyber w-full rounded-xl p-2 text-xs font-semibold text-sky-400 outline-none">
-              <option value="បុគ្គលិកធម្មតា">បុគ្គលិកធម្មតា</option>
-              <option value="Senior Staff">Senior Staff</option>
-              <option value="Team Leader">Team Leader</option>
-              <option value="អនុប្រធានសាខា">អនុប្រធានសាខា</option>
-              <option value="ប្រធានសាខា">ប្រធានសាខា</option>
-              <option value="Super Admin">Super Admin</option>
-            </select>
-          </div>
-        </div>
-
-        <div id="superAdminKeyBox" class="hidden bg-rose-950/40 border border-rose-800/60 p-2 rounded-xl">
-          <label class="text-rose-400 text-[9.5px] block font-bold">Super Admin Master Key</label>
-          <input type="password" id="regSecretKey" placeholder="SUPER@ONLINE#2026" class="input-cyber w-full rounded-lg p-1.5 font-mono text-xs mt-0.5">
-        </div>
-
-        <div>
-          <label class="text-slate-300 text-[10px] block mb-0.5">Gmail</label>
-          <input type="email" id="regGmail" placeholder="chanthanuon754@gmail.com" required class="input-cyber w-full rounded-xl p-2 text-xs">
-        </div>
-
-        <div>
-          <label class="text-slate-300 text-[10px] block mb-0.5">លេខសម្ងាត់ (Password)</label>
-          <input type="password" id="regPassword" placeholder="យ៉ាងតិច ៦ ខ្ទង់" minlength="6" required class="input-cyber w-full rounded-xl p-2 text-xs">
-        </div>
-
-        <button type="submit" id="btnRegSubmit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-lg transition flex items-center justify-center gap-2 mt-1">
-          <i class="fa-solid fa-user-plus text-xs"></i>
-          <span>ចុះឈ្មោះចូលប្រព័ន្ធ</span>
-        </button>
-      </form>
     </div>
   </div>
 
-  <!-- ==================== MAIN APP CONTAINER ==================== -->
-  <div class="w-full max-w-md glass-panel rounded-[32px] p-4 sm:p-5 flex flex-col justify-between space-y-4">
+  <!-- ==================== MAIN MOBILE TERMINAL CONTAINER ==================== -->
+  <div class="w-full max-w-md glass-terminal-card rounded-[36px] p-4 sm:p-5 flex flex-col justify-between space-y-4">
     
     <div>
-      <!-- 1. PROFILE HEADER -->
-      <div class="bg-[#0a1020]/80 border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between mb-3 shadow-sm">
+      <!-- 1. PROFILE & POP TERMINAL HEADER -->
+      <div class="glass-inner-box border border-sky-500/30 rounded-2xl p-3.5 flex items-center justify-between mb-3 shadow-md">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-700 to-sky-500 flex items-center justify-center font-bold text-white text-sm shadow-md shadow-blue-600/30">
-            <span id="userInitial">NC</span>
+          <div class="h-10 flex items-center justify-center shrink-0">
+            <img src="https://ticket.cogetel.com.kh/__swift/themes/__cp/images/online-logo.png" alt="ONLINE Logo" class="h-8 w-auto object-contain logo-blend-screen drop-shadow-[0_0_10px_rgba(56,189,248,0.3)]">
           </div>
-          <div>
-            <h2 id="userName" class="font-bold text-slate-100 text-xs">Mr. Nuon Chantha</h2>
-            <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5 font-mono">
-              <span>Staff ID: <b id="userStaffId" class="text-amber-400">1954</b></span>
-              <span>•</span>
-              <span id="userLocationBadge" class="text-sky-400 font-semibold font-sans">Office Bavet</span>
+          <div class="border-l border-slate-700/60 pl-3">
+            <div class="flex items-center gap-1.5">
+              <h2 id="userName" class="font-bold text-slate-100 text-xs">Mr. Nuon Chantha</h2>
+              <span id="userInitialBadge" class="px-1.5 py-0.2 bg-sky-950/80 border border-sky-800/60 rounded text-[9px] font-mono text-sky-400 font-bold">1954</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-0.5 font-mono">
+              <span class="badge-dot"></span>
+              <span id="userLocationBadge" class="text-sky-300 font-semibold font-sans">Office Bavet (Office -BVT)</span>
             </div>
           </div>
         </div>
@@ -234,27 +237,33 @@
 
       <!-- 2. QUICK STATUS BAR -->
       <div class="grid grid-cols-2 gap-2 text-[10px] mb-3.5">
-        <div class="bg-[#060a16] border border-slate-800/80 rounded-xl p-2 flex items-center space-x-2">
+        <div class="glass-inner-box rounded-xl p-2.5 flex items-center space-x-2">
           <div class="w-6 h-6 rounded-lg bg-sky-950/80 text-sky-400 flex items-center justify-center text-xs shrink-0"><i class="fa-regular fa-clock"></i></div>
-          <div class="truncate"><div class="text-slate-500 text-[8.5px]">DATE / TIME</div><div id="liveTime" class="font-bold text-slate-200 font-mono text-[9.5px]">-- Sept 2026</div></div>
+          <div class="truncate">
+            <div class="text-slate-500 text-[8.5px] uppercase tracking-wider font-mono">SYSTEM TIME</div>
+            <div id="liveTime" class="font-bold text-slate-200 font-mono text-[9.5px]">-- Sept 2026</div>
+          </div>
         </div>
-        <div class="bg-[#060a16] border border-slate-800/80 rounded-xl p-2 flex items-center space-x-2">
-          <div class="w-6 h-6 rounded-lg bg-emerald-950/80 text-emerald-400 flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-shield-check"></i></div>
-          <div class="truncate"><div class="text-slate-500 text-[8.5px]">SECURITY STATUS</div><div class="font-bold text-emerald-400 flex items-center gap-1"><span>Encrypted</span><span class="badge-dot"></span></div></div>
+        <div class="glass-inner-box rounded-xl p-2.5 flex items-center space-x-2">
+          <div class="w-6 h-6 rounded-lg bg-emerald-950/80 text-emerald-400 flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-signal"></i></div>
+          <div class="truncate">
+            <div class="text-slate-500 text-[8.5px] uppercase tracking-wider font-mono">GATEWAY STATUS</div>
+            <div class="font-bold text-emerald-400 flex items-center gap-1 font-mono text-[9.5px]"><span>ONLINE Bavet</span></div>
+          </div>
         </div>
       </div>
 
-      <!-- 3. NAVIGATION TABS (៣ ប៊ូតុង) -->
-      <div class="grid grid-cols-3 gap-1.5 bg-[#050811] p-1.5 rounded-2xl border border-slate-800/90 mb-3.5">
-        <button onclick="switchTab('request')" id="btnTabRequest" class="py-2.5 rounded-xl font-bold text-[11px] tab-active transition flex items-center justify-center gap-1 border border-transparent">
+      <!-- 3. NAVIGATION TABS -->
+      <div class="grid grid-cols-3 gap-1.5 glass-inner-box p-1.5 rounded-2xl mb-3.5">
+        <button onclick="switchTab('request')" id="btnTabRequest" class="py-2.5 rounded-xl font-bold text-[11.5px] tab-active transition flex items-center justify-center gap-1.5 border border-transparent">
           <i class="fa-solid fa-paper-plane text-[10px]"></i>
           <span>១. ស្នើសុំ</span>
         </button>
-        <button onclick="switchTab('submit')" id="btnTabSubmit" class="py-2.5 rounded-xl font-bold text-[11px] text-slate-400 hover:text-white transition flex items-center justify-center gap-1 border border-transparent">
+        <button onclick="switchTab('submit')" id="btnTabSubmit" class="py-2.5 rounded-xl font-bold text-[11.5px] text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 border border-transparent">
           <i class="fa-solid fa-box-archive text-[10px]"></i>
           <span>២. Stock Out</span>
         </button>
-        <button onclick="switchTab('return')" id="btnTabReturn" class="py-2.5 rounded-xl font-bold text-[11px] text-amber-400/80 hover:text-amber-300 transition flex items-center justify-center gap-1 border border-transparent">
+        <button onclick="switchTab('return')" id="btnTabReturn" class="py-2.5 rounded-xl font-bold text-[11.5px] text-amber-400/80 hover:text-amber-300 transition flex items-center justify-center gap-1.5 border border-transparent">
           <i class="fa-solid fa-rotate-left text-[10px]"></i>
           <span>៣. Return</span>
         </button>
@@ -262,32 +271,30 @@
 
       <!-- ==================== VIEW 1: ស្នើសុំសម្ភារៈ ==================== -->
       <div id="viewRequest" class="space-y-3">
-        <!-- LOCATION INFORMATION (REQUEST TAB) -->
-        <div class="bg-[#0a1020] border border-blue-900/40 rounded-2xl p-3.5 shadow-sm space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div class="glass-inner-box rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
             <div class="flex items-center space-x-2 text-sky-400 font-bold">
-              <span class="w-6 h-6 rounded-full bg-sky-950 border border-sky-800/60 flex items-center justify-center text-xs text-sky-400"><i class="fa-solid fa-location-dot"></i></span>
+              <span class="w-6 h-6 rounded-lg bg-sky-950 border border-sky-800/60 flex items-center justify-center text-xs text-sky-400"><i class="fa-solid fa-location-dot"></i></span>
               <div>
-                <div class="text-xs uppercase tracking-wider">LOCATION INFORMATION <span class="bg-blue-950 text-sky-400 border border-sky-800/50 px-1.5 py-0.2 rounded font-mono text-[9px]">01</span></div>
-                <div class="text-[9px] text-slate-500 font-normal">Location &amp; Department details</div>
+                <div class="text-[11px] font-bold uppercase tracking-wider">ព័ត៌មានទីតាំង និងក្រុមបច្ចេកទេស</div>
+                <div class="text-[9px] text-slate-500 font-normal">Location &amp; Department Information</div>
               </div>
             </div>
-            <i class="fa-solid fa-globe" style="color: rgba(0, 210, 255, 0.3); font-size: 16px;"></i>
+            <i class="fa-solid fa-globe text-sky-500/25 text-base"></i>
           </div>
 
-          <!-- Name Team (Auto Lock), Date, Month -->
           <div class="grid grid-cols-12 gap-2">
             <div class="col-span-5">
-              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Name Team (Auto Lock)</label>
-              <input type="text" id="req_nameTeam" readonly class="input-cyber input-readonly-auto w-full rounded-xl p-2 text-xs font-mono outline-none">
+              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Name Team (Auto)</label>
+              <input type="text" id="req_nameTeam" readonly class="input-terminal input-readonly-auto w-full rounded-xl p-2 text-xs font-mono outline-none">
             </div>
             <div class="col-span-4">
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Date Stock Out</label>
-              <input type="date" id="req_dateStockOut" onchange="calculateReqMonth()" class="input-cyber w-full rounded-xl p-2 font-mono text-[11px]" required>
+              <input type="date" id="req_dateStockOut" onchange="calculateReqMonth()" class="input-terminal w-full rounded-xl p-2 font-mono text-[11px]" required>
             </div>
             <div class="col-span-3">
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Month</label>
-              <select id="req_monthSelect" disabled class="input-cyber w-full rounded-xl p-2 font-mono text-[10.5px] opacity-80">
+              <select id="req_monthSelect" disabled class="input-terminal w-full rounded-xl p-2 font-mono text-[10.5px] opacity-80">
                 <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
                 <option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option>
                 <option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option>
@@ -296,13 +303,13 @@
             </div>
           </div>
 
-          <!-- Location Name & Department Name (២៥ ផ្នែកពេញលេញ) -->
+          <!-- 🌟 ៩ ទីតាំង & ២៥ ផ្នែកពេញលេញ -->
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Location Name</label>
-              <select id="req_locationSelect" onchange="autoFillReqLocationCode()" class="input-cyber w-full rounded-xl p-2 text-xs outline-none" required>
+              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Location Name (ទីតាំង)</label>
+              <select id="req_locationSelect" onchange="autoFillReqLocationCode()" class="input-terminal w-full rounded-xl p-2 text-xs outline-none" required>
                 <option value="Office Bavet" selected>Office Bavet</option>
-                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse</option>
+                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse at Head Office</option>
                 <option value="Department IMO">Department IMO</option>
                 <option value="Department Network and System">Department Network and System</option>
                 <option value="Department Technical Support">Department Technical Support</option>
@@ -313,8 +320,8 @@
               </select>
             </div>
             <div>
-              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Department Name</label>
-              <select id="req_deptSelect" onchange="autoFillReqDepartmentCode()" class="input-cyber w-full rounded-xl p-2 text-xs outline-none" required>
+              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Department Name (ផ្នែក)</label>
+              <select id="req_deptSelect" onchange="autoFillReqDepartmentCode()" class="input-terminal w-full rounded-xl p-2 text-xs outline-none" required>
                 <option value="Installation and Maintenance (IMO)" selected>Installation and Maintenance (IMO)</option>
                 <option value="Outside-Planning (OSP)">Outside-Planning (OSP)</option>
                 <option value="Project Planning">Project Planning</option>
@@ -344,28 +351,21 @@
             </div>
           </div>
 
-          <!-- Location Code & Department Code -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Location Code</label>
-              <div class="relative">
-                <input type="text" id="req_locationCode" value="010" readonly required class="input-cyber w-full rounded-xl p-2 pr-8 font-mono text-slate-300 text-xs">
-                <i class="fa-solid fa-qrcode absolute right-2.5 top-2.5" style="color: var(--neon-blue);"></i>
-              </div>
+              <input type="text" id="req_locationCode" value="Office -BVT" readonly required class="input-terminal w-full rounded-xl p-2 font-mono text-slate-300 text-xs">
             </div>
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Department Code</label>
-              <div class="relative">
-                <input type="text" id="req_deptCode" value="010" readonly required class="input-cyber w-full rounded-xl p-2 pr-8 font-mono text-slate-300 text-xs">
-                <i class="fa-solid fa-qrcode absolute right-2.5 top-2.5" style="color: var(--neon-blue);"></i>
-              </div>
+              <input type="text" id="req_deptCode" value="10" readonly required class="input-terminal w-full rounded-xl p-2 font-mono text-slate-300 text-xs">
             </div>
           </div>
         </div>
 
-        <!-- REQUISITION FORM (មាន CONDITION ថ្មី/ចាស់ & UOM) -->
-        <div class="bg-[#0a1020] border border-blue-900/30 rounded-2xl p-3.5 shadow-sm space-y-3">
-          <div class="flex items-center space-x-2 text-amber-400 font-bold border-b border-slate-800 pb-2">
+        <!-- REQUISITION FORM -->
+        <div class="glass-inner-box rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center space-x-2 text-amber-400 font-bold border-b border-slate-800/80 pb-2">
             <span class="w-6 h-6 rounded-lg bg-amber-950/80 border border-amber-800/40 flex items-center justify-center text-xs text-amber-400"><i class="fa-solid fa-cart-flatbed"></i></span>
             <span class="text-xs">ទម្រង់ស្នើសុំសម្ភារៈ / ឧបករណ៍បណ្តាញ</span>
           </div>
@@ -373,36 +373,40 @@
           <form onsubmit="handleRequestSubmit(event)" class="space-y-3">
             <div>
               <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">ជ្រើសរើសមុខទំនិញ (Product Name) *</label>
-              <select id="req_product" onchange="updateReqUomBadge()" required class="input-cyber w-full rounded-xl p-2.5 text-xs outline-none">
+              <select id="req_product" onchange="onReqProductChange()" required class="input-terminal w-full rounded-xl p-2.5 text-xs outline-none">
                 <option value="">-- សូមជ្រើសរើសមុខទំនិញ --</option>
               </select>
             </div>
 
-            <!-- 🌟 បន្ថែម Condition (New / Old) + Qty & Unit + Ticket ID -->
             <div class="grid grid-cols-12 gap-2">
               <div class="col-span-4">
                 <label class="text-slate-400 text-[10px] block mb-1 font-medium">ស្ថានភាពឧបករណ៍ *</label>
-                <select id="req_condition" class="input-cyber w-full rounded-xl p-2 text-xs font-semibold text-emerald-400 outline-none">
+                <select id="req_condition" class="input-terminal w-full rounded-xl p-2 text-xs font-semibold text-emerald-400 outline-none">
                   <option value="New" selected>✨ ថ្មី (New)</option>
                   <option value="Old">🔄 ចាស់/មួយទឹក (Old)</option>
                 </select>
               </div>
               <div class="col-span-4">
                 <label class="text-slate-400 text-[10px] block mb-1 font-medium">ចំនួន (<span id="req_uom_display" class="text-sky-400 font-mono">Qty</span>) *</label>
-                <input type="number" id="req_qty" min="1" value="1" required class="input-cyber w-full rounded-xl p-2 font-mono font-bold text-emerald-400 text-xs">
+                <input type="number" id="req_qty" min="1" value="1" required class="input-terminal w-full rounded-xl p-2 font-mono font-bold text-emerald-400 text-xs">
               </div>
               <div class="col-span-4">
-                <label class="text-slate-400 text-[10px] block mb-1 font-medium">Ticket ID អតិថិជន *</label>
-                <input type="text" id="req_ticket" placeholder="1415084" required class="input-cyber w-full rounded-xl p-2 font-mono text-slate-200 text-xs">
+                <label class="text-slate-400 text-[10px] block mb-1 font-medium">Ticket ស្នើសុំ *</label>
+                <input type="text" id="req_ticket" placeholder="1415084" required class="input-terminal w-full rounded-xl p-2 font-mono text-slate-200 text-xs">
               </div>
             </div>
 
             <div>
-              <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">Serial No. (លេខស៊េរីម៉ាស៊ីន)</label>
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-slate-400 text-[10.5px] font-medium">
+                  Serial No. (លេខស៊េរីម៉ាស៊ីន) <span id="req_serial_required_tag" class="text-rose-400 font-bold">*</span>
+                </label>
+                <span id="req_serial_hint" class="text-[9.5px] text-amber-400/80 font-mono"></span>
+              </div>
               <div class="relative">
-                <input type="text" id="req_serial" placeholder="បញ្ចូល ឬស្កេន Serial..." class="input-cyber w-full rounded-xl p-2.5 pr-9 font-mono text-slate-100 text-xs">
-                <button type="button" onclick="startScanner('req_serial')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-sky-400" title="ស្កេន Barcode">
-                  <i class="fa-solid fa-barcode text-sm"></i>
+                <input type="text" id="req_serial" placeholder="បញ្ចូល ឬស្កេន Serial..." class="input-terminal w-full rounded-xl p-2.5 pr-10 font-mono text-slate-100 text-xs">
+                <button type="button" onclick="startScanner('req_serial')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-sky-400 transition" title="ស្កេន Barcode">
+                  <i class="fa-solid fa-barcode text-base"></i>
                 </button>
               </div>
             </div>
@@ -410,19 +414,19 @@
             <div>
               <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">Mac Serial (MAC Address)</label>
               <div class="relative">
-                <input type="text" id="req_mac" placeholder="បញ្ចូល ឬស្កេន MAC Address..." class="input-cyber w-full rounded-xl p-2.5 pr-9 font-mono text-slate-100 text-xs">
-                <button type="button" onclick="startScanner('req_mac')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-sky-400" title="ស្កេន Barcode">
-                  <i class="fa-solid fa-barcode text-sm"></i>
+                <input type="text" id="req_mac" placeholder="បញ្ចូល ឬស្កេន MAC Address..." class="input-terminal w-full rounded-xl p-2.5 pr-10 font-mono text-slate-100 text-xs">
+                <button type="button" onclick="startScanner('req_mac')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-sky-400 transition" title="ស្កេន Barcode">
+                  <i class="fa-solid fa-barcode text-base"></i>
                 </button>
               </div>
             </div>
 
             <div>
               <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">Remark (សម្គាល់ / ចំណាំ)</label>
-              <input type="text" id="req_remark" placeholder="ឧ. ដំឡើងជូនអតិថិជនថ្មី..." class="input-cyber w-full rounded-xl p-2.5 text-slate-100 text-xs">
+              <input type="text" id="req_remark" placeholder="ឧ. ដំឡើងជូនអតិថិជនថ្មី..." class="input-terminal w-full rounded-xl p-2.5 text-slate-100 text-xs">
             </div>
 
-            <button type="submit" id="btnReqAction" class="w-full py-3.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white rounded-xl font-bold shadow-lg shadow-amber-950/50 transition flex items-center justify-center gap-2 mt-2">
+            <button type="submit" id="btnReqAction" class="w-full py-3.5 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 hover:from-amber-500 hover:to-orange-500 text-white rounded-2xl font-bold shadow-lg shadow-amber-950/60 transition flex items-center justify-center gap-2 mt-2">
               <i class="fa-solid fa-paper-plane text-xs"></i>
               <span>បញ្ជូនសំណើទៅកាន់ Admin</span>
             </button>
@@ -430,12 +434,12 @@
         </div>
       </div>
 
-      <!-- ==================== VIEW 2: បញ្ជាក់ STOCK OUT (បង្ហាញប្រភេទ ម៉ែត្រ/គ្រឿង) ==================== -->
+      <!-- ==================== VIEW 2: បញ្ជាក់ STOCK OUT ==================== -->
       <div id="viewSubmit" class="hidden space-y-3">
-        <div class="bg-[#0a1020] border border-emerald-900/30 rounded-2xl p-4 shadow-sm space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div class="glass-inner-box border border-emerald-950 rounded-2xl p-4 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
             <div class="flex items-center space-x-2 text-emerald-400 font-bold">
-              <span class="w-6 h-6 rounded-lg bg-emerald-950/80 border border-emerald-800/40 flex items-center justify-center text-xs text-emerald-400"><i class="fa-solid fa-clipboard-check"></i></span>
+              <span class="w-6 h-6 rounded-lg bg-emerald-950 border border-emerald-800/60 flex items-center justify-center text-xs text-emerald-400"><i class="fa-solid fa-clipboard-check"></i></span>
               <span class="text-xs">សម្ភារៈដែល Admin បាន Approve (រង់ចាំ Submit)</span>
             </div>
             <button onclick="loadApprovedItems()" class="text-sky-400 text-xs hover:underline flex items-center gap-1">
@@ -449,31 +453,30 @@
 
       <!-- ==================== VIEW 3: RETURN ឧបករណ៍ ==================== -->
       <div id="viewReturn" class="hidden space-y-3">
-        <div class="bg-[#0a1020] border border-amber-900/40 rounded-2xl p-3.5 shadow-sm space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div class="glass-inner-box rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
             <div class="flex items-center space-x-2 text-amber-400 font-bold">
               <span class="w-6 h-6 rounded-full bg-amber-950 border border-amber-800/60 flex items-center justify-center text-xs text-amber-400"><i class="fa-solid fa-location-dot"></i></span>
               <div>
-                <div class="text-xs uppercase tracking-wider">LOCATION INFORMATION</div>
-                <div class="text-[9px] text-slate-500 font-normal">Location &amp; Returning details</div>
+                <div class="text-[11px] font-bold uppercase tracking-wider">ព័ត៌មានទីតាំងដោះត្រឡប់ (Return)</div>
+                <div class="text-[9px] text-slate-500 font-normal">Operator and Branch Routing</div>
               </div>
             </div>
-            <i class="fa-solid fa-rotate-left" style="color: rgba(245, 158, 11, 0.4); font-size: 16px;"></i>
+            <i class="fa-solid fa-rotate-left text-amber-500/25 text-base"></i>
           </div>
 
-          <!-- Name Team (Auto Lock), Date Return, Month -->
           <div class="grid grid-cols-12 gap-2">
             <div class="col-span-5">
-              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Name Team (Auto Lock)</label>
-              <input type="text" id="ret_nameTeam" readonly class="input-cyber input-readonly-auto w-full rounded-xl p-2 text-xs font-mono outline-none">
+              <label class="text-slate-400 text-[10px] block mb-1 font-medium">Name Team (Auto)</label>
+              <input type="text" id="ret_nameTeam" readonly class="input-terminal input-readonly-auto w-full rounded-xl p-2 text-xs font-mono outline-none">
             </div>
             <div class="col-span-4">
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Date Return</label>
-              <input type="date" id="ret_dateReturn" onchange="calculateRetMonth()" class="input-cyber w-full rounded-xl p-2 font-mono text-[11px]" required>
+              <input type="date" id="ret_dateReturn" onchange="calculateRetMonth()" class="input-terminal w-full rounded-xl p-2 font-mono text-[11px]" required>
             </div>
             <div class="col-span-3">
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Month</label>
-              <select id="ret_monthSelect" disabled class="input-cyber w-full rounded-xl p-2 font-mono text-[10.5px] opacity-80">
+              <select id="ret_monthSelect" disabled class="input-terminal w-full rounded-xl p-2 font-mono text-[10.5px] opacity-80">
                 <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
                 <option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option>
                 <option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option>
@@ -482,14 +485,15 @@
             </div>
           </div>
 
-          <!-- Location Name & Department Name (២៥ ផ្នែកពេញលេញ) -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Location Name</label>
-              <select id="ret_locationSelect" onchange="autoFillRetLocationCode()" class="input-cyber w-full rounded-xl p-2 text-xs outline-none" required>
+              <select id="ret_locationSelect" onchange="autoFillRetLocationCode()" class="input-terminal w-full rounded-xl p-2 text-xs outline-none" required>
                 <option value="Office Bavet" selected>Office Bavet</option>
-                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse</option>
+                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse at Head Office</option>
                 <option value="Department IMO">Department IMO</option>
+                <option value="Department Network and System">Department Network and System</option>
+                <option value="Department Technical Support">Department Technical Support</option>
                 <option value="Office BTB">Office BTB</option>
                 <option value="Office SRP">Office SRP</option>
                 <option value="Offce SHV">Offce SHV</option>
@@ -498,7 +502,7 @@
             </div>
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Department Name</label>
-              <select id="ret_deptSelect" onchange="autoFillRetDepartmentCode()" class="input-cyber w-full rounded-xl p-2 text-xs outline-none" required>
+              <select id="ret_deptSelect" onchange="autoFillRetDepartmentCode()" class="input-terminal w-full rounded-xl p-2 text-xs outline-none" required>
                 <option value="Installation and Maintenance (IMO)" selected>Installation and Maintenance (IMO)</option>
                 <option value="Outside-Planning (OSP)">Outside-Planning (OSP)</option>
                 <option value="Project Planning">Project Planning</option>
@@ -528,45 +532,38 @@
             </div>
           </div>
 
-          <!-- Location Code & Department Code -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Location Code</label>
-              <div class="relative">
-                <input type="text" id="ret_locationCode" value="010" readonly class="input-cyber w-full rounded-xl p-2 pr-8 font-mono text-slate-400 text-xs">
-                <i class="fa-solid fa-qrcode absolute right-2.5 top-2.5" style="color: var(--neon-blue);"></i>
-              </div>
+              <input type="text" id="ret_locationCode" value="Office -BVT" readonly class="input-terminal w-full rounded-xl p-2 font-mono text-slate-400 text-xs">
             </div>
             <div>
               <label class="text-slate-400 text-[10px] block mb-1 font-medium">Department Code</label>
-              <div class="relative">
-                <input type="text" id="ret_deptCode" value="010" readonly class="input-cyber w-full rounded-xl p-2 pr-8 font-mono text-slate-400 text-xs">
-                <i class="fa-solid fa-qrcode absolute right-2.5 top-2.5" style="color: var(--neon-blue);"></i>
-              </div>
+              <input type="text" id="ret_deptCode" value="10" readonly class="input-terminal w-full rounded-xl p-2 font-mono text-slate-400 text-xs">
             </div>
           </div>
         </div>
 
-        <div class="bg-[#0a1020] border border-amber-900/30 rounded-2xl p-3.5 shadow-sm space-y-3">
-          <div class="flex items-center space-x-2 text-amber-400 font-bold border-b border-slate-800 pb-2">
-            <span class="w-6 h-6 rounded-lg bg-amber-950/80 border border-amber-800/40 flex items-center justify-center text-xs text-amber-400"><i class="fa-solid fa-rotate-left"></i></span>
+        <div class="glass-inner-box rounded-2xl p-3.5 space-y-3">
+          <div class="flex items-center space-x-2 text-amber-400 font-bold border-b border-slate-800/80 pb-2">
+            <span class="w-6 h-6 rounded-lg bg-amber-950 border border-amber-800/60 flex items-center justify-center text-xs text-amber-400"><i class="fa-solid fa-rotate-left"></i></span>
             <span class="text-xs">កត់ត្រាឧបករណ៍ដោះមកវិញ (ខូច / ចាស់)</span>
           </div>
 
           <form onsubmit="handleReturnSubmit(event)" class="space-y-3">
             <div>
               <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">ជ្រើសរើសមុខទំនិញ (Product Name) *</label>
-              <select id="ret_product" required class="input-cyber w-full rounded-xl p-2.5 text-xs outline-none">
+              <select id="ret_product" required class="input-terminal w-full rounded-xl p-2.5 text-xs outline-none">
                 <option value="">-- សូមជ្រើសរើសមុខទំនិញ --</option>
               </select>
             </div>
 
             <div>
-              <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">Serial No. (លេខស៊េរីម៉ាស៊ីន) *</label>
+              <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">Serial No. (លេខស៊េរីម៉ាស៊ីន)</label>
               <div class="relative">
-                <input type="text" id="ret_serial" placeholder="បញ្ចូល ឬស្កេន Serial..." required class="input-cyber w-full rounded-xl p-2.5 pr-9 font-mono text-slate-100 text-xs">
-                <button type="button" onclick="startScanner('ret_serial')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-amber-400" title="ស្កេន Barcode">
-                  <i class="fa-solid fa-barcode text-sm"></i>
+                <input type="text" id="ret_serial" placeholder="បញ្ចូល ឬស្កេន Serial..." class="input-terminal w-full rounded-xl p-2.5 pr-10 font-mono text-slate-100 text-xs">
+                <button type="button" onclick="startScanner('ret_serial')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-amber-400 transition" title="ស្កេន Barcode">
+                  <i class="fa-solid fa-barcode text-base"></i>
                 </button>
               </div>
             </div>
@@ -574,9 +571,9 @@
             <div>
               <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">Mac Serial (MAC Address)</label>
               <div class="relative">
-                <input type="text" id="ret_mac" placeholder="បញ្ចូល ឬស្កេន MAC Address..." class="input-cyber w-full rounded-xl p-2.5 pr-9 font-mono text-slate-100 text-xs">
-                <button type="button" onclick="startScanner('ret_mac')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-amber-400" title="ស្កេន Barcode">
-                  <i class="fa-solid fa-barcode text-sm"></i>
+                <input type="text" id="ret_mac" placeholder="បញ្ចូល ឬស្កេន MAC Address..." class="input-terminal w-full rounded-xl p-2.5 pr-10 font-mono text-slate-100 text-xs">
+                <button type="button" onclick="startScanner('ret_mac')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-amber-400 transition" title="ស្កេន Barcode">
+                  <i class="fa-solid fa-barcode text-base"></i>
                 </button>
               </div>
             </div>
@@ -584,27 +581,27 @@
             <div class="grid grid-cols-3 gap-2">
               <div>
                 <label class="text-slate-400 text-[10px] block mb-1 font-medium">Condition *</label>
-                <select id="ret_condition" class="input-cyber w-full rounded-xl p-2 text-xs font-semibold text-rose-400 outline-none">
+                <select id="ret_condition" class="input-terminal w-full rounded-xl p-2 text-xs font-semibold text-rose-400 outline-none">
                   <option value="Broken" selected>Broken (ខូច)</option>
                   <option value="Old">Old (ចាស់/ល្អ)</option>
                 </select>
               </div>
               <div>
                 <label class="text-slate-400 text-[10px] block mb-1 font-medium">ចំនួន (Qty) *</label>
-                <input type="number" id="ret_qty" min="1" value="1" required class="input-cyber w-full rounded-xl p-2 font-mono font-bold text-amber-400 text-xs">
+                <input type="number" id="ret_qty" min="1" value="1" required class="input-terminal w-full rounded-xl p-2 font-mono font-bold text-amber-400 text-xs">
               </div>
               <div>
                 <label class="text-slate-400 text-[10px] block mb-1 font-medium">Ticket ID *</label>
-                <input type="text" id="ret_ticket" placeholder="1415084" required class="input-cyber w-full rounded-xl p-2 font-mono text-slate-200 text-xs">
+                <input type="text" id="ret_ticket" placeholder="1415084" required class="input-terminal w-full rounded-xl p-2 font-mono text-slate-200 text-xs">
               </div>
             </div>
 
             <div>
-              <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">មូលហេតុនៃការខូច / ដោះត្រឡប់ (Fault Reason) *</label>
-              <input type="text" id="ret_reason" placeholder="ឧ. រន្ទះបាញ់ដាច់ភ្លើង, ខូច Port LAN..." required class="input-cyber w-full rounded-xl p-2.5 text-slate-100 text-xs">
+              <label class="text-slate-400 text-[10.5px] block mb-1 font-medium">មូលហេតុនៃការខូច / ដោះត្រឡប់ *</label>
+              <input type="text" id="ret_reason" placeholder="ឧ. រន្ទះបាញ់ដាច់ភ្លើង, ខូច Port..." required class="input-terminal w-full rounded-xl p-2.5 text-slate-100 text-xs">
             </div>
 
-            <button type="submit" id="btnRetAction" class="btn-submit-return w-full py-3.5 text-white font-extrabold text-xs shadow-lg transition flex items-center justify-center gap-2 mt-2 uppercase tracking-wider">
+            <button type="submit" id="btnRetAction" class="btn-submit-return w-full py-3.5 text-white font-extrabold text-xs shadow-lg transition flex items-center justify-center gap-2 mt-2 uppercase tracking-wider rounded-2xl">
               <i class="fa-solid fa-rotate-left text-xs"></i>
               <span>កត់ត្រា RETURN ចូល STOCK ផ្លូវការ</span>
             </button>
@@ -614,32 +611,32 @@
 
     </div>
 
-    <!-- FOOTER -->
+    <!-- TERMINAL FOOTER -->
     <div class="text-center text-[10px] text-slate-500 pt-2 border-t border-slate-800/80 font-mono">
-      MicroMax Enterprise System • Bavet City
+      ONLINE ISP • Regional Engineering Terminal
     </div>
   </div>
 
-  <!-- ==================== 🌟 MODAL SUBMIT STOCK OUT (មាន Used Qty & Remaining Qty) ==================== -->
-  <div id="modalStockOut" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="w-full max-w-[380px] cyber-modal-card p-4 sm:p-5 space-y-3.5 my-auto">
-      <div class="flex justify-between items-center pb-1">
-        <h3 class="font-bold text-emerald-400 text-[13px] tracking-wide">
-          បញ្ជាក់ដំឡើង &amp; Submit ចូល Stock Out
+  <!-- ==================== MODAL SUBMIT STOCK OUT ==================== -->
+  <div id="modalStockOut" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="w-full max-w-[380px] glass-terminal-card rounded-[32px] p-5 space-y-3.5 my-auto border border-sky-500/25">
+      <div class="flex justify-between items-center pb-1 border-b border-slate-800">
+        <h3 class="font-extrabold text-emerald-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-clipboard-check"></i>
+          <span>បញ្ជាក់ដំឡើង &amp; Submit Stock Out</span>
         </h3>
-        <button onclick="closeModal()" class="w-7 h-7 rounded-full bg-[#101b30] border border-slate-700/60 text-slate-400 hover:text-white flex items-center justify-center transition">
+        <button onclick="closeModal()" class="w-7 h-7 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
           <i class="fa-solid fa-xmark text-xs"></i>
         </button>
       </div>
 
-      <!-- Item Details Card -->
-      <div class="cyber-info-box p-3 space-y-1.5 border border-sky-900/60">
-        <div class="text-slate-400 text-[9px] font-medium tracking-wider flex justify-between">
+      <div class="glass-inner-box p-3 rounded-2xl space-y-1.5 border border-sky-900/60">
+        <div class="text-slate-400 text-[9px] font-medium tracking-wider flex justify-between font-mono">
           <span>ឧបករណ៍ដែលត្រូវចេញស្តុក៖</span>
-          <span id="so_displayCondition" class="text-emerald-400 font-bold font-mono">✨ New</span>
+          <span id="so_displayCondition" class="text-emerald-400 font-bold">✨ New</span>
         </div>
-        <div id="so_displayItem" class="font-bold text-slate-100 text-[12px] leading-snug">--</div>
-        <div class="flex items-center gap-2 text-[10px] text-slate-400 pt-1 border-t border-slate-800/80 font-mono">
+        <div id="so_displayItem" class="font-bold text-slate-100 text-xs leading-snug">--</div>
+        <div class="flex items-center gap-2 text-[10px] text-slate-400 pt-1 border-t border-slate-800 font-mono">
           <span>សុំសរុប: <b id="so_displayTotalReq" class="text-amber-400 font-bold">1</b></span>
           <span>•</span>
           <span>ខ្នាត: <b id="so_displayUOM" class="text-sky-300 font-semibold">UNIT</b></span>
@@ -652,29 +649,21 @@
         <input type="hidden" id="so_reqId">
         <input type="hidden" id="so_origQty" value="1">
         <input type="hidden" id="so_uomVal" value="UNIT">
+        <input type="hidden" id="so_isSerialized" value="true">
 
-        <!-- LOCATION INFORMATION (Auto Lock Name Team + ២៥ DEPARTMENTS) -->
-        <div class="cyber-info-box p-3 space-y-2.5 border border-sky-900/40">
-          <div class="flex items-center justify-between border-b border-slate-800/80 pb-1.5">
-            <div class="flex items-center space-x-1.5 text-sky-400 font-bold text-[10.5px]">
-              <i class="fa-solid fa-location-dot text-xs"></i>
-              <span>LOCATION INFORMATION <span class="bg-blue-950 text-sky-400 border border-sky-800/50 px-1 py-0.2 rounded font-mono text-[8.5px]">01</span></span>
-            </div>
-            <i class="fa-solid fa-globe" style="color: rgba(0, 210, 255, 0.3); font-size: 13px;"></i>
-          </div>
-
+        <div class="glass-inner-box p-3 rounded-2xl space-y-2 border border-slate-800">
           <div class="grid grid-cols-12 gap-2">
             <div class="col-span-5">
-              <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Name Team (Auto Lock)</label>
-              <input type="text" id="nameTeam" readonly class="cyber-field-input input-readonly-auto w-full p-1.5 text-[10px] font-mono outline-none">
+              <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Name Team</label>
+              <input type="text" id="nameTeam" readonly class="input-terminal input-readonly-auto w-full p-1.5 text-[10px] font-mono outline-none rounded-lg">
             </div>
             <div class="col-span-4">
-              <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Date Stock Out</label>
-              <input type="date" id="dateStockOut" onchange="calculateMonth()" class="cyber-field-input w-full p-1.5 font-mono text-[9.5px]" required>
+              <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Date Out</label>
+              <input type="date" id="dateStockOut" onchange="calculateMonth()" class="input-terminal w-full p-1.5 font-mono text-[9.5px] rounded-lg" required>
             </div>
             <div class="col-span-3">
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Month</label>
-              <select id="monthSelect" disabled class="cyber-field-input w-full p-1.5 font-mono text-[9.5px] opacity-80">
+              <select id="monthSelect" disabled class="input-terminal w-full p-1.5 font-mono text-[9.5px] opacity-80 rounded-lg">
                 <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
                 <option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option>
                 <option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option>
@@ -686,9 +675,9 @@
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Location Name</label>
-              <select id="locationSelect" onchange="autoFillLocationCode()" class="cyber-field-input w-full p-1.5 text-[9.5px] outline-none" required>
+              <select id="locationSelect" onchange="autoFillLocationCode()" class="input-terminal w-full p-1.5 text-[9.5px] outline-none rounded-lg" required>
                 <option value="Office Bavet" selected>Office Bavet</option>
-                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse</option>
+                <option value="ChakAngre Krom - Main Warehouse at Head Office">ChakAngre Krom - Main Warehouse at Head Office</option>
                 <option value="Department IMO">Department IMO</option>
                 <option value="Department Network and System">Department Network and System</option>
                 <option value="Department Technical Support">Department Technical Support</option>
@@ -700,7 +689,7 @@
             </div>
             <div>
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Department Name</label>
-              <select id="deptSelect" onchange="autoFillDepartmentCode()" class="cyber-field-input w-full p-1.5 text-[9.5px] outline-none" required>
+              <select id="deptSelect" onchange="autoFillDepartmentCode()" class="input-terminal w-full p-1.5 text-[9.5px] outline-none rounded-lg" required>
                 <option value="Installation and Maintenance (IMO)" selected>Installation and Maintenance (IMO)</option>
                 <option value="Outside-Planning (OSP)">Outside-Planning (OSP)</option>
                 <option value="Project Planning">Project Planning</option>
@@ -733,74 +722,75 @@
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Location Code</label>
-              <div class="relative">
-                <input type="text" id="locationCode" value="010" readonly class="cyber-field-input w-full p-1.5 pr-7 font-mono text-slate-300 text-[9.5px]">
-                <i class="fa-solid fa-qrcode absolute right-2 top-2" style="color: var(--neon-blue); font-size: 11px;"></i>
-              </div>
+              <input type="text" id="locationCode" value="Office -BVT" readonly class="input-terminal w-full p-1.5 font-mono text-slate-300 text-[9.5px] rounded-lg">
             </div>
             <div>
               <label class="text-slate-400 text-[9px] block mb-0.5 font-medium">Department Code</label>
-              <div class="relative">
-                <input type="text" id="deptCode" value="010" readonly class="cyber-field-input w-full p-1.5 pr-7 font-mono text-slate-300 text-[9.5px]">
-                <i class="fa-solid fa-qrcode absolute right-2 top-2" style="color: var(--neon-blue); font-size: 11px;"></i>
-              </div>
+              <input type="text" id="deptCode" value="10" readonly class="input-terminal w-full p-1.5 font-mono text-slate-300 text-[9.5px] rounded-lg">
             </div>
           </div>
         </div>
 
-        <!-- 🌟 បន្ថែមប្រអប់ ប្រើប្រាស់អស់ប៉ុន្មាន & នៅសល់ប៉ុន្មាន -->
-        <div class="grid grid-cols-2 gap-2 bg-[#040813] p-2.5 rounded-2xl border border-slate-800">
+        <div>
+          <label class="text-sky-300 text-[10.5px] block mb-1 font-bold flex items-center gap-1.5">
+            <i class="fa-solid fa-ticket text-sky-400"></i>
+            <span>Customer Ticket ID (ដំឡើងជាក់ស្តែង) *</span>
+          </label>
+          <input type="text" id="so_actualTicket" placeholder="បញ្ចូល Ticket ដំឡើងជាក់ស្តែង..." required class="input-terminal w-full p-2.5 text-slate-100 font-mono font-bold text-xs rounded-xl border-sky-600/70 focus:border-sky-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 glass-inner-box p-2 rounded-2xl border border-slate-800">
           <div>
-            <label class="text-slate-300 text-[10px] block mb-1 font-medium">ចំនួនប្រើអស់ (Used Qty) *</label>
-            <input type="number" id="so_usedQty" min="0" value="1" oninput="calculateRemainingStock()" required class="input-cyber w-full rounded-xl p-2 font-mono font-bold text-emerald-400 text-xs border border-emerald-800/50">
+            <label class="text-slate-300 text-[10px] block mb-1 font-medium">ចំនួនប្រើអស់ (Used) *</label>
+            <input type="number" id="so_usedQty" min="0" value="1" oninput="calculateRemainingStock()" required class="input-terminal w-full rounded-xl p-2 font-mono font-bold text-emerald-400 text-xs">
           </div>
           <div>
-            <label class="text-slate-300 text-[10px] block mb-1 font-medium">នៅសល់ចូលស្តុកវិញ (Return)</label>
-            <input type="number" id="so_remainQty" min="0" value="0" readonly class="input-cyber input-readonly-auto w-full rounded-xl p-2 font-mono font-bold text-amber-400 text-xs text-center">
+            <label class="text-slate-300 text-[10px] block mb-1 font-medium">នៅសល់ (Return)</label>
+            <input type="number" id="so_remainQty" min="0" value="0" readonly class="input-terminal input-readonly-auto w-full rounded-xl p-2 font-mono font-bold text-amber-400 text-xs text-center">
           </div>
         </div>
 
-        <!-- Serial & MAC Fields -->
         <div>
-          <label class="text-slate-300 text-[10px] block mb-1 font-medium">Serial No. (លេខស៊េរីម៉ាស៊ីន) *</label>
+          <label class="text-slate-300 text-[10px] block mb-1 font-medium">
+            Serial No. <span id="so_serial_required_tag" class="text-rose-400 font-bold">*</span>
+          </label>
           <div class="relative">
-            <input type="text" id="so_serial" placeholder="បញ្ចូល Serial..." required class="cyber-field-input w-full p-2.5 pr-11 text-slate-100 font-mono text-[11px]">
-            <button type="button" onclick="startScanner('so_serial')" class="absolute right-3 top-2.5 text-slate-400 barcode-icon-svg" title="ស្កេន Barcode">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M2 4h2v16H2V4zm4 0h1v16H6V4zm3 0h2v16H9V4zm4 0h1v16h-1V4zm3 0h2v16h-2V4zm4 0h2v16h-2V4z"/></svg>
+            <input type="text" id="so_serial" placeholder="បញ្ចូល Serial..." class="input-terminal w-full p-2.5 pr-10 text-slate-100 font-mono text-xs rounded-xl">
+            <button type="button" onclick="startScanner('so_serial')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-sky-400 transition" title="ស្កេន Barcode">
+              <i class="fa-solid fa-barcode text-base"></i>
             </button>
           </div>
         </div>
 
         <div>
-          <label class="text-slate-300 text-[10px] block mb-1 font-medium">Mac Serial (MAC Address)</label>
+          <label class="text-slate-300 text-[10px] block mb-1 font-medium">Mac Serial</label>
           <div class="relative">
-            <input type="text" id="so_mac" placeholder="បញ្ចូល MAC..." class="cyber-field-input active-glow w-full p-2.5 pr-11 text-slate-100 font-mono text-[11px]">
-            <button type="button" onclick="startScanner('so_mac')" class="absolute right-3 top-2.5 text-slate-400 barcode-icon-svg" title="ស្កេន Barcode">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M2 4h2v16H2V4zm4 0h1v16H6V4zm3 0h2v16H9V4zm4 0h1v16h-1V4zm3 0h2v16h-2V4zm4 0h2v16h-2V4z"/></svg>
+            <input type="text" id="so_mac" placeholder="បញ្ចូល MAC..." class="input-terminal w-full p-2.5 pr-10 text-slate-100 font-mono text-xs rounded-xl">
+            <button type="button" onclick="startScanner('so_mac')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-sky-400 transition" title="ស្កេន Barcode">
+              <i class="fa-solid fa-barcode text-base"></i>
             </button>
           </div>
         </div>
 
-        <!-- Port / Remark -->
         <div>
           <label class="text-slate-300 text-[10px] block mb-1 font-medium">Port / Remark</label>
-          <input type="text" id="so_remark" value="Port 1 - New Install" class="cyber-field-input w-full p-2.5 text-slate-100 text-[11px]">
+          <input type="text" id="so_remark" value="Port 1 - New Install" class="input-terminal w-full p-2.5 text-slate-100 text-xs rounded-xl">
         </div>
 
-        <button type="submit" id="btnConfirmAction" class="btn-submit-stockout w-full py-3.5 text-white font-extrabold text-[11.5px] tracking-wide flex items-center justify-center gap-2 mt-2 uppercase">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <button type="submit" id="btnConfirmAction" class="btn-submit-stockout w-full py-3.5 text-white font-extrabold text-xs tracking-wide flex items-center justify-center gap-2 mt-2 uppercase rounded-2xl">
+          <i class="fa-solid fa-check text-xs"></i>
           <span>SUBMIT ចូល STOCK OUT ផ្លូវការ</span>
         </button>
       </form>
     </div>
   </div>
 
-  <!-- SCANNER MODAL -->
-  <div id="modalScanner" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-xs text-center shadow-2xl space-y-3">
-      <h3 class="font-bold text-slate-200 text-xs">ស្កេន Barcode / QR Code តាមកាមេរ៉ា</h3>
+  <!-- ==================== SCANNER MODAL ==================== -->
+  <div id="modalScanner" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
+    <div class="glass-terminal-card border border-slate-700 rounded-3xl p-5 w-full max-w-xs text-center shadow-2xl space-y-3">
+      <h3 class="font-bold text-slate-200 text-xs font-mono">ស្កេន Barcode / QR Code តាមកាមេរ៉ា</h3>
       <div id="reader" class="w-full rounded-2xl overflow-hidden border border-slate-700"></div>
-      <button onclick="stopScanner()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-medium text-xs">បិទកាមេរ៉ា</button>
+      <button onclick="stopScanner()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-medium text-xs transition">បិទកាមេរ៉ា</button>
     </div>
   </div>
 
@@ -821,57 +811,65 @@
     let html5QrcodeScanner = null;
     let scanTargetInputId = null;
 
+    // 🌟 ៩ ទីតាំងត្រឹមត្រូវ ១០០%
     const locationCodeMap = {
-      "ChakAngre Krom - Main Warehouse at Head Office": "HQ-001",
-      "Department IMO": "IMO-002",
-      "Department Network and System": "NET-003",
-      "Department Technical Support": "TECH-004",
-      "Office BTB": "005",
-      "Office SRP": "006",
-      "Offce SHV": "007",
-      "Office Bavet": "010",
-      "Office Poipet": "011"
+      "ChakAngre Krom - Main Warehouse at Head Office": "C_KROM",
+      "Department IMO": "DEP-IMO",
+      "Department Network and System": "DEP-SYS",
+      "Department Technical Support": "DEP-TDS",
+      "Office BTB": "Office -BTB",
+      "Office SRP": "Office -SRP",
+      "Offce SHV": "Office -SHV",
+      "Office Bavet": "Office -BVT",
+      "Office Poipet": "Office -PPT"
     };
 
+    // 🌟 ២៥ ផ្នែកត្រឹមត្រូវ ១០០%
     const deptCodeMap = {
-      "Installation and Maintenance (IMO)": "010",
-      "Outside-Planning (OSP)": "020",
-      "Project Planning": "030",
-      "Network and system (IMO)": "040",
-      "Solution (IMO)": "050",
-      "Accounting & Finance": "060",
-      "Stock": "070",
-      "Credit Control": "080",
-      "Supply chain": "090",
-      "HR": "100",
-      "Admin": "110",
-      "Legal": "120",
-      "Management": "130",
-      "Internal Audit": "140",
-      "Project development": "150",
-      "Commercial - sale": "160",
-      "Marketing": "170",
-      "CSV": "180",
-      "CR": "190",
-      "Call center": "200",
-      "Billing development": "210",
-      "Software development": "220",
-      "System and Network": "230",
-      "Power": "240",
-      "Support & IT": "250"
+      "Installation and Maintenance (IMO)": "10",
+      "Outside-Planning (OSP)": "20",
+      "Project Planning": "30",
+      "Network and system (IMO)": "40",
+      "Solution (IMO)": "50",
+      "Accounting & Finance": "110",
+      "Stock": "120",
+      "Credit Control": "130",
+      "Supply chain": "220",
+      "HR": "310",
+      "Admin": "320",
+      "Legal": "330",
+      "Management": "340",
+      "Internal Audit": "410",
+      "Project development": "510",
+      "Commercial - sale": "520",
+      "Marketing": "530",
+      "CSV": "710",
+      "CR": "720",
+      "Call center": "730",
+      "Billing development": "810",
+      "Software development": "820",
+      "System and Network": "920",
+      "Power": "930",
+      "Support & IT": "910"
     };
+
+    function isSerializedItem(productName) {
+      if (!productName) return false;
+      const lower = productName.toLowerCase();
+      return (lower.includes('onu') || lower.includes('switch') || lower.includes('terminal') || lower.includes('chassis') || lower.includes('router') || lower.includes('echolife'));
+    }
 
     function toggleAuthTab(tab) {
-      if(tab === 'login') {
+      if (tab === 'login') {
         document.getElementById('loginForm').classList.remove('hidden');
         document.getElementById('registerForm').classList.add('hidden');
-        document.getElementById('tabBtnLogin').className = "flex-1 py-1.5 rounded-lg font-bold text-xs bg-blue-600 text-white shadow-xs transition";
-        document.getElementById('tabBtnRegister').className = "flex-1 py-1.5 rounded-lg font-bold text-xs text-slate-400 hover:text-slate-200 transition";
+        document.getElementById('tabBtnLogin').className = "flex-1 py-2 rounded-xl font-bold text-xs bg-sky-600 text-white shadow-xs transition";
+        document.getElementById('tabBtnRegister').className = "flex-1 py-2 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 transition";
       } else {
         document.getElementById('loginForm').classList.add('hidden');
         document.getElementById('registerForm').classList.remove('hidden');
-        document.getElementById('tabBtnRegister').className = "flex-1 py-1.5 rounded-lg font-bold text-xs bg-blue-600 text-white shadow-xs transition";
-        document.getElementById('tabBtnLogin').className = "flex-1 py-1.5 rounded-lg font-bold text-xs text-slate-400 hover:text-slate-200 transition";
+        document.getElementById('tabBtnRegister').className = "flex-1 py-2 rounded-xl font-bold text-xs bg-sky-600 text-white shadow-xs transition";
+        document.getElementById('tabBtnLogin').className = "flex-1 py-2 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 transition";
       }
     }
 
@@ -915,7 +913,7 @@
         alert("កំហុសក្នុងការតភ្ជាប់ Server!");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span>ចូលប្រើប្រាស់</span><i class="fa-solid fa-arrow-right text-xs ml-1"></i>';
+        btn.innerHTML = '<span>ផ្ទៀងផ្ទាត់ &amp; ចូលប្រើប្រាស់</span><i class="fa-solid fa-arrow-right text-xs ml-1"></i>';
       }
     }
 
@@ -976,29 +974,44 @@
     function applyStaffIdentity() {
       if (!currentStaff) return;
       document.getElementById('userName').innerText = currentStaff.fullName;
-      document.getElementById('userStaffId').innerText = currentStaff.staffId;
-      document.getElementById('userInitial').innerText = currentStaff.fullName.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase();
+      document.getElementById('userInitialBadge').innerText = currentStaff.staffId;
 
       if (document.getElementById('req_nameTeam')) document.getElementById('req_nameTeam').value = currentStaff.fullName;
       if (document.getElementById('nameTeam')) document.getElementById('nameTeam').value = currentStaff.fullName;
       if (document.getElementById('ret_nameTeam')) document.getElementById('ret_nameTeam').value = currentStaff.fullName;
     }
 
-    function updateReqUomBadge() {
+    function onReqProductChange() {
       const p = document.getElementById('req_product').value;
       const uom = (productDatabase[p] && productDatabase[p].uom) ? productDatabase[p].uom : 'Qty';
       document.getElementById('req_uom_display').innerText = uom;
+
+      const reqTag = document.getElementById('req_serial_required_tag');
+      const hint = document.getElementById('req_serial_hint');
+      const serialInput = document.getElementById('req_serial');
+
+      if (isSerializedItem(p)) {
+        reqTag.innerText = '* (ទាមទារដាច់ខាត)';
+        reqTag.className = 'text-rose-400 font-bold';
+        hint.innerText = '[ឧបករណ៍មានម៉ាក/ស៊េរី]';
+        serialInput.required = true;
+      } else {
+        reqTag.innerText = '(ស្រេចចិត្ត/មិនទាមទារ)';
+        reqTag.className = 'text-slate-500 font-normal';
+        hint.innerText = '[សម្ភារៈប្រើប្រាស់ទូទៅ]';
+        serialInput.required = false;
+      }
     }
 
     function autoFillReqLocationCode() {
       const loc = document.getElementById('req_locationSelect').value;
-      document.getElementById('req_locationCode').value = locationCodeMap[loc] || "010";
-      document.getElementById('userLocationBadge').innerText = loc.split(' - ')[0];
+      document.getElementById('req_locationCode').value = locationCodeMap[loc] || "Office -BVT";
+      document.getElementById('userLocationBadge').innerText = loc.split(' - ')[0] + " (" + (locationCodeMap[loc] || "Office -BVT") + ")";
     }
 
     function autoFillReqDepartmentCode() {
       const dept = document.getElementById('req_deptSelect').value;
-      document.getElementById('req_deptCode').value = deptCodeMap[dept] || "010";
+      document.getElementById('req_deptCode').value = deptCodeMap[dept] || "10";
     }
 
     function calculateReqMonth() {
@@ -1011,12 +1024,12 @@
 
     function autoFillLocationCode() {
       const loc = document.getElementById('locationSelect').value;
-      document.getElementById('locationCode').value = locationCodeMap[loc] || "010";
+      document.getElementById('locationCode').value = locationCodeMap[loc] || "Office -BVT";
     }
 
     function autoFillDepartmentCode() {
       const dept = document.getElementById('deptSelect').value;
-      document.getElementById('deptCode').value = deptCodeMap[dept] || "010";
+      document.getElementById('deptCode').value = deptCodeMap[dept] || "10";
     }
 
     function calculateMonth() {
@@ -1029,12 +1042,12 @@
 
     function autoFillRetLocationCode() {
       const loc = document.getElementById('ret_locationSelect').value;
-      document.getElementById('ret_locationCode').value = locationCodeMap[loc] || "010";
+      document.getElementById('ret_locationCode').value = locationCodeMap[loc] || "Office -BVT";
     }
 
     function autoFillRetDepartmentCode() {
       const dept = document.getElementById('ret_deptSelect').value;
-      document.getElementById('ret_deptCode').value = deptCodeMap[dept] || "010";
+      document.getElementById('ret_deptCode').value = deptCodeMap[dept] || "10";
     }
 
     function calculateRetMonth() {
@@ -1072,14 +1085,14 @@
       tabs.forEach(t => {
         document.getElementById(`view${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('hidden');
         const btn = document.getElementById(`btnTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        btn.className = "py-2.5 rounded-xl font-bold text-[11px] text-slate-400 hover:text-white transition flex items-center justify-center gap-1 border border-transparent";
+        btn.className = "py-2.5 rounded-xl font-bold text-[11.5px] text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 border border-transparent";
       });
 
       const activeView = document.getElementById(`view${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       if (activeView) activeView.classList.remove('hidden');
 
       const activeBtn = document.getElementById(`btnTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
-      if (activeBtn) activeBtn.className = "py-2.5 rounded-xl font-bold text-[11px] tab-active transition flex items-center justify-center gap-1 border border-transparent";
+      if (activeBtn) activeBtn.className = "py-2.5 rounded-xl font-bold text-[11.5px] tab-active transition flex items-center justify-center gap-1.5 border border-transparent";
 
       if (tab === 'submit') loadApprovedItems();
     }
@@ -1108,11 +1121,19 @@
       e.preventDefault();
       if (!currentStaff) return alert("សូម Login ជាមុនសិន!");
 
+      const p = document.getElementById('req_product').value;
+      const serialVal = document.getElementById('req_serial').value.trim();
+
+      if (isSerializedItem(p) && !serialVal) {
+        alert("⚠️ ឧបករណ៍ប្រភេទនេះមានតម្លៃខ្ពស់ តម្រូវឱ្យស្កេន ឬបញ្ចូលលេខ Serial No. ដាច់ខាត!");
+        document.getElementById('req_serial').focus();
+        return;
+      }
+
       const btn = document.getElementById('btnReqAction');
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងបញ្ជូន...';
 
-      const p = document.getElementById('req_product').value;
       const conditionVal = document.getElementById('req_condition').value;
       const uomVal = (productDatabase[p] && productDatabase[p].uom) ? productDatabase[p].uom : 'UNIT';
 
@@ -1127,7 +1148,7 @@
         condition: conditionVal,
         qty: document.getElementById('req_qty').value,
         ticket: document.getElementById('req_ticket').value,
-        serial: document.getElementById('req_serial').value.trim(),
+        serial: serialVal,
         macSerial: document.getElementById('req_mac').value.trim(),
         remark: document.getElementById('req_remark').value.trim(),
         locationName: document.getElementById('req_locationSelect').value,
@@ -1192,7 +1213,6 @@
       }
     }
 
-    // 🌟 បង្ហាញព័ត៌មានលម្អិតសម្ភារៈ ទាំងខ្នាត (UOM: ម៉ែត្រ/គ្រឿង) និងប្រភេទ (Condition) លើ View 2
     async function loadApprovedItems() {
       const container = document.getElementById('approvedList');
       container.innerHTML = '<div class="text-center py-8 text-sky-400 font-sans"><i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងទាញទិន្នន័យ...</div>';
@@ -1205,10 +1225,10 @@
 
         if (approved.length === 0) {
           container.innerHTML = `
-            <div class="text-center py-8 bg-[#050811] rounded-2xl border border-slate-800">
+            <div class="text-center py-8 bg-[#030712] rounded-2xl border border-slate-800">
               <i class="fa-solid fa-circle-check text-2xl text-slate-600 mb-2"></i>
               <div class="text-slate-400 font-medium">មិនមានឧបករណ៍ដែលកំពុងរង់ចាំ Submit ទេ!</div>
-              <p class="text-[10px] text-slate-500 mt-1">រាល់សំណើដែល Admin បាន Approve នឹងបង្ហាញនៅទីនេះ។</p>
+              <p class="text-[10px] text-slate-500 mt-1 font-mono">Pending verification queue is clear.</p>
             </div>
           `;
           return;
@@ -1219,18 +1239,18 @@
           const uom = it.uom || (productDatabase[it.productName] ? productDatabase[it.productName].uom : 'UNIT');
           const conditionText = (it.condition === 'Old') ? '🔄 ចាស់/មួយទឹក' : '✨ ថ្មី (New)';
           const conditionColor = (it.condition === 'Old') ? 'text-amber-400' : 'text-emerald-400';
-          const serialPart = it.verifiedSerial ? `<div class="text-[9.5px] text-slate-400 font-mono mt-0.5"><i class="fa-solid fa-barcode text-xs mr-1"></i> ${it.verifiedSerial}</div>` : '';
+          const serialPart = it.verifiedSerial ? `<div class="text-[10px] text-slate-400 font-mono mt-0.5"><i class="fa-solid fa-barcode text-xs mr-1 text-sky-400"></i> ${it.verifiedSerial}</div>` : '';
 
           html += `
-            <div class="p-3 bg-[#050811] rounded-2xl border border-slate-800 flex justify-between items-center shadow-sm">
+            <div class="p-3 bg-[#030712] rounded-2xl border border-slate-800 flex justify-between items-center shadow-sm">
               <div class="pr-2">
                 <div class="font-bold text-slate-100 text-xs">${it.productName}</div>
                 <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5 font-mono">
-                  <span>ចំនួន: <b class="text-emerald-400">${it.qty} ${uom}</b></span>
+                  <span>ចំនួន: <b class="text-emerald-400 font-bold">${it.qty} ${uom}</b></span>
                   <span>•</span>
                   <span>ប្រភេទ: <b class="${conditionColor}">${conditionText}</b></span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-mono">Ticket: <b class="text-sky-400">${it.ticket}</b></div>
+                <div class="text-[10px] text-slate-400 font-mono">Ticket ស្នើសុំ: <b class="text-sky-400">${it.ticket}</b></div>
                 ${serialPart}
                 <div class="text-[9px] text-slate-500 mt-0.5 font-sans">Approve ដោយ: ${it.approvedBy || 'Admin'}</div>
               </div>
@@ -1247,22 +1267,35 @@
       }
     }
 
-    // 🌟 បើក Form Submit Out ដោយមានគណនាចំនួនប្រើអស់ & ចំនួនសល់
     function openStockOutForm(reqId, itemCode, prodName, qty, ticket, serialMac, uom, condition) {
       document.getElementById('so_reqId').value = reqId;
       document.getElementById('so_displayItem').innerText = prodName;
       document.getElementById('so_displayTotalReq').innerText = `${qty} ${uom}`;
       document.getElementById('so_displayUOM').innerText = uom;
       document.getElementById('so_displayTicket').innerText = ticket;
+      document.getElementById('so_actualTicket').value = ticket;
       document.getElementById('so_displayCondition').innerText = (condition === 'Old') ? '🔄 ចាស់/មួយទឹក' : '✨ ថ្មី (New)';
       document.getElementById('so_origQty').value = qty;
       document.getElementById('so_uomVal').value = uom;
 
-      // Reset Qty fields
+      const isSer = isSerializedItem(prodName);
+      document.getElementById('so_isSerialized').value = isSer ? "true" : "false";
+      const reqTag = document.getElementById('so_serial_required_tag');
+      const serialInput = document.getElementById('so_serial');
+
+      if (isSer) {
+        reqTag.innerText = '* (ទាមទារដាច់ខាត)';
+        reqTag.className = 'text-rose-400 font-bold';
+        serialInput.required = true;
+      } else {
+        reqTag.innerText = '(ស្រេចចិត្ត/មិនទាមទារ)';
+        reqTag.className = 'text-slate-500 font-normal';
+        serialInput.required = false;
+      }
+
       document.getElementById('so_usedQty').value = qty;
       document.getElementById('so_remainQty').value = "0";
 
-      // Split Serial & MAC if present
       if (serialMac) {
         const parts = serialMac.split(' / ');
         document.getElementById('so_serial').value = parts[0] || '';
@@ -1276,7 +1309,6 @@
       document.getElementById('modalStockOut').classList.remove('hidden');
     }
 
-    // 🌟 គណនាចំនួននៅសល់ស្វ័យប្រវត្តិ (Total - Used = Remaining)
     function calculateRemainingStock() {
       const orig = Number(document.getElementById('so_origQty').value) || 0;
       let used = Number(document.getElementById('so_usedQty').value) || 0;
@@ -1299,6 +1331,22 @@
       e.preventDefault();
       if (!currentStaff) return alert("សូម Login ជាមុនសិន!");
 
+      const isSer = (document.getElementById('so_isSerialized').value === "true");
+      const serialVal = document.getElementById('so_serial').value.trim();
+      const actualTicketVal = document.getElementById('so_actualTicket').value.trim();
+
+      if (!actualTicketVal) {
+        alert("⚠️ សូមបញ្ចូលលេខ Customer Ticket ID ដំឡើងជាក់ស្តែង!");
+        document.getElementById('so_actualTicket').focus();
+        return;
+      }
+
+      if (isSer && !serialVal) {
+        alert("⚠️ ឧបករណ៍ប្រភេទនេះមានតម្លៃខ្ពស់ តម្រូវឱ្យស្កេន ឬបញ្ចូលលេខ Serial No. ដាច់ខាតមុននឹង Submit ចេញពីស្តុក!");
+        document.getElementById('so_serial').focus();
+        return;
+      }
+
       const btn = document.getElementById('btnConfirmAction');
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុង Submit...';
@@ -1315,13 +1363,14 @@
       const payload = {
         action: 'verifyRequisition',
         reqId: document.getElementById('so_reqId').value,
-        verifiedSerial: document.getElementById('so_serial').value.trim() + (document.getElementById('so_mac').value.trim() ? ' / ' + document.getElementById('so_mac').value.trim() : ''),
+        verifiedSerial: serialVal + (document.getElementById('so_mac').value.trim() ? ' / ' + document.getElementById('so_mac').value.trim() : ''),
         nameTeam: currentStaff.fullName,
         dateStockOut: document.getElementById('dateStockOut').value,
         locationName: document.getElementById('locationSelect').value,
         locationCode: document.getElementById('locationCode').value,
         departmentName: document.getElementById('deptSelect').value,
         departmentCode: document.getElementById('deptCode').value,
+        actualTicket: actualTicketVal,
         usedQty: usedQty,
         remainQty: remainQty,
         uom: uom,
@@ -1332,15 +1381,17 @@
         const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
         const json = await res.json();
         alert(json.message || "បានកត់ត្រាចូល Stock Out ជោគជ័យ!");
-        closeModal();
-        loadApprovedItems();
+        if (json.success) {
+          closeModal();
+          loadApprovedItems();
+        }
       } catch(err) {
         alert("បានបញ្ជូនទិន្នន័យជោគជ័យ!");
         closeModal();
         loadApprovedItems();
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span>SUBMIT ចូល STOCK OUT ផ្លូវការ</span>';
+        btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i><span>SUBMIT ចូល STOCK OUT ផ្លូវការ</span>';
       }
     }
 
