@@ -208,10 +208,10 @@
   <div class="w-full max-w-md glass-terminal-card rounded-[36px] p-4 sm:p-5 flex flex-col justify-between space-y-3.5">
     
     <div>
-      <!-- 🌟 REDESIGNED 2-TIER PROFILE HEADER (មិនចង្អៀត ឈ្មោះមិនបាក់ជួរ) -->
+      <!-- PROFILE HEADER -->
       <div class="glass-inner-box border border-sky-500/30 rounded-2xl p-3 space-y-2.5 shadow-md">
         
-        <!-- ជាន់ទី ១: Brand Logo & Action Buttons -->
+        <!-- Tier 1: Brand & Control Buttons -->
         <div class="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
           <div class="flex items-center space-x-2">
             <img src="https://ticket.cogetel.com.kh/__swift/themes/__cp/images/online-logo.png" alt="ONLINE Logo" class="h-7 w-auto object-contain logo-blend-screen drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]">
@@ -220,7 +220,6 @@
             </div>
           </div>
           
-          <!-- Control Buttons Group -->
           <div class="flex items-center space-x-1.5">
             <button onclick="openAboutModal()" title="អំពីយើង (About System)" class="w-7 h-7 rounded-lg bg-sky-950/60 border border-sky-700/60 flex items-center justify-center text-sky-400 hover:text-white hover:bg-sky-600 transition">
               <i class="fa-solid fa-circle-info text-xs"></i>
@@ -234,7 +233,7 @@
           </div>
         </div>
 
-        <!-- ជាន់ទី ២: Staff Identity & Location Badge (លាតសន្ធឹងពេញលេញ) -->
+        <!-- Tier 2: Staff Identity & Location Badge -->
         <div class="flex items-center justify-between pt-0.5">
           <div class="flex items-center space-x-2">
             <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-sky-600 to-blue-700 flex items-center justify-center text-white text-xs font-bold">
@@ -641,7 +640,6 @@
   <div id="modalAbout" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="w-full max-w-[390px] glass-terminal-card rounded-[32px] p-5 space-y-4 my-auto border border-sky-500/30">
       
-      <!-- Top Brand Header -->
       <div class="flex justify-between items-center pb-2 border-b border-slate-800">
         <div class="flex items-center space-x-2">
           <i class="fa-solid fa-circle-info text-sky-400 text-sm"></i>
@@ -652,14 +650,12 @@
         </button>
       </div>
 
-      <!-- Corporate Logo Banner -->
       <div class="p-4 rounded-2xl bg-gradient-to-b from-[#081a38] to-[#040b18] border border-sky-900/60 text-center space-y-1">
         <img src="https://ticket.cogetel.com.kh/__swift/themes/__cp/images/online-logo.png" alt="ONLINE Logo" class="h-9 w-auto mx-auto object-contain logo-blend-screen drop-shadow-[0_0_12px_rgba(56,189,248,0.35)]">
         <h3 class="font-extrabold text-white text-xs tracking-wide">Cogetel Co., Ltd (ONLINE ISP)</h3>
         <p class="text-[10px] text-sky-300 font-mono">Cambodia's Leading Internet &amp; Telecom Solution</p>
       </div>
 
-      <!-- Information Details -->
       <div class="space-y-2 text-[11px] text-slate-300">
         <div class="p-3 rounded-2xl glass-inner-box space-y-1.5 border border-slate-800">
           <div class="font-bold text-sky-400 text-[11px] flex items-center gap-1.5">
@@ -691,7 +687,6 @@
         </div>
       </div>
 
-      <!-- Support Hotlines -->
       <div class="p-3 rounded-2xl bg-sky-950/40 border border-sky-900/60 text-center space-y-1">
         <div class="text-[10.5px] font-bold text-sky-300 font-sans">ទំនាក់ទំនងផ្នែកជំនួយបច្ចេកទេស (Help Desk)</div>
         <div class="text-[10px] text-slate-400 font-mono flex items-center justify-center gap-2">
@@ -1183,6 +1178,9 @@
       if (activeBtn) activeBtn.className = "py-2.5 rounded-xl font-bold text-[11.5px] tab-active transition flex items-center justify-center gap-1.5 border border-transparent";
 
       if (tab === 'submit') loadApprovedItems();
+      if (tab === 'request' || tab === 'return') {
+        if (Object.keys(productDatabase).length === 0) loadProductCatalog();
+      }
     }
 
     function openAboutModal() {
@@ -1192,24 +1190,36 @@
       document.getElementById('modalAbout').classList.add('hidden');
     }
 
+    // 🌟 កែលម្អការផ្ទុកបញ្ជីទំនិញចូល Dropdown ឱ្យរឹងមាំ ១០០%
     async function loadProductCatalog() {
+      const selReq = document.getElementById('req_product');
+      const selRet = document.getElementById('ret_product');
+      
       try {
         const res = await fetch(`${API_URL}?action=getLiveProducts`);
         const json = await res.json();
         productDatabase = json.data || {};
 
-        const selReq = document.getElementById('req_product');
-        const selRet = document.getElementById('ret_product');
+        if (selReq) selReq.innerHTML = '<option value="">-- សូមជ្រើសរើសមុខទំនិញ --</option>';
+        if (selRet) selRet.innerHTML = '<option value="">-- សូមជ្រើសរើសមុខទំនិញ --</option>';
 
-        selReq.innerHTML = '<option value="">-- សូមជ្រើសរើសមុខទំនិញ --</option>';
-        selRet.innerHTML = '<option value="">-- សូមជ្រើសរើសមុខទំនិញ --</option>';
-
+        let hasItems = false;
         for (let k in productDatabase) {
+          hasItems = true;
           const uom = productDatabase[k].uom ? ` (${productDatabase[k].uom})` : '';
-          selReq.innerHTML += `<option value="${k}">${k}${uom}</option>`;
-          selRet.innerHTML += `<option value="${k}">${k}${uom}</option>`;
+          const opt = `<option value="${k}">${k}${uom}</option>`;
+          if (selReq) selReq.innerHTML += opt;
+          if (selRet) selRet.innerHTML += opt;
         }
-      } catch(e) {}
+
+        if (!hasItems) {
+          if (selReq) selReq.innerHTML = '<option value="">⚠️ មិនមានទិន្នន័យក្នុង Catalog</option>';
+          if (selRet) selRet.innerHTML = '<option value="">⚠️ មិនមានទិន្នន័យក្នុង Catalog</option>';
+        }
+      } catch(e) {
+        if (selReq) selReq.innerHTML = '<option value="">⚠️ កំហុសក្នុងការទាញទិន្នន័យ</option>';
+        if (selRet) selRet.innerHTML = '<option value="">⚠️ កំហុសក្នុងការទាញទិន្នន័យ</option>';
+      }
     }
 
     async function handleRequestSubmit(e) {
