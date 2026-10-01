@@ -1318,7 +1318,7 @@
       }
     }
 
-    async function loadApprovedItems() {
+   async function loadApprovedItems() {
       const container = document.getElementById('approvedList');
       container.innerHTML = '<div class="text-center py-8 text-sky-400 font-sans"><i class="fa-solid fa-spinner fa-spin mr-2"></i> កំពុងទាញទិន្នន័យ...</div>';
 
@@ -1326,14 +1326,23 @@
         const res = await fetch(`${API_URL}?action=getRequisitions`);
         const json = await res.json();
         const queue = json.queue || [];
-        const approved = queue.filter(q => q.status === 'Approved');
+
+        // 🌟 ១. ចាប់យក Staff ID របស់គណនីដែលកំពុង Login ក្នុង Terminal
+        const currentStaffId = (currentStaff && currentStaff.staffId) ? currentStaff.staffId.toString().trim() : '';
+
+        // 🌟 ២. Filter បង្ហាញតែសំណើណាដែលមាន Status = 'Approved' និងត្រូវគ្នានឹង Staff ID របស់ខ្លួនឯងប៉ុណ្ណោះ
+        const approved = queue.filter(q => {
+          const isApproved = (q.status === 'Approved');
+          const isMyRequest = q.staffId && (q.staffId.toString().trim() === currentStaffId);
+          return isApproved && isMyRequest;
+        });
 
         if (approved.length === 0) {
           container.innerHTML = `
             <div class="text-center py-8 bg-[#030712] rounded-2xl border border-slate-800">
               <i class="fa-solid fa-circle-check text-2xl text-slate-600 mb-2"></i>
-              <div class="text-slate-400 font-medium">មិនមានឧបករណ៍ដែលកំពុងរង់ចាំ Submit ទេ!</div>
-              <p class="text-[10px] text-slate-500 mt-1 font-mono">Pending verification queue is clear.</p>
+              <div class="text-slate-400 font-medium">មិនមានឧបករណ៍ដែលកំពុងរង់ចាំ Submit សម្រាប់លោកអ្នកទេ!</div>
+              <p class="text-[10px] text-slate-500 mt-1 font-mono">No pending approved requests for Staff ID: ${currentStaffId || 'N/A'}</p>
             </div>
           `;
           return;
@@ -1371,7 +1380,6 @@
         container.innerHTML = '<div class="text-center py-8 text-rose-500 font-sans">កំហុសក្នុងការទាញទិន្នន័យ!</div>';
       }
     }
-
     function openStockOutForm(reqId, itemCode, prodName, qty, ticket, serialMac, uom, condition) {
       document.getElementById('so_reqId').value = reqId;
       document.getElementById('so_displayItem').innerText = prodName;
